@@ -23,7 +23,7 @@
         android:id="@+id/beersLeftHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Beers Earned"
+        android:text="Beers Remaining"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -44,16 +44,42 @@
         app:layout_constraintBottom_toTopOf="@+id/drankABeerHeader" />
 
     <TextView
+        android:id="@+id/earnedABeerHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Earned A Beer"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/drankABeer"
+        app:layout_constraintEnd_toStartOf="@+id/drankABeerHeader"
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/beersLeft" />
+
+    <TextView
         android:id="@+id/drankABeerHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Drank A Beer"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintStart_toEndOf="@+id/earnedABeerHeader"
         app:layout_constraintTop_toBottomOf="@+id/beersLeft"
         app:layout_constraintBottom_toTopOf="@+id/drankABeer" />
+
+    <ImageButton
+        android:id="@+id/earnedABeer"
+        android:layout_width="100dp"
+        android:layout_height="200dp"
+        android:layout_marginBottom="76dp"
+        android:background="@null"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toStartOf="@+id/drankABeer"
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/earnedABeerHeader"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:srcCompat="@drawable/exercise" />
 
     <ImageButton
         android:id="@+id/drankABeer"
@@ -63,8 +89,8 @@
         android:background="@null"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintStart_toEndOf="@+id/earnedABeer"
         app:layout_constraintTop_toBottomOf="@+id/drankABeerHeader"
         app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/beer" />
