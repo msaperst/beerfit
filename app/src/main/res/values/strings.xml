@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BeerFit</string>
+    <string name="beersLeft">10</string>
+</resources>
