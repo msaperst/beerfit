@@ -33,7 +33,7 @@ public class BeerFitDatabase {
             database.execSQL("INSERT INTO Activities VALUES(5,'Soccer');");
         }
         if (isTableMissing("Goals")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS Goals(id INTEGER PRIMARY KEY AUTOINCREMENT, Activity INTEGER, Measurement INTEGER, Amount INTEGER);");
+            database.execSQL("CREATE TABLE IF NOT EXISTS Goals(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount INTEGER);");
             database.execSQL("INSERT INTO Goals VALUES(1,1,2,5);");
             database.execSQL("INSERT INTO Goals VALUES(2,2,2,5);");
             database.execSQL("INSERT INTO Goals VALUES(3,3,2,10);");
@@ -41,7 +41,7 @@ public class BeerFitDatabase {
             database.execSQL("INSERT INTO Goals VALUES(5,5,1,30);");
         }
         if (isTableMissing("ActivityLog")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS ActivityLog(id INTEGER PRIMARY KEY AUTOINCREMENT, Time TEXT, Activity INTEGER, Measurement INTEGER, Amount INTEGER);");
+            database.execSQL("CREATE TABLE IF NOT EXISTS ActivityLog(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount INTEGER);");
         }
     }
 
