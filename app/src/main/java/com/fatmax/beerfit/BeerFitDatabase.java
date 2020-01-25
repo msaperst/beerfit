@@ -26,11 +26,11 @@ public class BeerFitDatabase {
         }
         if (isTableMissing("Activities")) {
             database.execSQL("CREATE TABLE IF NOT EXISTS Activities(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR);");
-            database.execSQL("INSERT INTO Activities VALUES(1,'Walking');");
-            database.execSQL("INSERT INTO Activities VALUES(2,'Running');");
-            database.execSQL("INSERT INTO Activities VALUES(3,'Cycling');");
-            database.execSQL("INSERT INTO Activities VALUES(4,'Lifting');");
-            database.execSQL("INSERT INTO Activities VALUES(5,'Soccer');");
+            database.execSQL("INSERT INTO Activities VALUES(1,'Walked');");
+            database.execSQL("INSERT INTO Activities VALUES(2,'Ran');");
+            database.execSQL("INSERT INTO Activities VALUES(3,'Cycled');");
+            database.execSQL("INSERT INTO Activities VALUES(4,'Lifted');");
+            database.execSQL("INSERT INTO Activities VALUES(5,'Played Soccer');");
         }
         if (isTableMissing("Goals")) {
             database.execSQL("CREATE TABLE IF NOT EXISTS Goals(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount NUMBER);");
@@ -92,5 +92,37 @@ public class BeerFitDatabase {
 
     void logBeer() {
         database.execSQL("INSERT INTO ActivityLog VALUES(null,datetime('now', 'localtime'), 0, 0, 1);");
+    }
+
+    int getBeersRemaining() {
+        return (int) getBeersEarned() - getBeersDrank();
+    }
+
+    int getBeersDrank() {
+        Cursor cur = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = 0;", null);
+        if(cur.moveToFirst())
+        {
+            return cur.getInt(0);
+        }
+        return 0;
+    }
+
+    double getBeersEarned() {
+        //TODO - need to fix this algorithm
+        double beersEarned = 0;
+        Cursor res = database.rawQuery("SELECT * FROM Goals;", null);
+        res.moveToFirst();
+        while (!res.isAfterLast()) {
+            Cursor cur = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = " + res.getInt(1) + " AND measurement = " + res.getInt(2), null);
+            cur.moveToFirst();
+            while (!cur.isAfterLast()) {
+                beersEarned += cur.getDouble(0);
+                cur.moveToNext();
+            }
+            cur.close();
+            res.moveToNext();
+        }
+        res.close();
+        return beersEarned;
     }
 }

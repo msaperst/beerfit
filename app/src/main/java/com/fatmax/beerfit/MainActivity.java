@@ -17,8 +17,6 @@ public class MainActivity extends AppCompatActivity {
     TextView beerCounter;
     ImageButton drankBeer;
 
-    int beersRemaining = 10;    //TODO - remove this
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,9 +44,7 @@ public class MainActivity extends AppCompatActivity {
      * @return the number of beers remaining
      */
     void setBeersRemaining() {
-        // TODO - swap out the below with something meaningful
-        beersRemaining = beersRemaining - 1;
-        beerCounter.setText(String.valueOf(beersRemaining));
+        beerCounter.setText(String.valueOf(beerFitDatabase.getBeersRemaining()));
     }
 
     /**
