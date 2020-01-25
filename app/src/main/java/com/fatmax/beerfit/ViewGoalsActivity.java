@@ -35,17 +35,19 @@ public class ViewGoalsActivity extends AppCompatActivity {
 
             // setup our id cell
             TextView id = new TextView(this);
-            id.setText(res.getString(0));
             id.setWidth(0);
+            id.setText(res.getString(0));
             row.addView(id);
 
             // setup our activity cell
             TextView activity = new TextView(this);
+            activity.setPadding(10, 2, 10, 2);
             activity.setText(res.getString(1));
             row.addView(activity);
 
             // setup our duration cell
             TextView duration = new TextView(this);
+            duration.setPadding(10, 2, 10, 2);
             duration.setText(res.getString(2) + " " + res.getString(3));
             row.addView(duration);
 

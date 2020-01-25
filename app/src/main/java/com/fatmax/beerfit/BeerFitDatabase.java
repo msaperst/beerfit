@@ -33,7 +33,7 @@ public class BeerFitDatabase {
             database.execSQL("INSERT INTO Activities VALUES(5,'Soccer');");
         }
         if (isTableMissing("Goals")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS Goals(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount INTEGER);");
+            database.execSQL("CREATE TABLE IF NOT EXISTS Goals(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount NUMBER);");
             database.execSQL("INSERT INTO Goals VALUES(1,1,2,5);");
             database.execSQL("INSERT INTO Goals VALUES(2,2,2,5);");
             database.execSQL("INSERT INTO Goals VALUES(3,3,2,10);");
@@ -41,7 +41,7 @@ public class BeerFitDatabase {
             database.execSQL("INSERT INTO Goals VALUES(5,5,1,30);");
         }
         if (isTableMissing("ActivityLog")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS ActivityLog(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount INTEGER);");
+            database.execSQL("CREATE TABLE IF NOT EXISTS ActivityLog(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER);");
         }
     }
 
@@ -74,7 +74,7 @@ public class BeerFitDatabase {
 
     private int getOrdinal(String table, String column, String lookup) {
         int ordinal = -1;
-        Cursor res = database.rawQuery("SELECT " + column + " FROM " + table + " WHERE " + column + " = " + "'" + lookup + "'", null);
+        Cursor res = database.rawQuery("SELECT id FROM " + table + " WHERE " + column + " = " + "'" + lookup + "'", null);
         res.moveToFirst();
         while (!res.isAfterLast()) {
             ordinal = res.getInt(0);
@@ -84,7 +84,7 @@ public class BeerFitDatabase {
         return ordinal;
     }
 
-    void logActivity(String activity, String units, int duration) {
+    void logActivity(String activity, String units, double duration) {
         database.execSQL("INSERT INTO ActivityLog VALUES(null,datetime('now', 'localtime')," +
                 getOrdinal("Activities", "type", activity) + ", " +
                 getOrdinal("Measurements", "unit", units) + ", " + duration + ");");

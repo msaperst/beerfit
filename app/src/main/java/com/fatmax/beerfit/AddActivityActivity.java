@@ -52,7 +52,7 @@ public class AddActivityActivity extends AppCompatActivity {
             durationInput.setError("You need to indicate some duration of your activity");
             return;
         }
-        beerFitDatabase.logActivity(activity, units, Integer.valueOf(durationInput.getText().toString()));
+        beerFitDatabase.logActivity(activity, units, Double.valueOf(durationInput.getText().toString()));
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
