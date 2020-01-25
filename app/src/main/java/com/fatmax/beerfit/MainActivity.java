@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     TextView beerCounter;
     ImageButton drankBeer;
 
-    int beersRemaining = 10;
+    int beersRemaining = 10;    //TODO - remove this
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +30,12 @@ public class MainActivity extends AppCompatActivity {
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
         beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
         beerFitDatabase.setupDatabase();
-        //on app launch, set beer to 10
-        beerCounter.setText(String.valueOf(calculateBeersRemaining()));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setBeersRemaining();
     }
 
     /**
@@ -41,10 +45,10 @@ public class MainActivity extends AppCompatActivity {
      *
      * @return the number of beers remaining
      */
-    private int calculateBeersRemaining() {
+    void setBeersRemaining() {
         // TODO - swap out the below with something meaningful
         beersRemaining = beersRemaining - 1;
-        return beersRemaining;
+        beerCounter.setText(String.valueOf(beersRemaining));
     }
 
     /**
@@ -56,11 +60,21 @@ public class MainActivity extends AppCompatActivity {
      */
     public void drinkBeer(View view) {
         beerFitDatabase.logBeer();
-        beerCounter.setText(String.valueOf(calculateBeersRemaining()));
+        setBeersRemaining();
     }
 
     public void addActivity(View view) {
         Intent intent = new Intent(this, AddActivityActivity.class);
+        startActivity(intent);
+    }
+
+    public void viewActivities(View view) {
+        Intent intent = new Intent(this, ViewActivitiesActivity.class);
+        startActivity(intent);
+    }
+
+    public void viewGoals(View view) {
+        Intent intent = new Intent(this, ViewGoalsActivity.class);
         startActivity(intent);
     }
 }

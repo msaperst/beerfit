@@ -73,13 +73,14 @@
         android:layout_height="200dp"
         android:layout_marginBottom="76dp"
         android:background="@null"
+        android:contentDescription="Exercised"
         android:onClick="addActivity"
         android:scaleType="centerInside"
+        app:layout_constraintBottom_toTopOf="@+id/viewActivities"
         app:layout_constraintEnd_toStartOf="@+id/drankABeer"
         app:layout_constraintHorizontal_bias="0.25"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/earnedABeerHeader"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/exercise" />
 
     <ImageButton
@@ -88,13 +89,42 @@
         android:layout_height="200dp"
         android:layout_marginBottom="76dp"
         android:background="@null"
+        android:contentDescription="Drank"
         android:onClick="drinkBeer"
         android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/viewGoals"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toEndOf="@+id/earnedABeer"
         app:layout_constraintTop_toBottomOf="@+id/drankABeerHeader"
         app:srcCompat="@drawable/beer" />
+
+    <TextView
+        android:id="@+id/viewActivities"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="viewActivities"
+        android:text="View Activities"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/viewGoals"
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/earnedABeer" />
+
+    <TextView
+        android:id="@+id/viewGoals"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="viewGoals"
+        android:text="View Goals"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintStart_toEndOf="@+id/viewActivities"
+        app:layout_constraintTop_toBottomOf="@+id/drankABeer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
