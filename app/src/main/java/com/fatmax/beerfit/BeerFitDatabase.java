@@ -116,7 +116,7 @@ public class BeerFitDatabase {
             Cursor cur = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = " + res.getInt(1) + " AND measurement = " + res.getInt(2), null);
             cur.moveToFirst();
             while (!cur.isAfterLast()) {
-                beersEarned += cur.getDouble(0);
+                beersEarned += cur.getDouble(0) / res.getDouble(3);
                 cur.moveToNext();
             }
             cur.close();
