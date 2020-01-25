@@ -1,6 +1,6 @@
 package com.fatmax.beerfit;
 
-import android.database.Cursor;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
@@ -11,12 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    SQLiteDatabase database;
+    SQLiteDatabase sqLiteDatabase;
 
     TextView beerCounter;
     ImageButton drankBeer;
 
-    int beersRemaining = 0;
+    int beersRemaining = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,42 +26,39 @@ public class MainActivity extends AppCompatActivity {
         beerCounter = findViewById(R.id.beersLeft);
         drankBeer = findViewById(R.id.drankABeer);
 
-        setupDatabase();
-        // TODO - need to fix this to pull in total beers (will need log, etc)
-        beersRemaining = 10;
+        sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
+        beerFitDatabase.setupDatabase();
         //on app launch, set beer to 10
-        beerCounter.setText(String.valueOf(beersRemaining));
-
-        drankBeer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                beersRemaining = beersRemaining - 1;
-                beerCounter.setText(String.valueOf(beersRemaining));
-            }
-        });
+        beerCounter.setText(String.valueOf(calculateBeersRemaining()));
     }
 
-    private void setupDatabase() {
-        database = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
-        if (!isTableExists("Measurement")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS Measurement(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR);");
-            database.execSQL("INSERT INTO Measurement VALUES(null,'time');");
-            database.execSQL("INSERT INTO Measurement VALUES(null,'distance');");
-        }
-        if (!isTableExists("Goals")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS Goals(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR,Activity VARCHAR,Measurement INTEGER,Amount INTEGER);");
-        }
+    /**
+     * Calculates the number of beers remaining. Looks at the goals identified activities logged
+     * against them and calculates the total number of beers earned.
+     * Then subtracts all beers drank from the drank log.
+     * @return the number of beers remaining
+     */
+    private int calculateBeersRemaining() {
+        // swap out the below with something meaningful
+        return beersRemaining;
     }
 
-    private boolean isTableExists(String tableName) {
-        boolean isExist = false;
-        Cursor cursor = database.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tableName + "'", null);
-        if (cursor != null) {
-            if (cursor.getCount() > 0) {
-                isExist = true;
-            }
-            cursor.close();
-        }
-        return isExist;
+    /**
+     * Indicates the user drank a beer, so acts accordingly
+     * Specifically, adds a beer drank to the beer log, and then
+     * recalculates how many beers are remaining
+     * @param view
+     */
+    public void drinkBeer(View view) {
+        //TODO - needs to add to the log, not what happens below should add this to the log
+        beersRemaining = beersRemaining - 1;
+        beerCounter.setText(String.valueOf(calculateBeersRemaining()));
+
+    }
+
+    public void addActivity(View view) {
+        Intent intent = new Intent(this, AddActivityActivity.class);
+        startActivity(intent);
     }
 }

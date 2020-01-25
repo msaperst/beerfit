@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:text="Earned A Beer"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/drankABeer"
+        app:layout_constraintBottom_toTopOf="@+id/earnedABeer"
         app:layout_constraintEnd_toStartOf="@+id/drankABeerHeader"
         app:layout_constraintHorizontal_bias="0.25"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,6 +73,7 @@
         android:layout_height="200dp"
         android:layout_marginBottom="76dp"
         android:background="@null"
+        android:onClick="addActivity"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toStartOf="@+id/drankABeer"
         app:layout_constraintHorizontal_bias="0.25"
@@ -87,12 +88,13 @@
         android:layout_height="200dp"
         android:layout_marginBottom="76dp"
         android:background="@null"
+        android:onClick="drinkBeer"
         android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toEndOf="@+id/earnedABeer"
         app:layout_constraintTop_toBottomOf="@+id/drankABeerHeader"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/beer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
