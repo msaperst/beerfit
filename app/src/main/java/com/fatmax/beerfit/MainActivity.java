@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     SQLiteDatabase sqLiteDatabase;
+    BeerFitDatabase beerFitDatabase;
 
     TextView beerCounter;
     ImageButton drankBeer;
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         drankBeer = findViewById(R.id.drankABeer);
 
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
+        beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
         beerFitDatabase.setupDatabase();
         //on app launch, set beer to 10
         beerCounter.setText(String.valueOf(calculateBeersRemaining()));
@@ -37,10 +38,12 @@ public class MainActivity extends AppCompatActivity {
      * Calculates the number of beers remaining. Looks at the goals identified activities logged
      * against them and calculates the total number of beers earned.
      * Then subtracts all beers drank from the drank log.
+     *
      * @return the number of beers remaining
      */
     private int calculateBeersRemaining() {
-        // swap out the below with something meaningful
+        // TODO - swap out the below with something meaningful
+        beersRemaining = beersRemaining - 1;
         return beersRemaining;
     }
 
@@ -48,13 +51,12 @@ public class MainActivity extends AppCompatActivity {
      * Indicates the user drank a beer, so acts accordingly
      * Specifically, adds a beer drank to the beer log, and then
      * recalculates how many beers are remaining
+     *
      * @param view
      */
     public void drinkBeer(View view) {
-        //TODO - needs to add to the log, not what happens below should add this to the log
-        beersRemaining = beersRemaining - 1;
+        beerFitDatabase.logBeer();
         beerCounter.setText(String.valueOf(calculateBeersRemaining()));
-
     }
 
     public void addActivity(View view) {

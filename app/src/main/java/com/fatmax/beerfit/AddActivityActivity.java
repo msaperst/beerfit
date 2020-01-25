@@ -2,11 +2,12 @@ package com.fatmax.beerfit;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.database.Cursor;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 public class AddActivityActivity extends AppCompatActivity {
 
     SQLiteDatabase sqLiteDatabase;
+    BeerFitDatabase beerFitDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,20 +24,36 @@ public class AddActivityActivity extends AppCompatActivity {
 
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
+        beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
 
-        // setup the activities to choose from
-        ArrayList activities = beerFitDatabase.getFullColumn("Activities", "type");
+        // setup our two spinners
+        createSpinner(beerFitDatabase, "Activities", "type", R.id.activitySelection);
+        createSpinner(beerFitDatabase, "Measurements", "unit", R.id.activityDurationUnits);
+    }
+
+    private void createSpinner(BeerFitDatabase beerFitDatabase, String activity, String type, int p) {
+        ArrayList activities = beerFitDatabase.getFullColumn(activity, type);
         ArrayAdapter activitiesAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, activities);
         activitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner activitySpinner = findViewById(R.id.activitySelection);
+        Spinner activitySpinner = findViewById(p);
         activitySpinner.setAdapter(activitiesAdapter);
+    }
 
-        //setup the measurements to choose from
-        ArrayList measurements = beerFitDatabase.getFullColumn("Measurements", "unit");
-        ArrayAdapter measurementsAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, measurements);
-        measurementsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner measurementsSpinner = findViewById(R.id.activityDurationUnits);
-        measurementsSpinner.setAdapter(measurementsAdapter);
+    private String getSpinnerSelection(int p) {
+        Spinner activitySpinner = findViewById(p);
+        return activitySpinner.getSelectedItem().toString();
+    }
+
+    public void logActivity(View view) {
+        String activity = getSpinnerSelection(R.id.activitySelection);
+        String units = getSpinnerSelection(R.id.activityDurationUnits);
+        EditText durationInput = findViewById(R.id.activityDurationInput);
+        if( durationInput.getText().toString() == null || "".equals(durationInput.getText().toString())) {
+            durationInput.setError("You need to indicate some duration of your activity");
+            return;
+        }
+        beerFitDatabase.logActivity(activity, units, Integer.valueOf(durationInput.getText().toString()));
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
