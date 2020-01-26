@@ -45,7 +45,7 @@ public class BeerFitDatabase {
         }
     }
 
-    private boolean isTableMissing(String tableName) {
+    boolean isTableMissing(String tableName) {
         boolean isExist = false;
         Cursor cursor = database.rawQuery("SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name = '" + tableName + "'", null);
         if (cursor != null) {
@@ -72,7 +72,7 @@ public class BeerFitDatabase {
         return array_list;
     }
 
-    private int getOrdinal(String table, String column, String lookup) {
+    int getOrdinal(String table, String column, String lookup) {
         int ordinal = -1;
         Cursor res = database.rawQuery("SELECT id FROM " + table + " WHERE " + column + " = " + "'" + lookup + "'", null);
         res.moveToFirst();
@@ -108,7 +108,6 @@ public class BeerFitDatabase {
     }
 
     double getBeersEarned() {
-        //TODO - need to fix this algorithm
         double beersEarned = 0;
         Cursor res = database.rawQuery("SELECT * FROM Goals;", null);
         res.moveToFirst();

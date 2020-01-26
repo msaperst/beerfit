@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.fatmax.beerfit.ViewActivitiesActivity.createIdTextView;
+import static com.fatmax.beerfit.ViewActivitiesActivity.createTextView;
+
 public class ViewGoalsActivity extends AppCompatActivity {
 
     SQLiteDatabase sqLiteDatabase;
@@ -33,24 +36,14 @@ public class ViewGoalsActivity extends AppCompatActivity {
             TableRow row = new TableRow(this);
             row.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
-            // setup our id cell
-            TextView id = new TextView(this);
-            id.setWidth(0);
-            id.setText(res.getString(0));
+            // setup our cells
+            TextView id = createIdTextView(this, res);
+            TextView activity = createTextView(this, res.getString(1));
+            TextView duration = createTextView(this, res.getString(2) + " " + res.getString(3));
+
             row.addView(id);
-
-            // setup our activity cell
-            TextView activity = new TextView(this);
-            activity.setPadding(10, 2, 10, 2);
-            activity.setText(res.getString(1));
             row.addView(activity);
-
-            // setup our duration cell
-            TextView duration = new TextView(this);
-            duration.setPadding(10, 2, 10, 2);
-            duration.setText(res.getString(2) + " " + res.getString(3));
             row.addView(duration);
-
             tableLayout.addView(row);
             res.moveToNext();
         }

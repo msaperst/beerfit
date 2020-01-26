@@ -1,7 +1,5 @@
 package com.fatmax.beerfit;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -9,6 +7,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
@@ -27,11 +27,11 @@ public class AddActivityActivity extends AppCompatActivity {
         beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
 
         // setup our two spinners
-        createSpinner(beerFitDatabase, "Activities", "type", R.id.activitySelection);
-        createSpinner(beerFitDatabase, "Measurements", "unit", R.id.activityDurationUnits);
+        createSpinner("Activities", "type", R.id.activitySelection);
+        createSpinner("Measurements", "unit", R.id.activityDurationUnits);
     }
 
-    private void createSpinner(BeerFitDatabase beerFitDatabase, String activity, String type, int p) {
+    private void createSpinner(String activity, String type, int p) {
         ArrayList activities = beerFitDatabase.getFullColumn(activity, type);
         ArrayAdapter activitiesAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, activities);
         activitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -48,7 +48,7 @@ public class AddActivityActivity extends AppCompatActivity {
         String activity = getSpinnerSelection(R.id.activitySelection);
         String units = getSpinnerSelection(R.id.activityDurationUnits);
         EditText durationInput = findViewById(R.id.activityDurationInput);
-        if( durationInput.getText().toString() == null || "".equals(durationInput.getText().toString())) {
+        if (durationInput.getText().toString() == null || "".equals(durationInput.getText().toString())) {
             durationInput.setError("You need to indicate some duration of your activity");
             return;
         }
