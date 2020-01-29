@@ -2,6 +2,7 @@ package com.fatmax.beerfit;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 import java.util.ArrayList;
 
@@ -14,11 +15,6 @@ public class BeerFitDatabase {
     }
 
     void setupDatabase() {
-        // while i'm working on things, we'll need to wipe out all of these
-        database.execSQL("DROP TABLE IF EXISTS Measurements");
-        database.execSQL("DROP TABLE IF EXISTS Activities");
-        database.execSQL("DROP TABLE IF EXISTS Goals");
-
         if (isTableMissing("Measurements")) {
             database.execSQL("CREATE TABLE IF NOT EXISTS Measurements(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, unit VARCHAR);");
             database.execSQL("INSERT INTO Measurements VALUES(1,'time','minutes');");
@@ -57,30 +53,62 @@ public class BeerFitDatabase {
         return !isExist;
     }
 
-    ArrayList<String> getFullColumn(String table, String column) {
-        ArrayList<String> array_list = new ArrayList<>();
-
-        //hp = new HashMap();
-        Cursor res = database.rawQuery("SELECT * FROM " + table, null);
-        res.moveToFirst();
-
-        while (!res.isAfterLast()) {
-            array_list.add(res.getString(res.getColumnIndex(column)));
-            res.moveToNext();
+    String getColumnType(String table, String column) {
+        Cursor cursor = database.rawQuery("SELECT typeof(" + column + ") FROM " + table, null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                String columnType = cursor.getString(0);
+                cursor.close();
+                return columnType;
+            }
         }
-        res.close();
+        throw new SQLiteException("No data in the column to check");
+    }
+
+    Object getTableValue(Cursor cursor, String table, String column) {
+        switch (getColumnType(table, column).toLowerCase()) {
+            case "integer":
+                return cursor.getInt(cursor.getColumnIndex(column));
+            case "real":
+                return cursor.getDouble(cursor.getColumnIndex(column));
+            case "blob":
+                return cursor.getBlob(cursor.getColumnIndex(column));
+            case "text":
+            default:
+                return cursor.getString(cursor.getColumnIndex(column));
+        }
+    }
+
+    ArrayList<Object> getFullColumn(String table, String column) {
+        ArrayList<Object> array_list = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM " + table, null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    array_list.add(getTableValue(cursor, table, column));
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }
         return array_list;
     }
 
     int getOrdinal(String table, String column, String lookup) {
         int ordinal = -1;
-        Cursor res = database.rawQuery("SELECT id FROM " + table + " WHERE " + column + " = " + "'" + lookup + "'", null);
-        res.moveToFirst();
-        while (!res.isAfterLast()) {
-            ordinal = res.getInt(0);
-            res.moveToNext();
+        Cursor cursor = database.rawQuery("SELECT id FROM " + table + " WHERE " + column + " = " + "'" + lookup + "'", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    ordinal = cursor.getInt(0);
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
         }
-        res.close();
         return ordinal;
     }
 
@@ -94,14 +122,9 @@ public class BeerFitDatabase {
         database.execSQL("INSERT INTO ActivityLog VALUES(null,datetime('now', 'localtime'), 0, 0, 1);");
     }
 
-    int getBeersRemaining() {
-        return (int) getBeersEarned() - getBeersDrank();
-    }
-
     int getBeersDrank() {
         Cursor cur = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = 0;", null);
-        if(cur.moveToFirst())
-        {
+        if (cur.moveToFirst()) {
             return cur.getInt(0);
         }
         return 0;
@@ -123,5 +146,9 @@ public class BeerFitDatabase {
         }
         res.close();
         return beersEarned;
+    }
+
+    int getBeersRemaining() {
+        return (int) getBeersEarned() - getBeersDrank();
     }
 }
