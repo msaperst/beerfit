@@ -29,49 +29,24 @@ public class BeerFitDatabaseTest {
 
     @After
     public void cleanupDB() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void setupDatabaseTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         assertFalse(beerFitDatabase.isTableMissing("Measurements"));
         assertFalse(beerFitDatabase.isTableMissing("Activities"));
         assertFalse(beerFitDatabase.isTableMissing("Goals"));
         assertFalse(beerFitDatabase.isTableMissing("ActivityLog"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void isTableMissingTrueTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         assertTrue(beerFitDatabase.isTableMissing("myTable"));
@@ -79,66 +54,30 @@ public class BeerFitDatabaseTest {
 
     @Test
     public void isTableMissingFalseTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
-        db.execSQL("CREATE TABLE IF NOT EXISTS someTable(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR);");
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        db.execSQL("CREATE TABLE IF NOT EXISTS someTable(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR);");
         beerFitDatabase.setupDatabase();
         assertFalse(beerFitDatabase.isTableMissing("someTable"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test(expected = SQLiteException.class)
     public void getColumnTypeNoTableTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         // no table exists
         try {
             beerFitDatabase.getColumnType("columnTypes", "t");
             assertTrue(false);
         } finally {
-            SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+            wipeOutDB();
         }
     }
 
     @Test(expected = SQLiteException.class)
     public void getColumnTypeNoColumnTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         // column doesn't exist
         db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
@@ -146,370 +85,190 @@ public class BeerFitDatabaseTest {
             beerFitDatabase.getColumnType("columnTypes", "x");
             assertTrue(false);
         } finally {
-            SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+            wipeOutDB();
         }
     }
 
     @Test(expected = SQLiteException.class)
     public void getColumnTypeNoDataTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
         try {
             beerFitDatabase.getColumnType("columnTypes", "t");
             assertTrue(false);
         } finally {
-            SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+            wipeOutDB();
         }
     }
 
     @Test
     public void getColumnTypeStringTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
         db.execSQL("INSERT INTO columnTypes VALUES('500.0', '500.0', '500.0', '500.0', '500.0');");
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         assertEquals("text", beerFitDatabase.getColumnType("columnTypes", "t"));
         assertEquals("integer", beerFitDatabase.getColumnType("columnTypes", "n"));
         assertEquals("integer", beerFitDatabase.getColumnType("columnTypes", "i"));
         assertEquals("real", beerFitDatabase.getColumnType("columnTypes", "r"));
         assertEquals("text", beerFitDatabase.getColumnType("columnTypes", "b"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getColumnTypeDoubleTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
         db.execSQL("INSERT INTO columnTypes VALUES(500.0, 500.0, 500.0, 500.0, 500.0);");
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         assertEquals("text", beerFitDatabase.getColumnType("columnTypes", "t"));
         assertEquals("integer", beerFitDatabase.getColumnType("columnTypes", "n"));
         assertEquals("integer", beerFitDatabase.getColumnType("columnTypes", "i"));
         assertEquals("real", beerFitDatabase.getColumnType("columnTypes", "r"));
         assertEquals("real", beerFitDatabase.getColumnType("columnTypes", "b"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getColumnTypeIntegerTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
         db.execSQL("INSERT INTO columnTypes VALUES(500, 500, 500, 500, 500);");
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         assertEquals("text", beerFitDatabase.getColumnType("columnTypes", "t"));
         assertEquals("integer", beerFitDatabase.getColumnType("columnTypes", "n"));
         assertEquals("integer", beerFitDatabase.getColumnType("columnTypes", "i"));
         assertEquals("real", beerFitDatabase.getColumnType("columnTypes", "r"));
         assertEquals("integer", beerFitDatabase.getColumnType("columnTypes", "b"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getColumnTypeBlobTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
         db.execSQL("INSERT INTO columnTypes VALUES(x'0500', x'0500', x'0500', x'0500', x'0500');");
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         assertEquals("blob", beerFitDatabase.getColumnType("columnTypes", "t"));
         assertEquals("blob", beerFitDatabase.getColumnType("columnTypes", "n"));
         assertEquals("blob", beerFitDatabase.getColumnType("columnTypes", "i"));
         assertEquals("blob", beerFitDatabase.getColumnType("columnTypes", "r"));
         assertEquals("blob", beerFitDatabase.getColumnType("columnTypes", "b"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getColumnTypeNullTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
         db.execSQL("INSERT INTO columnTypes VALUES(null, null, null, null, null);");
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         assertEquals("null", beerFitDatabase.getColumnType("columnTypes", "t"));
         assertEquals("null", beerFitDatabase.getColumnType("columnTypes", "n"));
         assertEquals("null", beerFitDatabase.getColumnType("columnTypes", "i"));
         assertEquals("null", beerFitDatabase.getColumnType("columnTypes", "r"));
         assertEquals("null", beerFitDatabase.getColumnType("columnTypes", "b"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getTableValue() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         db.execSQL("CREATE TABLE value(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
         db.execSQL("INSERT INTO value VALUES('minutes', null, 1,4.5,x'0500');");
         Cursor res = db.rawQuery("SELECT * FROM value", null);
         res.moveToFirst();
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         assertEquals(1, beerFitDatabase.getTableValue(res, "value", "i"));
         assertEquals("minutes", beerFitDatabase.getTableValue(res, "value", "t"));
         assertEquals(Arrays.toString(new byte[]{(byte) 0x05, 0x00}), Arrays.toString((byte[]) beerFitDatabase.getTableValue(res, "value", "b")));
         assertEquals(4.5, beerFitDatabase.getTableValue(res, "value", "r"));
         assertNull(beerFitDatabase.getTableValue(res, "value", "n"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test(expected = SQLiteException.class)
     public void getFullColumnNoTableTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         try {
             beerFitDatabase.getFullColumn("someTable", "something");
             assertTrue(false);
         } finally {
-            SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+            wipeOutDB();
         }
     }
 
     @Test()
     public void getFullColumnNoColumnTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
-        db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
         assertEquals(new ArrayList<>(), beerFitDatabase.getFullColumn("fullColumn", "something"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getFullColumnNoDataTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
-        db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
         beerFitDatabase.getFullColumn("fullColumn", "type");
         assertEquals(new ArrayList<>(), beerFitDatabase.getFullColumn("fullColumn", "type"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getFullColumnCustomTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
         db.execSQL("INSERT INTO fullColumn VALUES(null,1,'minutes');");
         db.execSQL("INSERT INTO fullColumn VALUES(null,2,'seconds');");
         db.execSQL("INSERT INTO fullColumn VALUES(null,3,'hours');");
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         assertEquals(new ArrayList<Integer>(Arrays.asList(1, 2, 3)), beerFitDatabase.getFullColumn("fullColumn", "type"));
         assertEquals(new ArrayList<String>(Arrays.asList("minutes", "seconds", "hours")), beerFitDatabase.getFullColumn("fullColumn", "unit"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test(expected = SQLiteException.class)
     public void getOrdinalNoTableTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         try {
             beerFitDatabase.getOrdinal("Measurements", "unit", "kilometer");
             assertFalse(true);
         } finally {
-            SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+            wipeOutDB();
         }
     }
 
     @Test(expected = SQLiteException.class)
     public void getOrdinalNoColumnTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
-        db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
         try {
             beerFitDatabase.getOrdinal("fullColumn", "u", "kilometer");
             assertFalse(true);
         } finally {
-            SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+            wipeOutDB();
         }
     }
 
     @Test
     public void getOrdinalNoMatchTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
-        db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
         assertEquals(-1, beerFitDatabase.getOrdinal("fullColumn", "unit", "kilometer"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getOrdinalTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         assertEquals(1, beerFitDatabase.getOrdinal("Measurements", "type", "time"));
@@ -521,25 +280,13 @@ public class BeerFitDatabaseTest {
         // new data lookup
         beerFitDatabase.logBeer();
         assertEquals(1, beerFitDatabase.getOrdinal("ActivityLog", "amount", "1"));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
 
     }
 
     @Test
     public void logActivityTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         beerFitDatabase.logActivity("Running", "seconds", 12.2);
@@ -560,24 +307,12 @@ public class BeerFitDatabaseTest {
         res.moveToNext();
         assertTrue(res.isAfterLast());
         res.close();
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void logBeerTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         beerFitDatabase.logBeer();
@@ -591,24 +326,12 @@ public class BeerFitDatabaseTest {
         res.moveToNext();
         assertTrue(res.isAfterLast());
         res.close();
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getBeersDrankTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         assertEquals(0, beerFitDatabase.getBeersDrank());
@@ -624,25 +347,13 @@ public class BeerFitDatabaseTest {
         beerFitDatabase.logBeer();
         beerFitDatabase.logBeer();
         assertEquals(10, beerFitDatabase.getBeersDrank());
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getBeersEarnedTest() {
         //TODO - this will change (and need to) once goals become dynamic
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         assertEquals(0, beerFitDatabase.getBeersEarned(), 0);
@@ -662,25 +373,13 @@ public class BeerFitDatabaseTest {
         assertEquals(9.0, beerFitDatabase.getBeersEarned(), 0);
         beerFitDatabase.logActivity("Cycled", "kilometers", 15);
         assertEquals(10.5, beerFitDatabase.getBeersEarned(), 0);
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getBeersRemainingTest() {
         //TODO - this will change (and need to) once goals become dynamic
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         assertEquals(0, beerFitDatabase.getBeersRemaining(), 0);
@@ -712,24 +411,12 @@ public class BeerFitDatabaseTest {
         beerFitDatabase.logBeer();
         beerFitDatabase.logBeer();
         assertEquals(-1, beerFitDatabase.getBeersRemaining(), 0);
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void removeActivityTest() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         beerFitDatabase.logActivity("Running", "seconds", 12.2);
@@ -746,11 +433,26 @@ public class BeerFitDatabaseTest {
         cursor = db.rawQuery("SELECT * FROM ActivityLog", null);
         assertEquals(0, cursor.getCount());
         cursor.close();
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        wipeOutDB();
     }
 
     @Test
     public void getActivityTimeTest() {
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        beerFitDatabase.setupDatabase();
+        beerFitDatabase.logActivity("Running", "seconds", 12.2);
+        assertTrue(beerFitDatabase.getActivityTime(1).matches(DATETIME_FORMAT));
+        assertEquals("Unknown", beerFitDatabase.getActivityTime(0));
+        wipeOutDB();
+    }
+
+    private void wipeOutDB() {
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+    }
+
+    private SQLiteDatabase getDB() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
             @Override
@@ -763,12 +465,6 @@ public class BeerFitDatabaseTest {
 
             }
         };
-        SQLiteDatabase db = helper.getWritableDatabase();
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
-        beerFitDatabase.setupDatabase();
-        beerFitDatabase.logActivity("Running", "seconds", 12.2);
-        assertTrue(beerFitDatabase.getActivityTime(1).matches(DATETIME_FORMAT));
-        assertEquals("Unknown", beerFitDatabase.getActivityTime(0));
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+        return helper.getWritableDatabase();
     }
 }
