@@ -714,4 +714,61 @@ public class BeerFitDatabaseTest {
         assertEquals(-1, beerFitDatabase.getBeersRemaining(), 0);
         SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
     }
+
+    @Test
+    public void removeActivityTest() {
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
+            @Override
+            public void onCreate(SQLiteDatabase db) {
+
+            }
+
+            @Override
+            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+            }
+        };
+        SQLiteDatabase db = helper.getWritableDatabase();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        beerFitDatabase.setupDatabase();
+        beerFitDatabase.logActivity("Running", "seconds", 12.2);
+        beerFitDatabase.logActivity("Ran", "minutes", 30);
+        beerFitDatabase.removeActivity(1);
+        Cursor cursor = db.rawQuery("SELECT * FROM ActivityLog", null);
+        assertEquals(1, cursor.getCount());
+        cursor.close();
+        beerFitDatabase.removeActivity(1);
+        cursor = db.rawQuery("SELECT * FROM ActivityLog", null);
+        assertEquals(1, cursor.getCount());
+        cursor.close();
+        beerFitDatabase.removeActivity(2);
+        cursor = db.rawQuery("SELECT * FROM ActivityLog", null);
+        assertEquals(0, cursor.getCount());
+        cursor.close();
+        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+    }
+
+    @Test
+    public void getActivityTimeTest() {
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
+            @Override
+            public void onCreate(SQLiteDatabase db) {
+
+            }
+
+            @Override
+            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+            }
+        };
+        SQLiteDatabase db = helper.getWritableDatabase();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        beerFitDatabase.setupDatabase();
+        beerFitDatabase.logActivity("Running", "seconds", 12.2);
+        assertTrue(beerFitDatabase.getActivityTime(1).matches(DATETIME_FORMAT));
+        assertEquals("Unknown", beerFitDatabase.getActivityTime(0));
+        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+    }
 }

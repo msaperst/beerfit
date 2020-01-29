@@ -6,9 +6,9 @@ import android.database.sqlite.SQLiteException;
 
 import java.util.ArrayList;
 
-public class BeerFitDatabase {
+class BeerFitDatabase {
 
-    SQLiteDatabase database;
+    private SQLiteDatabase database;
 
     BeerFitDatabase(SQLiteDatabase database) {
         this.database = database;
@@ -98,7 +98,7 @@ public class BeerFitDatabase {
 
     int getOrdinal(String table, String column, String lookup) {
         int ordinal = -1;
-        Cursor cursor = database.rawQuery("SELECT id FROM " + table + " WHERE " + column + " = " + "'" + lookup + "'", null);
+        Cursor cursor = database.rawQuery("SELECT id FROM " + table + " WHERE " + column + " = " + "'" + lookup + "';", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -122,12 +122,31 @@ public class BeerFitDatabase {
         database.execSQL("INSERT INTO ActivityLog VALUES(null,datetime('now', 'localtime'), 0, 0, 1);");
     }
 
-    int getBeersDrank() {
-        Cursor cur = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = 0;", null);
-        if (cur.moveToFirst()) {
-            return cur.getInt(0);
+    void removeActivity(int id) {
+        database.execSQL("DELETE FROM ActivityLog WHERE id = '" + id + "';");
+    }
+
+    String getActivityTime(int id) {
+        String time = "Unknown";
+        Cursor cursor = database.rawQuery("SELECT time FROM ActivityLog WHERE id = '" + id + "';", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    time = cursor.getString(0);
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
         }
-        return 0;
+        return time;
+    }
+
+    int getBeersDrank() {
+        Cursor cursor = database.rawQuery("SELECT amount FROM ActivityLog WHERE activity = 0;", null);
+        int beers = cursor.getCount();
+        cursor.close();
+        return beers;
     }
 
     double getBeersEarned() {
