@@ -1,8 +1,11 @@
 package com.fatmax.beerfit;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -72,5 +75,11 @@ public class MainActivity extends AppCompatActivity {
     public void viewGoals(View view) {
         Intent intent = new Intent(this, ViewGoalsActivity.class);
         startActivity(intent);
+    }
+
+    public static int getScreenWidth(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.widthPixels;
     }
 }

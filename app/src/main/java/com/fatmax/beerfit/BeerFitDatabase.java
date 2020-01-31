@@ -112,8 +112,8 @@ class BeerFitDatabase {
         return ordinal;
     }
 
-    void logActivity(String activity, String units, double duration) {
-        database.execSQL("INSERT INTO ActivityLog VALUES(null,datetime('now', 'localtime')," +
+    void logActivity(String time, String activity, String units, double duration) {
+        database.execSQL("INSERT INTO ActivityLog VALUES(null, '" + time + "', " +
                 getOrdinal("Activities", "type", activity) + ", " +
                 getOrdinal("Measurements", "unit", units) + ", " + duration + ");");
     }

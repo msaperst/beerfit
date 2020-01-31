@@ -38,8 +38,8 @@ public class ViewGoalsActivity extends AppCompatActivity {
 
             // setup our cells
             TextView id = createIdTextView(this, res);
-            TextView activity = createTextView(this, res.getString(1));
-            TextView duration = createTextView(this, res.getString(2) + " " + res.getString(3));
+            TextView activity = createTextView(this, "activity", res.getString(1));
+            TextView duration = createTextView(this, "duration", res.getString(2) + " " + res.getString(3));
 
             row.addView(id);
             row.addView(activity);
