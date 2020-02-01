@@ -9,19 +9,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
-import java.util.ArrayList;
 
 public class ViewActivitiesActivity extends AppCompatActivity {
 
@@ -49,20 +45,21 @@ public class ViewActivitiesActivity extends AppCompatActivity {
 
             // setup our cells
             TextView time = createTextView(this, "time", cursor.getString(1));
-            TextView activity = createTextView(this, "activity", cursor.getString(2));
-            TextView duration = createTextView(this, "duration", "for " + cursor.getString(3) + " " + cursor.getString(4));
+            TextView activity;
+            if (cursor.getString(2) == null) {
+                activity = createTextView(this, "activity", "Drank " + cursor.getInt(3) + " beer");
+                if (cursor.getInt(3) > 1) {
+                    activity.setText(activity.getText() + "s");
+                }
+            } else {
+                activity = createTextView(this, "activity", cursor.getString(2) + " for " + cursor.getInt(3) + " " + cursor.getString(4));
+            }
             ImageButton edit = createEditButton(this);
             ImageButton delete = createDeleteButton(this);
 
-            //if we drank, put in different values
-            if (cursor.getString(2) == null || "".equals(cursor.getString(2))) {
-                activity.setText("Drank a beer");
-                duration.setText("");
-            }
             // build our rows
             row.addView(time);
             row.addView(activity);
-            row.addView(duration);
             row.addView(edit);
             row.addView(delete);
             tableLayout.addView(row);
@@ -119,27 +116,12 @@ public class ViewActivitiesActivity extends AppCompatActivity {
         return button;
     }
 
-    private boolean isActivtyBeer(TextView view) {
-        return "Drank a beer".equals(view.getText().toString());
-    }
-
     void editActivity(View editButton) {
         TableRow row = (TableRow) editButton.getParent();
         int activityId = (int) row.getTag();
         Intent intent = new Intent(this, AddActivityActivity.class);
         intent.putExtra("activityId", activityId);
         startActivity(intent);
-    }
-
-    private Spinner getSpinner(String table, String column, String currentValue) {
-        Spinner spinner = new Spinner(this);
-        ArrayList list = beerFitDatabase.getFullColumn(table, column);
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, list);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        int adapterPosition = adapter.getPosition(currentValue);
-        spinner.setSelection(adapterPosition);
-        return spinner;
     }
 
     void deleteActivity(View deleteButton) {
