@@ -113,7 +113,11 @@ class BeerFitDatabase {
     }
 
     void logActivity(String time, String activity, String units, double duration) {
-        database.execSQL("INSERT INTO ActivityLog VALUES(null, '" + time + "', " +
+        logActivity(null, time, activity, units, duration);
+    }
+
+    void logActivity(String id, String time, String activity, String units, double duration) {
+        database.execSQL("INSERT INTO ActivityLog VALUES(" + id + ", '" + time + "', " +
                 getOrdinal("Activities", "type", activity) + ", " +
                 getOrdinal("Measurements", "unit", units) + ", " + duration + ");");
     }

@@ -3,11 +3,13 @@ package com.fatmax.beerfit;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -47,10 +49,39 @@ public class AddActivityActivity extends AppCompatActivity {
         findViewById(R.id.activityDate).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
         findViewById(R.id.activityTime).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
         findViewById(R.id.activityDurationInput).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
-        // initialize date time
+
         cal = Calendar.getInstance();
-        ((TextView) findViewById(R.id.activityDate)).setText(dateFormat.format(cal.getTime()));
-        ((TextView) findViewById(R.id.activityTime)).setText(timeFormat.format(cal.getTime()));
+
+        Intent myIntent = getIntent();
+        if (myIntent.hasExtra("activityId")) {
+            //if this is an existing activity
+            int activityId = myIntent.getIntExtra("activityId", -1);
+            TextView header = findViewById(R.id.addActivityHeader);
+            header.setText("Edit Your Activity");
+            header.setTag(activityId);
+            ((Button) findViewById(R.id.submitActivity)).setText("Update Activity");
+
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM ActivityLog WHERE id = " + activityId, null);
+            cursor.moveToFirst();
+            String dateTime = cursor.getString(1);
+
+            cal.set(Calendar.YEAR, Integer.valueOf(dateTime.split(" ")[0].split("-")[0]));
+            cal.set(Calendar.MONTH, Integer.valueOf(dateTime.split(" ")[0].split("-")[1]));
+            cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(dateTime.split(" ")[0].split("-")[2]));
+            cal.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.split(" ")[1].split(":")[0]));
+            cal.set(Calendar.MINUTE, Integer.valueOf(dateTime.split(" ")[1].split(":")[1]));
+
+            ((Spinner) findViewById(R.id.activitySelection)).setSelection(cursor.getInt(2));
+            ((TextView) findViewById(R.id.activityDate)).setText(dateTime.split(" ")[0]);
+            ((TextView) findViewById(R.id.activityTime)).setText(dateTime.split(" ")[1]);
+            ((TextView) findViewById(R.id.activityDurationInput)).setText(cursor.getString(4));
+            ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(cursor.getInt(3));
+        } else {
+            // otherwise initialize date time
+            cal = Calendar.getInstance();
+            ((TextView) findViewById(R.id.activityDate)).setText(dateFormat.format(cal.getTime()));
+            ((TextView) findViewById(R.id.activityTime)).setText(timeFormat.format(cal.getTime()));
+        }
     }
 
     private void createSpinner(String activity, String type, int p) {
@@ -72,7 +103,7 @@ public class AddActivityActivity extends AppCompatActivity {
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 ((TextView) findViewById(R.id.activityDate)).setText(dateFormat.format(calendar.getTime()));
             }
-        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) - 1, cal.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
@@ -115,7 +146,14 @@ public class AddActivityActivity extends AppCompatActivity {
         if (!isFilledOut) {
             return;
         }
-        beerFitDatabase.logActivity(date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
+        TextView header = findViewById(R.id.addActivityHeader);
+        if (header.getTag() != null && header.getTag() instanceof Integer) {
+            int activityId = (int) header.getTag();
+            beerFitDatabase.removeActivity(activityId);
+            beerFitDatabase.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
+        } else {
+            beerFitDatabase.logActivity(date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
+        }
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
