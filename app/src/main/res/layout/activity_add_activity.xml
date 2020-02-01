@@ -7,6 +7,19 @@
     tools:context=".AddActivityActivity">
 
     <TextView
+        android:id="@+id/addActivityHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add An Activity"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/activitySelectionHeader"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/activitySelectionHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/addActivityHeader" />
 
     <Spinner
         android:id="@+id/activitySelection"
@@ -24,11 +37,51 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/activityDurationHeader"
+        app:layout_constraintBottom_toTopOf="@+id/activityDateTimeHeader"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activitySelectionHeader" />
+
+    <TextView
+        android:id="@+id/activityDateTimeHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter Time"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/activityTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activitySelection" />
+
+    <TextView
+        android:id="@+id/activityDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="5dp"
+        android:ems="10"
+        android:onClick="pickDate"
+        app:layout_constraintBottom_toTopOf="@+id/activityDurationHeader"
+        app:layout_constraintEnd_toStartOf="@+id/activityTime"
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activityDateTimeHeader" />
+
+    <TextView
+        android:id="@+id/activityTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="5dp"
+        android:ems="10"
+        android:onClick="pickTime"
+        app:layout_constraintBottom_toTopOf="@+id/activityDurationHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintStart_toEndOf="@+id/activityDate"
+        app:layout_constraintTop_toBottomOf="@+id/activityDateTimeHeader" />
 
     <TextView
         android:id="@+id/activityDurationHeader"
@@ -40,7 +93,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activitySelection" />
+        app:layout_constraintTop_toBottomOf="@+id/activityDate" />
 
     <EditText
         android:id="@+id/activityDurationInput"
@@ -77,6 +130,7 @@
         android:layout_marginEnd="24dp"
         android:onClick="logActivity"
         android:text="Log Activity"
+        android:backgroundTint="@android:color/holo_green_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
