@@ -4,7 +4,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 class BeerFitDatabase {
 
@@ -123,7 +126,13 @@ class BeerFitDatabase {
     }
 
     void logBeer() {
-        database.execSQL("INSERT INTO ActivityLog VALUES(null,datetime('now', 'localtime'), 0, 0, 1);");
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+        logBeer(null, dateTimeFormat.format(cal.getTime()), 1);
+    }
+
+    void logBeer(String id, String time, int amount) {
+        database.execSQL("INSERT INTO ActivityLog VALUES(" + id + ", '" + time + "', 0, 0, " + amount + ");");
     }
 
     void removeActivity(int id) {
@@ -147,8 +156,14 @@ class BeerFitDatabase {
     }
 
     int getBeersDrank() {
-        Cursor cursor = database.rawQuery("SELECT amount FROM ActivityLog WHERE activity = 0;", null);
-        int beers = cursor.getCount();
+        int beers = 0;
+        Cursor cursor = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = 0;", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                beers = cursor.getInt(0);
+            }
+        }
         cursor.close();
         return beers;
     }

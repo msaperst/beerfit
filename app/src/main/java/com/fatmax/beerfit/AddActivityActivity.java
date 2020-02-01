@@ -7,7 +7,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -76,6 +78,35 @@ public class AddActivityActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.activityTime)).setText(dateTime.split(" ")[1]);
             ((TextView) findViewById(R.id.activityDurationInput)).setText(cursor.getString(4));
             ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(cursor.getInt(3));
+
+            ((TextView) findViewById(R.id.activityDateTimeHeader)).setText("Update Time");
+
+            //if beer activity
+            if (cursor.getInt(2) == 0) {
+                ((TextView) findViewById(R.id.activitySelectionHeader)).setText("Activity");
+                ((TextView) findViewById(R.id.activityDurationHeader)).setText("Enter Amount");
+                ((EditText) findViewById(R.id.activityDurationInput)).setInputType(InputType.TYPE_CLASS_NUMBER);
+                //fix our activity
+                Spinner activitySpinner = findViewById(R.id.activitySelection);
+                ViewGroup.LayoutParams activityLayoutParams = activitySpinner.getLayoutParams();
+                TextView activity = new TextView(this);
+                activity.setId(activitySpinner.getId());
+                activity.setText("Drank Beer");
+                activity.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                activity.setLayoutParams(activityLayoutParams);
+                ViewGroup rootLayout = (ViewGroup) activitySpinner.getParent();
+                rootLayout.removeView(findViewById(R.id.activitySelection));
+                rootLayout.addView(activity);
+                //fix our units
+                Spinner unitSpinner = findViewById(R.id.activityDurationUnits);
+                ViewGroup.LayoutParams unitLayoutParams = unitSpinner.getLayoutParams();
+                TextView unit = new TextView(this);
+                unit.setId(unitSpinner.getId());
+                unit.setText("beers");
+                unit.setLayoutParams(unitLayoutParams);
+                rootLayout.removeView(findViewById(R.id.activityDurationUnits));
+                rootLayout.addView(unit);
+            }
         } else {
             // otherwise initialize date time
             cal = Calendar.getInstance();
@@ -122,22 +153,26 @@ public class AddActivityActivity extends AppCompatActivity {
 
     public void logActivity(View view) {
         boolean isFilledOut = true;
-        Spinner activity = findViewById(R.id.activitySelection);
+        Spinner activity = null;
         TextView date = findViewById(R.id.activityDate);
         TextView time = findViewById(R.id.activityTime);
-        Spinner units = findViewById(R.id.activityDurationUnits);
+        Spinner units = null;
         EditText duration = findViewById(R.id.activityDurationInput);
-        if ("".equals(activity.getSelectedItem().toString())) {
-            TextView errorText = (TextView) activity.getSelectedView();
-            errorText.setError("");
-            errorText.setTextColor(Color.RED);
-            errorText.setText("You need to indicate some activity");
-            isFilledOut = false;
-        }
-        if ("".equals(units.getSelectedItem().toString())) {
-            TextView errorText = (TextView) units.getSelectedView();
-            errorText.setError("");
-            isFilledOut = false;
+        if (!isBeerActivity()) {
+            activity = findViewById(R.id.activitySelection);
+            if ("".equals(activity.getSelectedItem().toString())) {
+                TextView errorText = (TextView) activity.getSelectedView();
+                errorText.setError("");
+                errorText.setTextColor(Color.RED);
+                errorText.setText("You need to indicate some activity");
+                isFilledOut = false;
+            }
+            units = findViewById(R.id.activityDurationUnits);
+            if ("".equals(units.getSelectedItem().toString())) {
+                TextView errorText = (TextView) units.getSelectedView();
+                errorText.setError("");
+                isFilledOut = false;
+            }
         }
         if ("".equals(duration.getText().toString())) {
             duration.setError("You need to indicate some duration of your activity");
@@ -148,13 +183,22 @@ public class AddActivityActivity extends AppCompatActivity {
         }
         TextView header = findViewById(R.id.addActivityHeader);
         if (header.getTag() != null && header.getTag() instanceof Integer) {
+            // if we're updating an activity
             int activityId = (int) header.getTag();
             beerFitDatabase.removeActivity(activityId);
-            beerFitDatabase.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
+            if (isBeerActivity()) {
+                beerFitDatabase.logBeer(String.valueOf(activityId), date.getText() + " " + time.getText(), Integer.valueOf(duration.getText().toString()));
+            } else {
+                beerFitDatabase.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
+            }
         } else {
             beerFitDatabase.logActivity(date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
         }
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+
+    private boolean isBeerActivity() {
+        return "Activity".equals(((TextView) findViewById(R.id.activitySelectionHeader)).getText());
     }
 }

@@ -58,17 +58,6 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/viewActivitiesDurationHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="Duration"
-                android:textColor="@color/colorAccent"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
                 android:id="@+id/viewActivitiesEditHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
