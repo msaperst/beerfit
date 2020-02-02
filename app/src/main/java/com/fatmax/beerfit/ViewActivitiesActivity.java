@@ -1,23 +1,24 @@
 package com.fatmax.beerfit;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
+import android.widget.TableLayout.LayoutParams;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+
+import static com.fatmax.beerfit.TableBuilder.createDeleteButton;
+import static com.fatmax.beerfit.TableBuilder.createEditButton;
+import static com.fatmax.beerfit.TableBuilder.createTextView;
 
 public class ViewActivitiesActivity extends AppCompatActivity {
 
@@ -35,12 +36,12 @@ public class ViewActivitiesActivity extends AppCompatActivity {
 
         // dynamically build our table
         TableLayout tableLayout = findViewById(R.id.activitiesTable);
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT ActivityLog.id, ActivityLog.time, Activities.type, ActivityLog.amount, Measurements.unit FROM ActivityLog LEFT JOIN Activities ON ActivityLog.activity = Activities.id LEFT JOIN Measurements ON ActivityLog.measurement = Measurements.id ORDER BY ActivityLog.time DESC", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT ActivityLog.id, ActivityLog.time, Activities.past, ActivityLog.amount, Measurements.unit FROM ActivityLog LEFT JOIN Activities ON ActivityLog.activity = Activities.id LEFT JOIN Measurements ON ActivityLog.measurement = Measurements.id ORDER BY ActivityLog.time DESC", null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             // setup our table row
             TableRow row = new TableRow(this);
-            row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+            row.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             row.setTag(cursor.getInt(0));
 
             // setup our cells
@@ -54,66 +55,33 @@ public class ViewActivitiesActivity extends AppCompatActivity {
             } else {
                 activity = createTextView(this, "activity", cursor.getString(2) + " for " + cursor.getInt(3) + " " + cursor.getString(4));
             }
-            ImageButton edit = createEditButton(this);
-            ImageButton delete = createDeleteButton(this);
+
+            // create and setup our edit button
+            ImageButton editButton = createEditButton(this);
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    editActivity(v);
+                }
+            });
+            // create and setup our delete button
+            ImageButton deleteButton = createDeleteButton(this);
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteActivity(v);
+                }
+            });
 
             // build our rows
             row.addView(time);
             row.addView(activity);
-            row.addView(edit);
-            row.addView(delete);
+            row.addView(editButton);
+            row.addView(deleteButton);
             tableLayout.addView(row);
             cursor.moveToNext();
         }
         cursor.close();
-    }
-
-    static TextView createIdTextView(Context context, Cursor res) {
-        TextView id = new TextView(context);
-        id.setText(res.getString(0));
-        id.setWidth(0);
-        return id;
-    }
-
-    static TextView createTextView(Context context, String tag, String text) {
-        TextView view = new TextView(context);
-        view.setPadding(10, 2, 10, 2);
-        view.setTag(tag);
-        view.setText(text);
-        view.setTextSize(12);
-        return view;
-    }
-
-    ImageButton createEditButton(Context context) {
-        ImageButton button = new ImageButton(context);
-        button.setBackground(ContextCompat.getDrawable(context, android.R.color.transparent));
-        button.setContentDescription("Edit Activity");
-        button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        button.setImageResource(android.R.drawable.ic_menu_edit);
-        button.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(context, android.R.color.holo_orange_light)));
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editActivity(v);
-            }
-        });
-        return button;
-    }
-
-    ImageButton createDeleteButton(Context context) {
-        ImageButton button = new ImageButton(context);
-        button.setBackground(ContextCompat.getDrawable(context, android.R.color.transparent));
-        button.setContentDescription("Delete Activity");
-        button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        button.setImageResource(android.R.drawable.ic_menu_delete);
-        button.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(context, android.R.color.holo_red_dark)));
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteActivity(v);
-            }
-        });
-        return button;
     }
 
     void editActivity(View editButton) {

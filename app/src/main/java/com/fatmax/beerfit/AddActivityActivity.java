@@ -45,7 +45,7 @@ public class AddActivityActivity extends AppCompatActivity {
         beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
 
         // setup our two spinners
-        createSpinner("Activities", "type", R.id.activitySelection);
+        createSpinner("Activities", "past", R.id.activitySelection);
         createSpinner("Measurements", "unit", R.id.activityDurationUnits);
         //setup our object widths
         findViewById(R.id.activityDate).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);

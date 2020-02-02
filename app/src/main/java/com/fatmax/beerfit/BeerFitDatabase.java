@@ -18,18 +18,23 @@ class BeerFitDatabase {
     }
 
     void setupDatabase() {
+        // TODO - remove once done testing/working it out
+        database.execSQL("DROP TABLE Activities");
+        database.execSQL("DROP TABLE Goals");
+        database.execSQL("DROP TABLE Measurements");
+
         if (isTableMissing("Measurements")) {
             database.execSQL("CREATE TABLE IF NOT EXISTS Measurements(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, unit VARCHAR);");
             database.execSQL("INSERT INTO Measurements VALUES(1,'time','minutes');");
             database.execSQL("INSERT INTO Measurements VALUES(2,'distance','kilometers');");
         }
         if (isTableMissing("Activities")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS Activities(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR);");
-            database.execSQL("INSERT INTO Activities VALUES(1,'Walked');");
-            database.execSQL("INSERT INTO Activities VALUES(2,'Ran');");
-            database.execSQL("INSERT INTO Activities VALUES(3,'Cycled');");
-            database.execSQL("INSERT INTO Activities VALUES(4,'Lifted');");
-            database.execSQL("INSERT INTO Activities VALUES(5,'Played Soccer');");
+            database.execSQL("CREATE TABLE IF NOT EXISTS Activities(id INTEGER PRIMARY KEY AUTOINCREMENT, past VARCHAR, current VARCHAR);");
+            database.execSQL("INSERT INTO Activities VALUES(1,'Walked','Walk');");
+            database.execSQL("INSERT INTO Activities VALUES(2,'Ran','Run');");
+            database.execSQL("INSERT INTO Activities VALUES(3,'Cycled','Cycle');");
+            database.execSQL("INSERT INTO Activities VALUES(4,'Lifted','Lift');");
+            database.execSQL("INSERT INTO Activities VALUES(5,'Played Soccer','Play Soccer');");
         }
         if (isTableMissing("Goals")) {
             database.execSQL("CREATE TABLE IF NOT EXISTS Goals(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount NUMBER);");
@@ -121,7 +126,7 @@ class BeerFitDatabase {
 
     void logActivity(String id, String time, String activity, String units, double duration) {
         database.execSQL("INSERT INTO ActivityLog VALUES(" + id + ", '" + time + "', " +
-                getOrdinal("Activities", "type", activity) + ", " +
+                getOrdinal("Activities", "past", activity) + ", " +
                 getOrdinal("Measurements", "unit", units) + ", " + duration + ");");
     }
 
@@ -163,8 +168,8 @@ class BeerFitDatabase {
                 cursor.moveToFirst();
                 beers = cursor.getInt(0);
             }
+            cursor.close();
         }
-        cursor.close();
         return beers;
     }
 
@@ -188,5 +193,19 @@ class BeerFitDatabase {
 
     int getBeersRemaining() {
         return (int) getBeersEarned() - getBeersDrank();
+    }
+
+    void addGoal(String activity, String units, double duration) {
+        addGoal(null, activity, units, duration);
+    }
+
+    void addGoal(String id, String activity, String units, double duration) {
+        database.execSQL("INSERT INTO Goals VALUES(" + id + ", " +
+                getOrdinal("Activities", "current", activity) + ", " +
+                getOrdinal("Measurements", "unit", units) + ", " + duration + ");");
+    }
+
+    void removeGoal(int id) {
+        database.execSQL("DELETE FROM Goals WHERE id = '" + id + "';");
     }
 }
