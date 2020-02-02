@@ -9,6 +9,12 @@
         android:roundIcon="@drawable/beerfit"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".AddGoalActivity"
+            android:parentActivityName=".ViewGoalsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ViewGoalsActivity" />
+        </activity>
         <activity
             android:name=".ViewGoalsActivity"
             android:parentActivityName=".MainActivity">
