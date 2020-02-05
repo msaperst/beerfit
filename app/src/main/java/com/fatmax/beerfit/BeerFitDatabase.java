@@ -4,10 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
 class BeerFitDatabase {
 
@@ -18,11 +15,14 @@ class BeerFitDatabase {
     }
 
     void setupDatabase() {
-        // TODO - remove once done testing/working it out
-        database.execSQL("DROP TABLE Activities");
-        database.execSQL("DROP TABLE Goals");
-        database.execSQL("DROP TABLE Measurements");
+//        database.execSQL("DROP TABLE StashedBeers");
+//        database.execSQL("DROP TABLE Activities");
+//        database.execSQL("DROP TABLE Goals");
+//        database.execSQL("DROP TABLE Measurements");
 
+        if (isTableMissing("StashedBeers")) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS StashedBeers(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, beers NUMBER);");
+        }
         if (isTableMissing("Measurements")) {
             database.execSQL("CREATE TABLE IF NOT EXISTS Measurements(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, unit VARCHAR);");
             database.execSQL("INSERT INTO Measurements VALUES(1,'time','minutes');");
@@ -64,12 +64,13 @@ class BeerFitDatabase {
     String getColumnType(String table, String column) {
         Cursor cursor = database.rawQuery("SELECT typeof(" + column + ") FROM " + table, null);
         if (cursor != null) {
+            String columnType = null;
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                String columnType = cursor.getString(0);
-                cursor.close();
-                return columnType;
+                columnType = cursor.getString(0);
             }
+            cursor.close();
+            return columnType;
         }
         throw new SQLiteException("No data in the column to check");
     }
@@ -131,13 +132,11 @@ class BeerFitDatabase {
     }
 
     void logBeer() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
-        logBeer(null, dateTimeFormat.format(cal.getTime()), 1);
+        logBeer(null, "datetime('now', 'localtime')", 1);
     }
 
     void logBeer(String id, String time, int amount) {
-        database.execSQL("INSERT INTO ActivityLog VALUES(" + id + ", '" + time + "', 0, 0, " + amount + ");");
+        database.execSQL("INSERT INTO ActivityLog VALUES(" + id + ", " + time + ", 0, 0, " + amount + ");");
     }
 
     void removeActivity(int id) {
@@ -160,39 +159,85 @@ class BeerFitDatabase {
         return time;
     }
 
-    int getBeersDrank() {
-        int beers = 0;
-        Cursor cursor = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = 0;", null);
+    /**
+     * When the goals are updated (added, edited, or removed), it will mess with the current beer count.
+     * To counter this, before goals are modified, the remaining beers are calculated, and stashed with a timestamp
+     * Then recalculating will only pull activities after that timestamp
+     */
+    void stashBeersRemaining() {
+        database.execSQL("INSERT INTO StashedBeers VALUES( null, datetime('now', 'localtime'), " + getBeersRemaining() + ");");
+    }
+
+    private String getBeersStashed(String column) {
+        String stashedBeer = null;
+        Cursor cursor = database.rawQuery("SELECT " + column + " FROM StashedBeers ORDER BY time DESC LIMIT 1;", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                beers = cursor.getInt(0);
+                stashedBeer = cursor.getString(0);
             }
             cursor.close();
         }
-        return beers;
+        return stashedBeer;
     }
 
-    double getBeersEarned() {
-        double beersEarned = 0;
-        Cursor res = database.rawQuery("SELECT * FROM Goals;", null);
-        res.moveToFirst();
-        while (!res.isAfterLast()) {
-            Cursor cur = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = " + res.getInt(1) + " AND measurement = " + res.getInt(2), null);
-            cur.moveToFirst();
-            while (!cur.isAfterLast()) {
-                beersEarned += cur.getDouble(0) / res.getDouble(3);
-                cur.moveToNext();
-            }
-            cur.close();
-            res.moveToNext();
+    String getBeersStashedTime() {
+        String stashedBeersTime = getBeersStashed("time");
+        if (stashedBeersTime == null) {
+            stashedBeersTime = "1900-01-01 00:00";
         }
-        res.close();
+        return stashedBeersTime;
+    }
+
+    double getBeersStashedCount() {
+        String stashedBeersCount = getBeersStashed("beers");
+        if (stashedBeersCount == null) {
+            stashedBeersCount = "0";
+        }
+        return Double.valueOf(stashedBeersCount);
+    }
+
+    int getBeersRecentlyDrank() {
+        String stashedBeerTime = getBeersStashedTime();
+        int beersDrank = 0;
+        Cursor cursor = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = 0 AND time > Datetime('" + stashedBeerTime + "');", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                beersDrank = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        return beersDrank;
+    }
+
+    double getBeersRecentlyEarned() {
+        String stashedBeerTime = getBeersStashedTime();
+        double beersEarned = 0;
+        Cursor goals = database.rawQuery("SELECT * FROM Goals;", null);
+        if (goals != null) {
+            if (goals.getCount() > 0) {
+                goals.moveToFirst();
+                while (!goals.isAfterLast()) {
+                    int activity = goals.getInt(1);
+                    int measurement = goals.getInt(2);
+                    Cursor activities = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = " + goals.getInt(1) + " AND measurement = " + goals.getInt(2) + " AND time > Datetime('" + stashedBeerTime + "');", null);
+                    activities.moveToFirst();
+                    while (!activities.isAfterLast()) {
+                        beersEarned += activities.getDouble(0) / goals.getDouble(3);
+                        activities.moveToNext();
+                    }
+                    activities.close();
+                    goals.moveToNext();
+                }
+            }
+            goals.close();
+        }
         return beersEarned;
     }
 
     int getBeersRemaining() {
-        return (int) getBeersEarned() - getBeersDrank();
+        return (int) getBeersStashedCount() + (int) getBeersRecentlyEarned() - getBeersRecentlyDrank();
     }
 
     void addGoal(String activity, String units, double duration) {
@@ -200,12 +245,14 @@ class BeerFitDatabase {
     }
 
     void addGoal(String id, String activity, String units, double duration) {
+        stashBeersRemaining();
         database.execSQL("INSERT INTO Goals VALUES(" + id + ", " +
                 getOrdinal("Activities", "current", activity) + ", " +
                 getOrdinal("Measurements", "unit", units) + ", " + duration + ");");
     }
 
     void removeGoal(int id) {
+        stashBeersRemaining();
         database.execSQL("DELETE FROM Goals WHERE id = '" + id + "';");
     }
 }

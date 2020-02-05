@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
 
@@ -32,8 +33,8 @@ public class AddActivityActivity extends AppCompatActivity {
     BeerFitDatabase beerFitDatabase;
 
     Calendar cal;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,7 +188,7 @@ public class AddActivityActivity extends AppCompatActivity {
             int activityId = (int) header.getTag();
             beerFitDatabase.removeActivity(activityId);
             if (isBeerActivity()) {
-                beerFitDatabase.logBeer(String.valueOf(activityId), date.getText() + " " + time.getText(), Integer.valueOf(duration.getText().toString()));
+                beerFitDatabase.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", Integer.valueOf(duration.getText().toString()));
             } else {
                 beerFitDatabase.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
             }
