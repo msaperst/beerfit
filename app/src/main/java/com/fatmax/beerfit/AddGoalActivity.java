@@ -1,11 +1,13 @@
 package com.fatmax.beerfit;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -15,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 
 import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.GOALS_TABLE;
 import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
 
@@ -40,7 +43,18 @@ public class AddGoalActivity extends AppCompatActivity {
 
         Intent myIntent = getIntent();
         if (myIntent.hasExtra("goalId")) {
-            // TODO - load the provided goal
+            int goalId = myIntent.getIntExtra("goalId", -1);
+            TextView header = findViewById(R.id.addGoalHeader);
+            header.setText("Edit Your Goal");
+            header.setTag(goalId);
+            ((Button) findViewById(R.id.submitGoal)).setText("Update Goal");
+
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE id = " + goalId, null);
+            cursor.moveToFirst();
+
+            ((Spinner) findViewById(R.id.goalSelection)).setSelection(cursor.getInt(1));
+            ((TextView) findViewById(R.id.goalDurationInput)).setText(cursor.getString(3));
+            ((Spinner) findViewById(R.id.goalDurationUnits)).setSelection(cursor.getInt(2));
         }
     }
 
