@@ -8,6 +8,17 @@ import java.util.ArrayList;
 
 class BeerFitDatabase {
 
+    private static final String CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ";
+    private static final String INSERT_INTO = "INSERT INTO ";
+    private static final String VALUES = " VALUES(";
+    private static final String WHERE_ID = " WHERE id = '";
+
+    static final String STASHED_BEERS_TABLE = "StashedBeers";
+    static final String MEASUREMENTS_TABLE = "Measurements";
+    static final String ACTIVITIES_TABLE = "Activities";
+    static final String GOALS_TABLE = "Goals";
+    static final String ACTIVITY_LOG_TABLE = "ActivityLog";
+
     private SQLiteDatabase database;
 
     BeerFitDatabase(SQLiteDatabase database) {
@@ -15,37 +26,38 @@ class BeerFitDatabase {
     }
 
     void setupDatabase() {
-//        database.execSQL("DROP TABLE StashedBeers");
-//        database.execSQL("DROP TABLE Activities");
-//        database.execSQL("DROP TABLE Goals");
-//        database.execSQL("DROP TABLE Measurements");
+//        database.execSQL("DROP TABLE " + STASHED_BEERS_TABLE );
+//        database.execSQL("DROP TABLE " + ACTIVITIES_TABLE );
+//        database.execSQL("DROP TABLE " + GOALS_TABLE );
+//        database.execSQL("DROP TABLE " + MEASUREMENTS_TABLE );
+//        database.execSQL("DROP TABLE " + ACTIVITY_LOG_TABLE );
 
-        if (isTableMissing("StashedBeers")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS StashedBeers(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, beers NUMBER);");
+        if (isTableMissing(STASHED_BEERS_TABLE)) {
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + STASHED_BEERS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, beers NUMBER);");
         }
-        if (isTableMissing("Measurements")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS Measurements(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, unit VARCHAR);");
-            database.execSQL("INSERT INTO Measurements VALUES(1,'time','minutes');");
-            database.execSQL("INSERT INTO Measurements VALUES(2,'distance','kilometers');");
+        if (isTableMissing(MEASUREMENTS_TABLE)) {
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + MEASUREMENTS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, unit VARCHAR);");
+            database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(1,'time','minutes');");
+            database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(2,'distance','kilometers');");
         }
-        if (isTableMissing("Activities")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS Activities(id INTEGER PRIMARY KEY AUTOINCREMENT, past VARCHAR, current VARCHAR);");
-            database.execSQL("INSERT INTO Activities VALUES(1,'Walked','Walk');");
-            database.execSQL("INSERT INTO Activities VALUES(2,'Ran','Run');");
-            database.execSQL("INSERT INTO Activities VALUES(3,'Cycled','Cycle');");
-            database.execSQL("INSERT INTO Activities VALUES(4,'Lifted','Lift');");
-            database.execSQL("INSERT INTO Activities VALUES(5,'Played Soccer','Play Soccer');");
+        if (isTableMissing(ACTIVITIES_TABLE)) {
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITIES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, past VARCHAR, current VARCHAR);");
+            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(1,'Walked','Walk');");
+            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(2,'Ran','Run');");
+            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(3,'Cycled','Cycle');");
+            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(4,'Lifted','Lift');");
+            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(5,'Played Soccer','Play Soccer');");
         }
-        if (isTableMissing("Goals")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS Goals(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount NUMBER);");
-            database.execSQL("INSERT INTO Goals VALUES(1,1,2,5);");
-            database.execSQL("INSERT INTO Goals VALUES(2,2,2,5);");
-            database.execSQL("INSERT INTO Goals VALUES(3,3,2,10);");
-            database.execSQL("INSERT INTO Goals VALUES(4,4,1,30);");
-            database.execSQL("INSERT INTO Goals VALUES(5,5,1,30);");
+        if (isTableMissing(GOALS_TABLE)) {
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + GOALS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount NUMBER);");
+            database.execSQL(INSERT_INTO + GOALS_TABLE + " VALUES(1,1,2,5);");
+            database.execSQL(INSERT_INTO + GOALS_TABLE + " VALUES(2,2,2,5);");
+            database.execSQL(INSERT_INTO + GOALS_TABLE + " VALUES(3,3,2,10);");
+            database.execSQL(INSERT_INTO + GOALS_TABLE + " VALUES(4,4,1,30);");
+            database.execSQL(INSERT_INTO + GOALS_TABLE + " VALUES(5,5,1,30);");
         }
-        if (isTableMissing("ActivityLog")) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS ActivityLog(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER);");
+        if (isTableMissing(ACTIVITY_LOG_TABLE)) {
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITY_LOG_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER);");
         }
     }
 
@@ -90,19 +102,19 @@ class BeerFitDatabase {
     }
 
     ArrayList<Object> getFullColumn(String table, String column) {
-        ArrayList<Object> array_list = new ArrayList<>();
+        ArrayList<Object> columnList = new ArrayList<>();
         Cursor cursor = database.rawQuery("SELECT * FROM " + table, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
-                    array_list.add(getTableValue(cursor, table, column));
+                    columnList.add(getTableValue(cursor, table, column));
                     cursor.moveToNext();
                 }
             }
             cursor.close();
         }
-        return array_list;
+        return columnList;
     }
 
     int getOrdinal(String table, String column, String lookup) {
@@ -126,9 +138,9 @@ class BeerFitDatabase {
     }
 
     void logActivity(String id, String time, String activity, String units, double duration) {
-        database.execSQL("INSERT INTO ActivityLog VALUES(" + id + ", '" + time + "', " +
-                getOrdinal("Activities", "past", activity) + ", " +
-                getOrdinal("Measurements", "unit", units) + ", " + duration + ");");
+        database.execSQL(INSERT_INTO + ACTIVITY_LOG_TABLE + VALUES + id + ", '" + time + "', " +
+                getOrdinal(ACTIVITIES_TABLE, "past", activity) + ", " +
+                getOrdinal(MEASUREMENTS_TABLE, "unit", units) + ", " + duration + ");");
     }
 
     void logBeer() {
@@ -136,16 +148,16 @@ class BeerFitDatabase {
     }
 
     void logBeer(String id, String time, int amount) {
-        database.execSQL("INSERT INTO ActivityLog VALUES(" + id + ", " + time + ", 0, 0, " + amount + ");");
+        database.execSQL(INSERT_INTO + ACTIVITY_LOG_TABLE + VALUES + id + ", " + time + ", 0, 0, " + amount + ");");
     }
 
     void removeActivity(int id) {
-        database.execSQL("DELETE FROM ActivityLog WHERE id = '" + id + "';");
+        database.execSQL("DELETE FROM " + ACTIVITY_LOG_TABLE + WHERE_ID + id + "';");
     }
 
     String getActivityTime(int id) {
         String time = "Unknown";
-        Cursor cursor = database.rawQuery("SELECT time FROM ActivityLog WHERE id = '" + id + "';", null);
+        Cursor cursor = database.rawQuery("SELECT time FROM " + ACTIVITY_LOG_TABLE + WHERE_ID + id + "';", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -165,12 +177,12 @@ class BeerFitDatabase {
      * Then recalculating will only pull activities after that timestamp
      */
     void stashBeersRemaining() {
-        database.execSQL("INSERT INTO StashedBeers VALUES( null, datetime('now', 'localtime'), " + getBeersRemaining() + ");");
+        database.execSQL(INSERT_INTO + STASHED_BEERS_TABLE + " VALUES( null, datetime('now', 'localtime'), " + getBeersRemaining() + ");");
     }
 
     private String getBeersStashed(String column) {
         String stashedBeer = null;
-        Cursor cursor = database.rawQuery("SELECT " + column + " FROM StashedBeers ORDER BY time DESC LIMIT 1;", null);
+        Cursor cursor = database.rawQuery("SELECT " + column + " FROM " + STASHED_BEERS_TABLE + " ORDER BY time DESC LIMIT 1;", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -200,7 +212,7 @@ class BeerFitDatabase {
     int getBeersRecentlyDrank() {
         String stashedBeerTime = getBeersStashedTime();
         int beersDrank = 0;
-        Cursor cursor = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = 0 AND time > Datetime('" + stashedBeerTime + "');", null);
+        Cursor cursor = database.rawQuery("SELECT SUM(amount) FROM " + ACTIVITY_LOG_TABLE + " WHERE activity = 0 AND time > Datetime('" + stashedBeerTime + "');", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -214,14 +226,12 @@ class BeerFitDatabase {
     double getBeersRecentlyEarned() {
         String stashedBeerTime = getBeersStashedTime();
         double beersEarned = 0;
-        Cursor goals = database.rawQuery("SELECT * FROM Goals;", null);
+        Cursor goals = database.rawQuery("SELECT * FROM " + GOALS_TABLE + ";", null);
         if (goals != null) {
             if (goals.getCount() > 0) {
                 goals.moveToFirst();
                 while (!goals.isAfterLast()) {
-                    int activity = goals.getInt(1);
-                    int measurement = goals.getInt(2);
-                    Cursor activities = database.rawQuery("SELECT SUM(amount) FROM ActivityLog WHERE activity = " + goals.getInt(1) + " AND measurement = " + goals.getInt(2) + " AND time > Datetime('" + stashedBeerTime + "');", null);
+                    Cursor activities = database.rawQuery("SELECT SUM(amount) FROM " + ACTIVITY_LOG_TABLE + " WHERE activity = " + goals.getInt(1) + " AND measurement = " + goals.getInt(2) + " AND time > Datetime('" + stashedBeerTime + "');", null);
                     activities.moveToFirst();
                     while (!activities.isAfterLast()) {
                         beersEarned += activities.getDouble(0) / goals.getDouble(3);
@@ -246,13 +256,13 @@ class BeerFitDatabase {
 
     void addGoal(String id, String activity, String units, double duration) {
         stashBeersRemaining();
-        database.execSQL("INSERT INTO Goals VALUES(" + id + ", " +
-                getOrdinal("Activities", "current", activity) + ", " +
-                getOrdinal("Measurements", "unit", units) + ", " + duration + ");");
+        database.execSQL(INSERT_INTO + GOALS_TABLE + VALUES + id + ", " +
+                getOrdinal(ACTIVITIES_TABLE, "current", activity) + ", " +
+                getOrdinal(MEASUREMENTS_TABLE, "unit", units) + ", " + duration + ");");
     }
 
     void removeGoal(int id) {
         stashBeersRemaining();
-        database.execSQL("DELETE FROM Goals WHERE id = '" + id + "';");
+        database.execSQL("DELETE FROM " + GOALS_TABLE + WHERE_ID + id + "';");
     }
 }

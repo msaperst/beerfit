@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
+import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
 
 public class AddGoalActivity extends AppCompatActivity {
@@ -31,8 +33,8 @@ public class AddGoalActivity extends AppCompatActivity {
         beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
 
         // setup our two spinners
-        createSpinner("Activities", "current", R.id.goalSelection);
-        createSpinner("Measurements", "unit", R.id.goalDurationUnits);
+        createSpinner(ACTIVITIES_TABLE, "current", R.id.goalSelection);
+        createSpinner(MEASUREMENTS_TABLE, "unit", R.id.goalDurationUnits);
         //setup our object widths
         findViewById(R.id.goalDurationInput).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
 
@@ -67,7 +69,7 @@ public class AddGoalActivity extends AppCompatActivity {
             return;
         }
         TextView header = findViewById(R.id.addGoalHeader);
-        if (header.getTag() != null && header.getTag() instanceof Integer) {
+        if (header.getTag() instanceof Integer) {
             // if we're updating a goal
             int goalId = (int) header.getTag();
             beerFitDatabase.removeGoal(goalId);

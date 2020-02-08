@@ -21,6 +21,11 @@ import java.util.Date;
 import java.util.Locale;
 
 import static com.fatmax.beerfit.AddActivityActivity.dateFormat;
+import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.GOALS_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.STASHED_BEERS_TABLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -42,10 +47,11 @@ public class BeerFitDatabaseTest {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
-        assertFalse(beerFitDatabase.isTableMissing("Measurements"));
-        assertFalse(beerFitDatabase.isTableMissing("Activities"));
-        assertFalse(beerFitDatabase.isTableMissing("Goals"));
-        assertFalse(beerFitDatabase.isTableMissing("ActivityLog"));
+        assertFalse(beerFitDatabase.isTableMissing(STASHED_BEERS_TABLE));
+        assertFalse(beerFitDatabase.isTableMissing(MEASUREMENTS_TABLE));
+        assertFalse(beerFitDatabase.isTableMissing(ACTIVITIES_TABLE));
+        assertFalse(beerFitDatabase.isTableMissing(GOALS_TABLE));
+        assertFalse(beerFitDatabase.isTableMissing(ACTIVITY_LOG_TABLE));
         wipeOutDB();
     }
 
@@ -238,7 +244,7 @@ public class BeerFitDatabaseTest {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         try {
-            beerFitDatabase.getOrdinal("Measurements", "unit", "kilometer");
+            beerFitDatabase.getOrdinal(MEASUREMENTS_TABLE, "unit", "kilometer");
             assertFalse(true);
         } finally {
             wipeOutDB();
@@ -272,15 +278,15 @@ public class BeerFitDatabaseTest {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
-        assertEquals(1, beerFitDatabase.getOrdinal("Measurements", "type", "time"));
-        assertEquals(2, beerFitDatabase.getOrdinal("Measurements", "unit", "kilometers"));
-        db.execSQL("INSERT INTO Measurements VALUES(5,'time','hours')");
-        assertEquals(5, beerFitDatabase.getOrdinal("Measurements", "unit", "hours"));
-        db.execSQL("INSERT INTO Measurements VALUES(null,'time','seconds')");
-        assertEquals(6, beerFitDatabase.getOrdinal("Measurements", "unit", "seconds"));
+        assertEquals(1, beerFitDatabase.getOrdinal(MEASUREMENTS_TABLE, "type", "time"));
+        assertEquals(2, beerFitDatabase.getOrdinal(MEASUREMENTS_TABLE, "unit", "kilometers"));
+        db.execSQL("INSERT INTO " + MEASUREMENTS_TABLE + " VALUES(5,'time','hours')");
+        assertEquals(5, beerFitDatabase.getOrdinal(MEASUREMENTS_TABLE, "unit", "hours"));
+        db.execSQL("INSERT INTO " + MEASUREMENTS_TABLE + " VALUES(null,'time','seconds')");
+        assertEquals(6, beerFitDatabase.getOrdinal(MEASUREMENTS_TABLE, "unit", "seconds"));
         // new data lookup
         beerFitDatabase.logBeer();
-        assertEquals(1, beerFitDatabase.getOrdinal("ActivityLog", "amount", "1"));
+        assertEquals(1, beerFitDatabase.getOrdinal(ACTIVITY_LOG_TABLE, "amount", "1"));
         wipeOutDB();
 
     }
@@ -292,7 +298,7 @@ public class BeerFitDatabaseTest {
         beerFitDatabase.setupDatabase();
         beerFitDatabase.logActivity("2000-01-01 10:10", "Running", "seconds", 12.2);
         beerFitDatabase.logActivity("2000-01-01 10:10", "Ran", "minutes", 30);
-        Cursor res = db.rawQuery("SELECT * FROM ActivityLog;", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";", null);
         res.moveToFirst();
         assertEquals(1, res.getInt(0));
         assertEquals("2000-01-01 10:10", res.getString(1));
@@ -318,7 +324,7 @@ public class BeerFitDatabaseTest {
         beerFitDatabase.setupDatabase();
         beerFitDatabase.logActivity("3", "2000-01-01 10:10", "Running", "seconds", 12.2);
         beerFitDatabase.logActivity("2000-01-01 10:10", "Ran", "minutes", 30);
-        Cursor res = db.rawQuery("SELECT * FROM ActivityLog;", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";", null);
         res.moveToFirst();
         assertEquals(3, res.getInt(0));
         assertEquals("2000-01-01 10:10", res.getString(1));
@@ -343,7 +349,7 @@ public class BeerFitDatabaseTest {
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         beerFitDatabase.logBeer();
-        Cursor res = db.rawQuery("SELECT * FROM ActivityLog;", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";", null);
         res.moveToFirst();
         assertEquals(1, res.getInt(0));
         assertTrue(res.getString(1).matches(DATETIME_FORMAT + ":\\d{2}"));
@@ -362,7 +368,7 @@ public class BeerFitDatabaseTest {
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         beerFitDatabase.logBeer("1", "'2000-01-01 10:10'", 2);
-        Cursor res = db.rawQuery("SELECT * FROM ActivityLog;", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";", null);
         res.moveToFirst();
         assertEquals(1, res.getInt(0));
         assertEquals("2000-01-01 10:10", res.getString(1));
@@ -468,15 +474,15 @@ public class BeerFitDatabaseTest {
         beerFitDatabase.logActivity(getDateTime(), "Running", "seconds", 12.2);
         beerFitDatabase.logActivity(getDateTime(), "Ran", "minutes", 30);
         beerFitDatabase.removeActivity(1);
-        Cursor cursor = db.rawQuery("SELECT * FROM ActivityLog", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE, null);
         assertEquals(1, cursor.getCount());
         cursor.close();
         beerFitDatabase.removeActivity(1);
-        cursor = db.rawQuery("SELECT * FROM ActivityLog", null);
+        cursor = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE, null);
         assertEquals(1, cursor.getCount());
         cursor.close();
         beerFitDatabase.removeActivity(2);
-        cursor = db.rawQuery("SELECT * FROM ActivityLog", null);
+        cursor = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE, null);
         assertEquals(0, cursor.getCount());
         cursor.close();
         wipeOutDB();
@@ -498,10 +504,10 @@ public class BeerFitDatabaseTest {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
-        db.execSQL("DELETE FROM Goals;");
+        db.execSQL("DELETE FROM " + GOALS_TABLE + ";");
         beerFitDatabase.addGoal("Running", "seconds", 12.2);
         beerFitDatabase.addGoal("Run", "minutes", 30);
-        Cursor res = db.rawQuery("SELECT * FROM Goals;", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + GOALS_TABLE + ";", null);
         res.moveToFirst();
         assertEquals(6, res.getInt(0));
         assertEquals(-1, res.getInt(1));
@@ -523,10 +529,10 @@ public class BeerFitDatabaseTest {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
-        db.execSQL("DELETE FROM Goals;");
+        db.execSQL("DELETE FROM " + GOALS_TABLE + ";");
         beerFitDatabase.addGoal("3", "Running", "seconds", 12.2);
         beerFitDatabase.addGoal("Run", "minutes", 30);
-        Cursor res = db.rawQuery("SELECT * FROM Goals;", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + GOALS_TABLE + ";", null);
         res.moveToFirst();
         assertEquals(3, res.getInt(0));
         assertEquals(-1, res.getInt(1));
@@ -549,15 +555,15 @@ public class BeerFitDatabaseTest {
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         beerFitDatabase.removeGoal(1);
-        Cursor cursor = db.rawQuery("SELECT * FROM Goals", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + GOALS_TABLE, null);
         assertEquals(4, cursor.getCount());
         cursor.close();
         beerFitDatabase.removeGoal(1);
-        cursor = db.rawQuery("SELECT * FROM Goals", null);
+        cursor = db.rawQuery("SELECT * FROM " + GOALS_TABLE, null);
         assertEquals(4, cursor.getCount());
         cursor.close();
         beerFitDatabase.removeGoal(2);
-        cursor = db.rawQuery("SELECT * FROM Goals", null);
+        cursor = db.rawQuery("SELECT * FROM " + GOALS_TABLE, null);
         assertEquals(3, cursor.getCount());
         cursor.close();
         wipeOutDB();
@@ -573,7 +579,7 @@ public class BeerFitDatabaseTest {
         beerFitDatabase.logBeer();
         Thread.sleep(1000);
         beerFitDatabase.stashBeersRemaining();
-        Cursor cursor = db.rawQuery("SELECT * FROM StashedBeers", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + STASHED_BEERS_TABLE, null);
         cursor.moveToFirst();
         assertEquals(1, cursor.getInt(0));
         String firstTime = cursor.getString(1);
@@ -623,9 +629,30 @@ public class BeerFitDatabaseTest {
         wipeOutDB();
     }
 
-    //TODO
-    // -- get beers stashed time
-    // -- get beers stashed count
+    @Test
+    public void getBeersStashedTimeTest() {
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        beerFitDatabase.setupDatabase();
+        beerFitDatabase.stashBeersRemaining();
+        assertEquals(getDateTime(), beerFitDatabase.getBeersStashedTime());
+        wipeOutDB();
+    }
+
+    @Test
+    public void getBeersStashedCountTest() throws InterruptedException {
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        beerFitDatabase.setupDatabase();
+        beerFitDatabase.stashBeersRemaining();
+        assertEquals(0, beerFitDatabase.getBeersStashedCount(), 0);
+        Thread.sleep(1000);
+        beerFitDatabase.logBeer();
+        assertEquals(0, beerFitDatabase.getBeersStashedCount(), 0);
+        beerFitDatabase.stashBeersRemaining();
+        assertEquals(-1, beerFitDatabase.getBeersStashedCount(), 0);
+        wipeOutDB();
+    }
 
     private void wipeOutDB() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
