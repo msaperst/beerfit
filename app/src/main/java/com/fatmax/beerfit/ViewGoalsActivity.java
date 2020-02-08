@@ -83,7 +83,10 @@ public class ViewGoalsActivity extends AppCompatActivity {
 
     void editGoal(View editButton) {
         TableRow row = (TableRow) editButton.getParent();
-        int activityId = (int) row.getTag();
+        int goalId = (int) row.getTag();
+        Intent intent = new Intent(this, AddGoalActivity.class);
+        intent.putExtra("goalId", goalId);
+        startActivity(intent);
     }
 
     void deleteGoal(View deleteButton) {
