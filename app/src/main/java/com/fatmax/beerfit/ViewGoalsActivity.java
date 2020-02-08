@@ -16,6 +16,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.GOALS_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
 import static com.fatmax.beerfit.TableBuilder.createDeleteButton;
 import static com.fatmax.beerfit.TableBuilder.createEditButton;
 import static com.fatmax.beerfit.TableBuilder.createTextView;
@@ -36,7 +39,7 @@ public class ViewGoalsActivity extends AppCompatActivity {
 
         // dynamically build our table
         TableLayout tableLayout = findViewById(R.id.goalsTable);
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT Goals.id, Activities.current, Goals.amount, Measurements.unit FROM Goals LEFT JOIN Activities ON Goals.activity = Activities.id LEFT JOIN Measurements ON Goals.measurement = Measurements.id", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT " + GOALS_TABLE + ".id, " + ACTIVITIES_TABLE + ".current, " + GOALS_TABLE + ".amount, " + MEASUREMENTS_TABLE + ".unit FROM " + GOALS_TABLE + " LEFT JOIN " + ACTIVITIES_TABLE + " ON " + GOALS_TABLE + ".activity = " + ACTIVITIES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + GOALS_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id", null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             // setup our table row

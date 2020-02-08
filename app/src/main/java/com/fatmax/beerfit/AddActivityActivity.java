@@ -23,7 +23,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
+import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
 
 public class AddActivityActivity extends AppCompatActivity {
@@ -32,8 +36,8 @@ public class AddActivityActivity extends AppCompatActivity {
     BeerFitDatabase beerFitDatabase;
 
     Calendar cal;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +49,8 @@ public class AddActivityActivity extends AppCompatActivity {
         beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
 
         // setup our two spinners
-        createSpinner("Activities", "past", R.id.activitySelection);
-        createSpinner("Measurements", "unit", R.id.activityDurationUnits);
+        createSpinner(ACTIVITIES_TABLE, "past", R.id.activitySelection);
+        createSpinner(MEASUREMENTS_TABLE, "unit", R.id.activityDurationUnits);
         //setup our object widths
         findViewById(R.id.activityDate).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
         findViewById(R.id.activityTime).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
@@ -63,7 +67,7 @@ public class AddActivityActivity extends AppCompatActivity {
             header.setTag(activityId);
             ((Button) findViewById(R.id.submitActivity)).setText("Update Activity");
 
-            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM ActivityLog WHERE id = " + activityId, null);
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = " + activityId, null);
             cursor.moveToFirst();
             String dateTime = cursor.getString(1);
 
@@ -182,12 +186,12 @@ public class AddActivityActivity extends AppCompatActivity {
             return;
         }
         TextView header = findViewById(R.id.addActivityHeader);
-        if (header.getTag() != null && header.getTag() instanceof Integer) {
+        if (header.getTag() instanceof Integer) {
             // if we're updating an activity
             int activityId = (int) header.getTag();
             beerFitDatabase.removeActivity(activityId);
             if (isBeerActivity()) {
-                beerFitDatabase.logBeer(String.valueOf(activityId), date.getText() + " " + time.getText(), Integer.valueOf(duration.getText().toString()));
+                beerFitDatabase.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", Integer.valueOf(duration.getText().toString()));
             } else {
                 beerFitDatabase.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
             }

@@ -16,6 +16,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
 import static com.fatmax.beerfit.TableBuilder.createDeleteButton;
 import static com.fatmax.beerfit.TableBuilder.createEditButton;
 import static com.fatmax.beerfit.TableBuilder.createTextView;
@@ -36,7 +39,7 @@ public class ViewActivitiesActivity extends AppCompatActivity {
 
         // dynamically build our table
         TableLayout tableLayout = findViewById(R.id.activitiesTable);
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT ActivityLog.id, ActivityLog.time, Activities.past, ActivityLog.amount, Measurements.unit FROM ActivityLog LEFT JOIN Activities ON ActivityLog.activity = Activities.id LEFT JOIN Measurements ON ActivityLog.measurement = Measurements.id ORDER BY ActivityLog.time DESC", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT " + ACTIVITY_LOG_TABLE + ".id, " + ACTIVITY_LOG_TABLE + ".time, " + ACTIVITIES_TABLE + ".past, " + ACTIVITY_LOG_TABLE + ".amount, " + MEASUREMENTS_TABLE + ".unit FROM " + ACTIVITY_LOG_TABLE + " LEFT JOIN " + ACTIVITIES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".activity = " + ACTIVITIES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id ORDER BY " + ACTIVITY_LOG_TABLE + ".time DESC", null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             // setup our table row
@@ -53,7 +56,7 @@ public class ViewActivitiesActivity extends AppCompatActivity {
                     activity.setText(activity.getText() + "s");
                 }
             } else {
-                activity = createTextView(this, "activity", cursor.getString(2) + " for " + cursor.getInt(3) + " " + cursor.getString(4));
+                activity = createTextView(this, "activity", cursor.getString(2) + " for " + cursor.getDouble(3) + " " + cursor.getString(4));
             }
 
             // create and setup our edit button
