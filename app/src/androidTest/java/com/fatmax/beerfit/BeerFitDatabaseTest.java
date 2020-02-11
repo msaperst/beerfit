@@ -404,10 +404,10 @@ public class BeerFitDatabaseTest {
 
     @Test
     public void getBeersRecentlyEarnedTest() {
-        //TODO - this will change (and need to) once goals become dynamic
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
+        addGoals(db);
         assertEquals(0, beerFitDatabase.getBeersRecentlyEarned(), 0);
         beerFitDatabase.logActivity(getDateTime(), "Ran", "kilometers", 5);
         assertEquals(1, beerFitDatabase.getBeersRecentlyEarned(), 0);
@@ -430,10 +430,10 @@ public class BeerFitDatabaseTest {
 
     @Test
     public void getBeersRemainingTest() {
-        //TODO - this will change (and need to) once goals become dynamic
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
+        addGoals(db);
         assertEquals(0, beerFitDatabase.getBeersRemaining(), 0);
         beerFitDatabase.logActivity(getDateTime(), "Ran", "kilometers", 5);
         assertEquals(1, beerFitDatabase.getBeersRemaining(), 0);
@@ -504,17 +504,16 @@ public class BeerFitDatabaseTest {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
-        db.execSQL("DELETE FROM " + GOALS_TABLE + ";");
         beerFitDatabase.addGoal("Running", "seconds", 12.2);
         beerFitDatabase.addGoal("Run", "minutes", 30);
         Cursor res = db.rawQuery("SELECT * FROM " + GOALS_TABLE + ";", null);
         res.moveToFirst();
-        assertEquals(6, res.getInt(0));
+        assertEquals(1, res.getInt(0));
         assertEquals(-1, res.getInt(1));
         assertEquals(-1, res.getInt(2));
         assertEquals(12.2, res.getDouble(3), 0);
         res.moveToNext();
-        assertEquals(7, res.getInt(0));
+        assertEquals(2, res.getInt(0));
         assertEquals(2, res.getInt(1));
         assertEquals(1, res.getInt(2));
         assertEquals(30, res.getDouble(3), 0);
@@ -529,6 +528,7 @@ public class BeerFitDatabaseTest {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
+        addGoals(db);
         db.execSQL("DELETE FROM " + GOALS_TABLE + ";");
         beerFitDatabase.addGoal("3", "Running", "seconds", 12.2);
         beerFitDatabase.addGoal("Run", "minutes", 30);
@@ -549,11 +549,20 @@ public class BeerFitDatabaseTest {
         wipeOutDB();
     }
 
+    private void addGoals(SQLiteDatabase database) {
+        database.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,5);");
+        database.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(2,2,2,5);");
+        database.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(3,3,2,10);");
+        database.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(4,4,1,30);");
+        database.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(5,5,1,30);");
+    }
+
     @Test
     public void removeGoalTest() {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
+        addGoals(db);
         beerFitDatabase.removeGoal(1);
         Cursor cursor = db.rawQuery("SELECT * FROM " + GOALS_TABLE, null);
         assertEquals(4, cursor.getCount());
@@ -601,10 +610,10 @@ public class BeerFitDatabaseTest {
 
     @Test
     public void changeGoalsTest() throws InterruptedException {
-        //TODO - this will change (and need to) once goals become dynamic
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
+        addGoals(db);
         beerFitDatabase.logActivity(getDateTime(), "Ran", "kilometers", 5);
         beerFitDatabase.logActivity(getDateTime(), "Walked", "kilometers", 10);
         assertEquals(3, beerFitDatabase.getBeersRemaining(), 0);

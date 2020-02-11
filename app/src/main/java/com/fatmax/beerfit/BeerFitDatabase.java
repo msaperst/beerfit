@@ -26,12 +26,6 @@ class BeerFitDatabase {
     }
 
     void setupDatabase() {
-//        database.execSQL("DROP TABLE " + STASHED_BEERS_TABLE );
-//        database.execSQL("DROP TABLE " + ACTIVITIES_TABLE );
-//        database.execSQL("DROP TABLE " + GOALS_TABLE );
-//        database.execSQL("DROP TABLE " + MEASUREMENTS_TABLE );
-//        database.execSQL("DROP TABLE " + ACTIVITY_LOG_TABLE );
-
         if (isTableMissing(STASHED_BEERS_TABLE)) {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + STASHED_BEERS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, beers NUMBER);");
         }
@@ -50,11 +44,6 @@ class BeerFitDatabase {
         }
         if (isTableMissing(GOALS_TABLE)) {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + GOALS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount NUMBER);");
-            database.execSQL(INSERT_INTO + GOALS_TABLE + " VALUES(1,1,2,5);");
-            database.execSQL(INSERT_INTO + GOALS_TABLE + " VALUES(2,2,2,5);");
-            database.execSQL(INSERT_INTO + GOALS_TABLE + " VALUES(3,3,2,10);");
-            database.execSQL(INSERT_INTO + GOALS_TABLE + " VALUES(4,4,1,30);");
-            database.execSQL(INSERT_INTO + GOALS_TABLE + " VALUES(5,5,1,30);");
         }
         if (isTableMissing(ACTIVITY_LOG_TABLE)) {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITY_LOG_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER);");
