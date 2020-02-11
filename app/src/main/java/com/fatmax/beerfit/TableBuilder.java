@@ -9,6 +9,9 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 public class TableBuilder {
+
+    private TableBuilder() {}
+
     static TextView createTextView(Context context, String tag, String text) {
         TextView view = new TextView(context);
         view.setPadding(10, 2, 10, 2);
