@@ -36,8 +36,8 @@ public class AddActivityActivity extends AppCompatActivity {
     BeerFitDatabase beerFitDatabase;
 
     Calendar cal;
-    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-    static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
+    static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,8 +114,8 @@ public class AddActivityActivity extends AppCompatActivity {
         } else {
             // otherwise initialize date time
             cal = Calendar.getInstance();
-            ((TextView) findViewById(R.id.activityDate)).setText(dateFormat.format(cal.getTime()));
-            ((TextView) findViewById(R.id.activityTime)).setText(timeFormat.format(cal.getTime()));
+            ((TextView) findViewById(R.id.activityDate)).setText(DATE_FORMAT.format(cal.getTime()));
+            ((TextView) findViewById(R.id.activityTime)).setText(TIME_FORMAT.format(cal.getTime()));
         }
     }
 
@@ -136,7 +136,7 @@ public class AddActivityActivity extends AppCompatActivity {
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, month);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                ((TextView) findViewById(R.id.activityDate)).setText(dateFormat.format(calendar.getTime()));
+                ((TextView) findViewById(R.id.activityDate)).setText(DATE_FORMAT.format(calendar.getTime()));
             }
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) - 1, cal.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
@@ -149,7 +149,7 @@ public class AddActivityActivity extends AppCompatActivity {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hour);
                 calendar.set(Calendar.MINUTE, minute);
-                ((TextView) findViewById(R.id.activityTime)).setText(timeFormat.format(calendar.getTime()));
+                ((TextView) findViewById(R.id.activityTime)).setText(TIME_FORMAT.format(calendar.getTime()));
             }
         }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false);
         timePickerDialog.show();

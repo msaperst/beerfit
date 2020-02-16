@@ -16,6 +16,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.Locale;
+
 import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITY_LOG_TABLE;
 import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
@@ -27,6 +33,8 @@ public class ViewActivitiesActivity extends AppCompatActivity {
 
     SQLiteDatabase sqLiteDatabase;
     BeerFitDatabase beerFitDatabase;
+
+    final SimpleDateFormat datetimeFormat = new SimpleDateFormat("EEE, MMM d yyyy, kk:mm", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +56,9 @@ public class ViewActivitiesActivity extends AppCompatActivity {
             row.setTag(cursor.getInt(0));
 
             // setup our cells
-            TextView time = createTextView(this, "time", cursor.getString(1));
+            LocalDateTime localDateTime = LocalDateTime.parse(cursor.getString(1).replace(" ", "T"));
+            Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            TextView time = createTextView(this, "time", datetimeFormat.format(date));
             TextView activity;
             if (cursor.getString(2) == null) {
                 activity = createTextView(this, "activity", "Drank " + cursor.getInt(3) + " beer");

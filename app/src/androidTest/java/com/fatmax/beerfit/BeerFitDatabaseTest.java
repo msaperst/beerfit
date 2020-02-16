@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.fatmax.beerfit.AddActivityActivity.dateFormat;
+import static com.fatmax.beerfit.AddActivityActivity.DATE_FORMAT;
 import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITY_LOG_TABLE;
 import static com.fatmax.beerfit.BeerFitDatabase.GOALS_TABLE;
@@ -689,6 +689,6 @@ public class BeerFitDatabaseTest {
         // purposefully adding in seconds, when the app doesn't provide it, as this speeds up testing.
         // otherwise, i'd have to wait a minute for accurate results
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
-        return dateFormat.format(date) + " " + timeFormat.format(date);
+        return DATE_FORMAT.format(date) + " " + timeFormat.format(date);
     }
 }
