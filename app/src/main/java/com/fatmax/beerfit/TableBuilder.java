@@ -8,16 +8,16 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
-public class TableBuilder {
+class TableBuilder {
 
-    private TableBuilder() {}
+    private TableBuilder() {
+    }
 
     static TextView createTextView(Context context, String tag, String text) {
         TextView view = new TextView(context);
-        view.setPadding(10, 2, 10, 2);
+        view.setTextAppearance(R.style.BodyText);
         view.setTag(tag);
         view.setText(text);
-        view.setTextSize(12);
         return view;
     }
 

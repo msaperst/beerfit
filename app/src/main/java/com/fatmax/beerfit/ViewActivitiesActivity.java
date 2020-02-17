@@ -46,13 +46,13 @@ public class ViewActivitiesActivity extends AppCompatActivity {
         beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
 
         // dynamically build our table
-        TableLayout tableLayout = findViewById(R.id.activitiesTable);
+        TableLayout tableLayout = findViewById(R.id.activityBodyTable);
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT " + ACTIVITY_LOG_TABLE + ".id, " + ACTIVITY_LOG_TABLE + ".time, " + ACTIVITIES_TABLE + ".past, " + ACTIVITY_LOG_TABLE + ".amount, " + MEASUREMENTS_TABLE + ".unit FROM " + ACTIVITY_LOG_TABLE + " LEFT JOIN " + ACTIVITIES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".activity = " + ACTIVITIES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id ORDER BY " + ACTIVITY_LOG_TABLE + ".time DESC", null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             // setup our table row
             TableRow row = new TableRow(this);
-            row.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            row.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             row.setTag(cursor.getInt(0));
 
             // setup our cells
