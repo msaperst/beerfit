@@ -6,79 +6,61 @@
     android:layout_height="match_parent"
     tools:context=".ViewActivitiesActivity">
 
-    <TextView
-        android:id="@+id/viewActivitiesTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View BeerFit Activities"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/activitiesTable"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TableLayout
+    <LinearLayout
         android:id="@+id/activitiesTable"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewActivitiesTitle">
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <TableRow
-            android:id="@+id/viewActivitiesHeader"
-            android:layout_width="fill_parent"
+        <TableLayout
+            android:id="@+id/activityHeaderTable"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDark">
+            android:padding="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/viewActivitiesTimeHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="Time"
-                android:textColor="@color/colorAccent"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+            <TableRow style="@style/HeaderRow">
 
-            <TextView
-                android:id="@+id/viewActivitiesActivityHeader"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/viewActivitiesTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:text="View BeerFit Activities"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow style="@style/HeaderRow">
+
+                <TextView
+                    android:id="@+id/viewActivitiesTimeHeader"
+                    style="@style/HeaderText"
+                    android:text="Time" />
+
+                <TextView
+                    android:id="@+id/viewActivitiesActivityHeader"
+                    style="@style/HeaderText"
+                    android:layout_width="match_parent"
+                    android:text="Activity"
+                    app:layout_constraintHorizontal_bias="0.75" />
+            </TableRow>
+        </TableLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableLayout
+                android:id="@+id/activityBodyTable"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="Activity"
-                android:textColor="@color/colorAccent"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/viewActivitiesEditHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:padding="10dp"
-                android:text=""
-                android:textColor="@color/colorAccent"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/viewActivitiesDeleteHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:padding="10dp"
-                android:text=""
-                android:textColor="@color/colorAccent"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-        </TableRow>
-    </TableLayout>
+                android:padding="10dp" />
+        </ScrollView>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
