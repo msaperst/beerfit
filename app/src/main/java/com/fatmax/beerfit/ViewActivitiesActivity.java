@@ -115,7 +115,7 @@ public class ViewActivitiesActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 beerFitDatabase.removeActivity(activityId);
-                ((LinearLayout) findViewById(R.id.activitiesTable)).removeView(row);
+                ((LinearLayout) findViewById(R.id.activityBodyTable)).removeView(row);
                 dialog.dismiss();
             }
         });
