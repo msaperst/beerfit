@@ -77,6 +77,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void viewMetrics(View view) {
+        Intent intent = new Intent(this, ViewMetricsActivity.class);
+        startActivity(intent);
+    }
+
     public static int getScreenWidth(Context context) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
