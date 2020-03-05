@@ -138,7 +138,7 @@ public class AddActivityActivity extends AppCompatActivity {
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 ((TextView) findViewById(R.id.activityDate)).setText(DATE_FORMAT.format(calendar.getTime()));
             }
-        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) - 1, cal.get(Calendar.DAY_OF_MONTH));
+        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
