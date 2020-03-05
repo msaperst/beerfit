@@ -102,7 +102,7 @@ public class ViewActivitiesActivity extends AppCompatActivity {
         alert.setMessage("Are you sure to delete the activity on " + beerFitDatabase.getActivityTime(activityId));
         alert.setPositiveButton("YES", (dialog, which) -> {
             beerFitDatabase.removeActivity(activityId);
-            ((LinearLayout) findViewById(R.id.activitiesTable)).removeView(row);
+            ((LinearLayout) findViewById(R.id.activityBodyTable)).removeView(row);
             dialog.dismiss();
         });
         alert.setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
