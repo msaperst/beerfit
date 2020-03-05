@@ -1,7 +1,6 @@
 package com.fatmax.beerfit;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,9 +18,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.BeerFitDatabase.GOALS_TABLE;
 import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
-import static com.fatmax.beerfit.TableBuilder.createDeleteButton;
-import static com.fatmax.beerfit.TableBuilder.createEditButton;
-import static com.fatmax.beerfit.TableBuilder.createTextView;
+import static com.fatmax.beerfit.utilities.TableBuilder.createDeleteButton;
+import static com.fatmax.beerfit.utilities.TableBuilder.createEditButton;
+import static com.fatmax.beerfit.utilities.TableBuilder.createTextView;
 
 public class ViewGoalsActivity extends AppCompatActivity {
 
@@ -52,20 +51,10 @@ public class ViewGoalsActivity extends AppCompatActivity {
             activity.setTextSize(20);
             // create and setup our edit button
             ImageButton editButton = createEditButton(this);
-            editButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    editGoal(v);
-                }
-            });
+            editButton.setOnClickListener(this::editGoal);
             // create and setup our delete button
             ImageButton deleteButton = createDeleteButton(this);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    deleteGoal(v);
-                }
-            });
+            deleteButton.setOnClickListener(this::deleteGoal);
 
             row.addView(activity);
             row.addView(editButton);
@@ -95,20 +84,12 @@ public class ViewGoalsActivity extends AppCompatActivity {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Delete Goal");
         alert.setMessage("Are you sure to delete the goal of " + ((TextView) row.findViewWithTag("goal")).getText());
-        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                beerFitDatabase.removeGoal(activityId);
-                ((LinearLayout) findViewById(R.id.goalsTable)).removeView(row);
-                dialog.dismiss();
-            }
+        alert.setPositiveButton("YES", (dialog, which) -> {
+            beerFitDatabase.removeGoal(activityId);
+            ((LinearLayout) findViewById(R.id.goalsTable)).removeView(row);
+            dialog.dismiss();
         });
-        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        alert.setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
         alert.show();
     }
 }

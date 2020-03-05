@@ -71,11 +71,11 @@ public class AddActivityActivity extends AppCompatActivity {
             cursor.moveToFirst();
             String dateTime = cursor.getString(1);
 
-            cal.set(Calendar.YEAR, Integer.valueOf(dateTime.split(" ")[0].split("-")[0]));
-            cal.set(Calendar.MONTH, Integer.valueOf(dateTime.split(" ")[0].split("-")[1]));
-            cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(dateTime.split(" ")[0].split("-")[2]));
-            cal.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.split(" ")[1].split(":")[0]));
-            cal.set(Calendar.MINUTE, Integer.valueOf(dateTime.split(" ")[1].split(":")[1]));
+            cal.set(Calendar.YEAR, Integer.parseInt(dateTime.split(" ")[0].split("-")[0]));
+            cal.set(Calendar.MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[1]));
+            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[2]));
+            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(dateTime.split(" ")[1].split(":")[0]));
+            cal.set(Calendar.MINUTE, Integer.parseInt(dateTime.split(" ")[1].split(":")[1]));
 
             ((Spinner) findViewById(R.id.activitySelection)).setSelection(cursor.getInt(2));
             ((TextView) findViewById(R.id.activityDate)).setText(dateTime.split(" ")[0]);
@@ -191,18 +191,18 @@ public class AddActivityActivity extends AppCompatActivity {
             int activityId = (int) header.getTag();
             beerFitDatabase.removeActivity(activityId);
             if (isBeerActivity()) {
-                beerFitDatabase.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", Integer.valueOf(duration.getText().toString()));
+                beerFitDatabase.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", Integer.parseInt(duration.getText().toString()));
             } else {
-                beerFitDatabase.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
+                beerFitDatabase.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
             }
         } else {
-            beerFitDatabase.logActivity(date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
+            beerFitDatabase.logActivity(date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
         }
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
     private boolean isBeerActivity() {
-        return "Activity".equals(((TextView) findViewById(R.id.activitySelectionHeader)).getText());
+        return "Activity".contentEquals(((TextView) findViewById(R.id.activitySelectionHeader)).getText());
     }
 }

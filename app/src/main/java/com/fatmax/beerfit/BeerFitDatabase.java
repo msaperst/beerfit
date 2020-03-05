@@ -195,7 +195,7 @@ class BeerFitDatabase {
         if (stashedBeersCount == null) {
             stashedBeersCount = "0";
         }
-        return Double.valueOf(stashedBeersCount);
+        return Double.parseDouble(stashedBeersCount);
     }
 
     int getBeersRecentlyDrank() {
