@@ -71,11 +71,11 @@ public class AddActivityActivity extends AppCompatActivity {
             cursor.moveToFirst();
             String dateTime = cursor.getString(1);
 
-            cal.set(Calendar.YEAR, Integer.valueOf(dateTime.split(" ")[0].split("-")[0]));
-            cal.set(Calendar.MONTH, Integer.valueOf(dateTime.split(" ")[0].split("-")[1]));
-            cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(dateTime.split(" ")[0].split("-")[2]));
-            cal.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.split(" ")[1].split(":")[0]));
-            cal.set(Calendar.MINUTE, Integer.valueOf(dateTime.split(" ")[1].split(":")[1]));
+            cal.set(Calendar.YEAR, Integer.parseInt(dateTime.split(" ")[0].split("-")[0]));
+            cal.set(Calendar.MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[1]));
+            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[2]));
+            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(dateTime.split(" ")[1].split(":")[0]));
+            cal.set(Calendar.MINUTE, Integer.parseInt(dateTime.split(" ")[1].split(":")[1]));
 
             ((Spinner) findViewById(R.id.activitySelection)).setSelection(cursor.getInt(2));
             ((TextView) findViewById(R.id.activityDate)).setText(dateTime.split(" ")[0]);
@@ -138,7 +138,7 @@ public class AddActivityActivity extends AppCompatActivity {
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 ((TextView) findViewById(R.id.activityDate)).setText(DATE_FORMAT.format(calendar.getTime()));
             }
-        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) - 1, cal.get(Calendar.DAY_OF_MONTH));
+        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
