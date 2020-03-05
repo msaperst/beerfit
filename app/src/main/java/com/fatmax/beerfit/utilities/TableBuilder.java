@@ -1,4 +1,4 @@
-package com.fatmax.beerfit;
+package com.fatmax.beerfit.utilities;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -8,12 +8,14 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
-class TableBuilder {
+import com.fatmax.beerfit.R;
+
+public class TableBuilder {
 
     private TableBuilder() {
     }
 
-    static TextView createTextView(Context context, String tag, String text) {
+    public static TextView createTextView(Context context, String tag, String text) {
         TextView view = new TextView(context);
         view.setTextAppearance(R.style.BodyText);
         view.setTag(tag);
@@ -21,7 +23,7 @@ class TableBuilder {
         return view;
     }
 
-    static ImageButton createEditButton(Context context) {
+    public static ImageButton createEditButton(Context context) {
         ImageButton button = new ImageButton(context);
         button.setBackground(ContextCompat.getDrawable(context, android.R.color.transparent));
         button.setContentDescription("Edit Activity");
@@ -31,7 +33,7 @@ class TableBuilder {
         return button;
     }
 
-    static ImageButton createDeleteButton(Context context) {
+    public static ImageButton createDeleteButton(Context context) {
         ImageButton button = new ImageButton(context);
         button.setBackground(ContextCompat.getDrawable(context, android.R.color.transparent));
         button.setContentDescription("Delete Activity");

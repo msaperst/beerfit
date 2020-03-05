@@ -1,7 +1,6 @@
 package com.fatmax.beerfit;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -25,9 +24,9 @@ import java.util.Locale;
 import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITY_LOG_TABLE;
 import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
-import static com.fatmax.beerfit.TableBuilder.createDeleteButton;
-import static com.fatmax.beerfit.TableBuilder.createEditButton;
-import static com.fatmax.beerfit.TableBuilder.createTextView;
+import static com.fatmax.beerfit.utilities.TableBuilder.createDeleteButton;
+import static com.fatmax.beerfit.utilities.TableBuilder.createEditButton;
+import static com.fatmax.beerfit.utilities.TableBuilder.createTextView;
 
 public class ViewActivitiesActivity extends AppCompatActivity {
 
@@ -71,20 +70,10 @@ public class ViewActivitiesActivity extends AppCompatActivity {
 
             // create and setup our edit button
             ImageButton editButton = createEditButton(this);
-            editButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    editActivity(v);
-                }
-            });
+            editButton.setOnClickListener(this::editActivity);
             // create and setup our delete button
             ImageButton deleteButton = createDeleteButton(this);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    deleteActivity(v);
-                }
-            });
+            deleteButton.setOnClickListener(this::deleteActivity);
 
             // build our rows
             row.addView(time);
@@ -111,20 +100,12 @@ public class ViewActivitiesActivity extends AppCompatActivity {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Delete Activity");
         alert.setMessage("Are you sure to delete the activity on " + beerFitDatabase.getActivityTime(activityId));
-        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                beerFitDatabase.removeActivity(activityId);
-                ((LinearLayout) findViewById(R.id.activitiesTable)).removeView(row);
-                dialog.dismiss();
-            }
+        alert.setPositiveButton("YES", (dialog, which) -> {
+            beerFitDatabase.removeActivity(activityId);
+            ((LinearLayout) findViewById(R.id.activitiesTable)).removeView(row);
+            dialog.dismiss();
         });
-        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        alert.setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
         alert.show();
     }
 }

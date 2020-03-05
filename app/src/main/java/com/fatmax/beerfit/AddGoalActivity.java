@@ -55,6 +55,8 @@ public class AddGoalActivity extends AppCompatActivity {
             ((Spinner) findViewById(R.id.goalSelection)).setSelection(cursor.getInt(1));
             ((TextView) findViewById(R.id.goalDurationInput)).setText(cursor.getString(3));
             ((Spinner) findViewById(R.id.goalDurationUnits)).setSelection(cursor.getInt(2));
+
+            cursor.close();
         }
     }
 
@@ -87,9 +89,9 @@ public class AddGoalActivity extends AppCompatActivity {
             // if we're updating a goal
             int goalId = (int) header.getTag();
             beerFitDatabase.removeGoal(goalId);
-            beerFitDatabase.addGoal(String.valueOf(goalId), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
+            beerFitDatabase.addGoal(String.valueOf(goalId), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
         } else {
-            beerFitDatabase.addGoal(activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
+            beerFitDatabase.addGoal(activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
         }
         Intent intent = new Intent(this, ViewGoalsActivity.class);
         startActivity(intent);
