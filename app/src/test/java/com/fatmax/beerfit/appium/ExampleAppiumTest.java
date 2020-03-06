@@ -1,4 +1,4 @@
-package com.fatmax.beerfit;
+package com.fatmax.beerfit.appium;
 
 import org.junit.After;
 import org.junit.Before;
@@ -13,7 +13,7 @@ import io.appium.java_client.service.local.AppiumServiceBuilder;
 
 import static org.junit.Assert.assertEquals;
 
-public class AppiumIT {
+public class ExampleAppiumTest {
     private AndroidDriver driver;
     private AppiumDriverLocalService service = AppiumDriverLocalService.buildService(new AppiumServiceBuilder().usingAnyFreePort());
 

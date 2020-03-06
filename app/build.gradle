@@ -1,20 +1,35 @@
 apply plugin: 'com.android.application'
 
+def appiumTests = false
+
 android {
-    compileSdkVersion 28
-    buildToolsVersion "29.0.2"
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
     defaultConfig {
         applicationId "com.fatmax.beerfit"
-        minSdkVersion 26
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode rootProject.versionCode
+        versionName rootProject.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    testOptions {
+        unitTests.all {
+            test {
+                filter {
+                    if (appiumTests.toBoolean()) {
+                        includeTestsMatching "*AppiumTest"
+                    } else {
+                        includeTestsMatching "*UnitTest"
+                    }
+                }
+            }
         }
     }
 }
@@ -28,4 +43,17 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.android.material:material:1.1.0'
+}
+
+task appiumTest(
+        type: Test,
+        description: 'Run appium tests only. Pass in \'-Pappium=true\'',
+        dependsOn: ['testDebugUnitTest', 'clean'] ) {
+
+    //Turn on integration testing when argument exists and is true
+    if (project.hasProperty('appium')) {
+        if (appium == 'true') {
+            appiumTests = true
+        }
+    }
 }

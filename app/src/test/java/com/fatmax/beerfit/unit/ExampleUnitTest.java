@@ -1,4 +1,4 @@
-package com.fatmax.beerfit;
+package com.fatmax.beerfit.unit;
 
 import org.junit.Test;
 
