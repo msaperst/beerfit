@@ -13,7 +13,7 @@ import io.appium.java_client.service.local.AppiumServiceBuilder;
 
 import static org.junit.Assert.assertEquals;
 
-public class AppiumTest {
+public class AppiumIT {
     private AndroidDriver driver;
     private AppiumDriverLocalService service = AppiumDriverLocalService.buildService(new AppiumServiceBuilder().usingAnyFreePort());
 
