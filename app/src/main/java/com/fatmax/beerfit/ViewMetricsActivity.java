@@ -57,9 +57,9 @@ public class ViewMetricsActivity extends AppCompatActivity {
         // setup our filters
         String overallFilter = "";
         String detailFilter = "";
-        if (metric.getFilter() != null && !metric.getFilter().isEmpty()) {
-            overallFilter = " WHERE " + String.join(AND, metric.getFilter());
-            detailFilter = AND + String.join(AND, metric.getFilter());
+        if (metric.getFilters() != null && !metric.getFilters().isEmpty()) {
+            overallFilter = " WHERE " + String.join(AND, metric.getFilters());
+            detailFilter = AND + String.join(AND, metric.getFilters());
         }
         Cursor timeCursor = sqLiteDatabase.rawQuery("SELECT DISTINCT strftime('" + metric.getDateTimePattern() + "',time) FROM " + ACTIVITY_LOG_TABLE + overallFilter, null);
         if (timeCursor != null) {
@@ -109,7 +109,9 @@ public class ViewMetricsActivity extends AppCompatActivity {
         row.setOnClickListener(v -> {
             if (metricsIterator.hasNext()) {
                 String[] bits = tag.split(" ");
-                updateMetrics(metric.getType(), bits[bits.length - 1]);
+                for (Metric m : metrics) {
+                    m.updateFilter(metric.getType(), bits[bits.length - 1]);
+                }
                 metric = metricsIterator.next();
                 createDataTable(metric);
             }
@@ -128,15 +130,5 @@ public class ViewMetricsActivity extends AppCompatActivity {
         TextView view = new TextView(this);
         view.setText(text);
         return view;
-    }
-
-    void updateMetrics(String pattern, String replacement) {
-        for (Metric m : metrics) {
-            List<String> filters = new ArrayList<>();
-            for (String filter : m.getFilter()) {
-                filters.add(filter.replaceAll(pattern, replacement));
-            }
-            m.setFilter(filters);
-        }
     }
 }

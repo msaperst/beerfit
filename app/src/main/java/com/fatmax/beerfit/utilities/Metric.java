@@ -1,19 +1,20 @@
 package com.fatmax.beerfit.utilities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Metric {
 
     private final String type;
     private final String dateTimePattern;
-    private List<String> filter;
+    private List<String> filters;
     private final String title;
 
-    public Metric(String type, String title, String dateTimePattern, List<String> filter) {
+    public Metric(String type, String title, String dateTimePattern, List<String> filters) {
         this.type = type;
         this.title = title;
         this.dateTimePattern = dateTimePattern;
-        this.filter = filter;
+        this.filters = filters;
     }
 
     public String getType() {
@@ -24,15 +25,19 @@ public class Metric {
         return dateTimePattern;
     }
 
-    public List<String> getFilter() {
-        return filter;
-    }
-
-    public void setFilter(List<String> filter) {
-        this.filter = filter;
+    public List<String> getFilters() {
+        return filters;
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public void updateFilter(String pattern, String replacement) {
+        List<String> newFilters = new ArrayList<>();
+        for (String filter : this.filters) {
+            newFilters.add(filter.replaceAll(pattern, replacement));
+        }
+        this.filters = newFilters;
     }
 }
