@@ -26,6 +26,9 @@ import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
 public class ViewMetricsActivity extends AppCompatActivity {
 
     public static final String AND = " AND ";
+    public static final String STRFTIME_Y_TIME_YEAR = "strftime('%Y',time) = 'YEAR'";
+    public static final String STRFTIME_M_TIME_MONTH = "strftime('%m',time) = 'MONTH'";
+    public static final String STRFTIME_W_TIME_WEEK = "strftime('%W',time) = 'WEEK'";
     SQLiteDatabase sqLiteDatabase;
     BeerFitDatabase beerFitDatabase;
 
@@ -43,8 +46,9 @@ public class ViewMetricsActivity extends AppCompatActivity {
         beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
 
         metrics.add(new Metric("YEAR", null, "%Y", new ArrayList<>()));
-        metrics.add(new Metric("MONTH", null, "%Y %m", Collections.singletonList("strftime('%Y',time) = 'YEAR'")));
-        metrics.add(new Metric("WEEK", null, "%Y %m %W", Arrays.asList("strftime('%Y',time) = 'YEAR'", "strftime('%m',time) = 'MONTH'")));
+        metrics.add(new Metric("MONTH", null, "%Y %m", Collections.singletonList(STRFTIME_Y_TIME_YEAR)));
+        metrics.add(new Metric("WEEK", null, "%Y %m %W", Arrays.asList(STRFTIME_Y_TIME_YEAR, STRFTIME_M_TIME_MONTH)));
+        metrics.add(new Metric("DAY", null, "%Y %m %W %j", Arrays.asList(STRFTIME_Y_TIME_YEAR, STRFTIME_M_TIME_MONTH, STRFTIME_W_TIME_WEEK)));
         metricsIterator = metrics.iterator();
         metric = metricsIterator.next();
         createDataTable(metric);
