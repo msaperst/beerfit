@@ -25,6 +25,13 @@ import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
 
 public class ViewMetricsActivity extends AppCompatActivity {
 
+    //TODO
+    // - cleanup CC of createDataTable
+    // - fix/add title of breakdown
+    // - fix styling...just fill whole row?
+    // - add all data, don't just filter. but have it jump to relevant data on scroller
+    // - add graphs of activities, maybe on bottom half of viewing screen
+
     public static final String AND = " AND ";
     public static final String STRFTIME_Y_TIME_YEAR = "strftime('%Y',time) = 'YEAR'";
     public static final String STRFTIME_M_TIME_MONTH = "strftime('%m',time) = 'MONTH'";
