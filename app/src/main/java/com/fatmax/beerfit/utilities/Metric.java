@@ -7,13 +7,11 @@ import java.util.Locale;
 
 public class Metric {
 
-    private final String type;
     private final String dateTimePattern;
     private final String patternMin;
     private final String patternMax;
 
-    public Metric(String type, String dateTimePattern, String patternMin, String patternMax) {
-        this.type = type;
+    public Metric(String dateTimePattern, String patternMin, String patternMax) {
         this.dateTimePattern = dateTimePattern;
         this.patternMin = patternMin;
         this.patternMax = patternMax;
@@ -26,10 +24,6 @@ public class Metric {
 
     String getPatternMax() {
         return patternMax;
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getDateTimePattern() {

@@ -53,10 +53,10 @@ public class ViewMetricsActivity extends AppCompatActivity {
         beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
 
         //setup our metrics
-        metrics.add(new Metric("Year", "%Y", null, null));
-        metrics.add(new Metric("Month", "%Y %m", "01", "12"));
-        metrics.add(new Metric("Week", "%Y %m %W", "01", "52"));
-        metrics.add(new Metric("Day", "%Y %m %W %j", "001", "366"));
+        metrics.add(new Metric("%Y", null, null));
+        metrics.add(new Metric("%Y %m", "01", "12"));
+        metrics.add(new Metric("%Y %m %W", "01", "52"));
+        metrics.add(new Metric("%Y %m %W %j", "001", "366"));
         metricsIterator = metrics.iterator();
         metric = metricsIterator.next();
 
@@ -134,7 +134,6 @@ public class ViewMetricsActivity extends AppCompatActivity {
                                     activity = activityCursor.getString(0) + " (" + activityCursor.getString(2) + ")";
                                 }
                                 // if the activity doesn't have a list, create one
-                                data.createActivity(activity);
                                 data.addDataPoint(activity, data.getXAxis(dateMetric), activityCursor.getDouble(1));
                                 //for each activity in the date metric, tally them all
                                 activityCursor.moveToNext();
@@ -191,11 +190,11 @@ public class ViewMetricsActivity extends AppCompatActivity {
     void setupGraph(GraphView graph, Data data, String tag) {
         graph.getLegendRenderer().setVisible(true);
         graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-//        graph.getViewport().setXAxisBoundsManual(true);
-//        graph.getViewport().setMinX(data.getXAxisMin(tag, metric));
-//        graph.getViewport().setMaxX(data.getXAxisMax(tag, metric));
-//        graph.getViewport().setScalable(true);
-//        graph.getViewport().setScrollable(true);
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(data.getXAxisMin(tag, metric));
+        graph.getViewport().setMaxX(data.getXAxisMax(tag, metric));
+        graph.getViewport().setScalable(true);
+        graph.getViewport().setScrollable(true);
     }
 
     void scrollTo(String tag) {
