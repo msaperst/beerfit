@@ -76,7 +76,7 @@ public class Data {
         return activityDataPoints.size();
     }
 
-    public Boolean doesDataPointsContainX(Double x, List<DataPoint> dataPoints) {
+    public boolean doesDataPointsContainX(Double x, List<DataPoint> dataPoints) {
         for (DataPoint datapoint : dataPoints) {
             if (x == datapoint.getX()) {
                 return true;

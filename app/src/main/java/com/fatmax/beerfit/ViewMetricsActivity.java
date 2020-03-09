@@ -31,7 +31,6 @@ public class ViewMetricsActivity extends AppCompatActivity {
     public static final String TIME_AS_DATE_FROM = "',time) AS date FROM ";
 
     //TODO
-    // - cleanup CC of createDataTable
     // - on scroll, change other to match it
 
     SQLiteDatabase sqLiteDatabase;
@@ -53,10 +52,10 @@ public class ViewMetricsActivity extends AppCompatActivity {
         beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
 
         //setup our metrics
-        metrics.add(new Metric("%Y", null, null));
-        metrics.add(new Metric("%Y %m", "01", "12"));
-        metrics.add(new Metric("%Y %m %W", "01", "52"));
-        metrics.add(new Metric("%Y %m %W %j", "001", "366"));
+        metrics.add(new Metric("%Y"));
+        metrics.add(new Metric("%Y %m"));
+        metrics.add(new Metric("%Y %m %W"));
+        metrics.add(new Metric("%Y %m %W %j"));
         metricsIterator = metrics.iterator();
         metric = metricsIterator.next();
 
@@ -74,32 +73,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
             if (timeCursor.getCount() > 0) {
                 timeCursor.moveToFirst();
                 while (!timeCursor.isAfterLast()) {
-                    String dateMetric = timeCursor.getString(0);
-                    // each date metric needs it's own title row and data
-                    metricsView.addView(createTableRow(dateMetric, Collections.singletonList(createHeaderView(metric.getTitle(dateMetric)))));
-                    //for each activity in the date metric, tally them all
-                    Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + ACTIVITIES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " LEFT JOIN " + ACTIVITIES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".activity = " + ACTIVITIES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' GROUP BY " + ACTIVITIES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
-                    if (activityCursor != null) {
-                        if (activityCursor.getCount() > 0) {
-                            activityCursor.moveToFirst();
-                            while (!activityCursor.isAfterLast()) {
-                                // each distinct activity needs it's own row and data
-                                String text;
-                                if (activityCursor.getString(0) == null) {
-                                    text = "Drank " + activityCursor.getInt(1) + " beer";
-                                    if (activityCursor.getInt(1) > 1) {
-                                        text += "s";
-                                    }
-                                } else {
-                                    text = activityCursor.getString(0) + " for " + activityCursor.getDouble(1) + " " + activityCursor.getString(2);
-                                }
-                                metricsView.addView(createTableRow(dateMetric, Collections.singletonList(createTextView(text))));
-                                //for each activity in the date metric, tally them all
-                                activityCursor.moveToNext();
-                            }
-                        }
-                        activityCursor.close();
-                    }
+                    loopThroughActivitiesData(metric, metricsView, timeCursor);
                     timeCursor.moveToNext();
                 }
             }
@@ -108,6 +82,40 @@ public class ViewMetricsActivity extends AppCompatActivity {
         if (tag != null) {
             scrollTo(tag);
         }
+    }
+
+    private void loopThroughActivitiesData(Metric metric, TableLayout metricsView, Cursor timeCursor) {
+        String dateMetric = timeCursor.getString(0);
+        // each date metric needs it's own title row and data
+        metricsView.addView(createTableRow(dateMetric, Collections.singletonList(createHeaderView(metric.getTitle(dateMetric)))));
+        //for each activity in the date metric, tally them all
+        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + ACTIVITIES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " LEFT JOIN " + ACTIVITIES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".activity = " + ACTIVITIES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' GROUP BY " + ACTIVITIES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
+        if (activityCursor != null) {
+            if (activityCursor.getCount() > 0) {
+                activityCursor.moveToFirst();
+                while (!activityCursor.isAfterLast()) {
+                    String text = getActivityText(activityCursor);
+                    metricsView.addView(createTableRow(dateMetric, Collections.singletonList(createTextView(text))));
+                    //for each activity in the date metric, tally them all
+                    activityCursor.moveToNext();
+                }
+            }
+            activityCursor.close();
+        }
+    }
+
+    private String getActivityText(Cursor activityCursor) {
+        // each distinct activity needs it's own row and data
+        String text;
+        if (activityCursor.getString(0) == null) {
+            text = "Drank " + activityCursor.getInt(1) + " beer";
+            if (activityCursor.getInt(1) > 1) {
+                text += "s";
+            }
+        } else {
+            text = activityCursor.getString(0) + " for " + activityCursor.getDouble(1) + " " + activityCursor.getString(2);
+        }
+        return text;
     }
 
     void createDataGraph(String tag, Metric metric) {
@@ -119,28 +127,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
             if (timeCursor.getCount() > 0) {
                 timeCursor.moveToFirst();
                 while (!timeCursor.isAfterLast()) {
-                    String dateMetric = timeCursor.getString(0);
-                    //for each activity in the date metric, tally them all
-                    Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + ACTIVITIES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " LEFT JOIN " + ACTIVITIES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".activity = " + ACTIVITIES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' GROUP BY " + ACTIVITIES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
-                    if (activityCursor != null) {
-                        if (activityCursor.getCount() > 0) {
-                            activityCursor.moveToFirst();
-                            while (!activityCursor.isAfterLast()) {
-                                // determine the unique activity string
-                                String activity;
-                                if (activityCursor.getString(0) == null) {
-                                    activity = "Drank (beers)";
-                                } else {
-                                    activity = activityCursor.getString(0) + " (" + activityCursor.getString(2) + ")";
-                                }
-                                // if the activity doesn't have a list, create one
-                                data.addDataPoint(activity, data.getXAxis(dateMetric), activityCursor.getDouble(1));
-                                //for each activity in the date metric, tally them all
-                                activityCursor.moveToNext();
-                            }
-                        }
-                        activityCursor.close();
-                    }
+                    loopThroughActivitiesGraph(metric, data, timeCursor);
                     timeCursor.moveToNext();
                 }
             }
@@ -152,6 +139,31 @@ public class ViewMetricsActivity extends AppCompatActivity {
         }
         if (tag != null) {
             setupGraph(graph, data, tag);
+        }
+    }
+
+    private void loopThroughActivitiesGraph(Metric metric, Data data, Cursor timeCursor) {
+        String dateMetric = timeCursor.getString(0);
+        //for each activity in the date metric, tally them all
+        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + ACTIVITIES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " LEFT JOIN " + ACTIVITIES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".activity = " + ACTIVITIES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' GROUP BY " + ACTIVITIES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
+        if (activityCursor != null) {
+            if (activityCursor.getCount() > 0) {
+                activityCursor.moveToFirst();
+                while (!activityCursor.isAfterLast()) {
+                    // determine the unique activity string
+                    String activity;
+                    if (activityCursor.getString(0) == null) {
+                        activity = "Drank (beers)";
+                    } else {
+                        activity = activityCursor.getString(0) + " (" + activityCursor.getString(2) + ")";
+                    }
+                    // if the activity doesn't have a list, create one
+                    data.addDataPoint(activity, data.getXAxis(dateMetric), activityCursor.getDouble(1));
+                    //for each activity in the date metric, tally them all
+                    activityCursor.moveToNext();
+                }
+            }
+            activityCursor.close();
         }
     }
 

@@ -8,22 +8,9 @@ import java.util.Locale;
 public class Metric {
 
     private final String dateTimePattern;
-    private final String patternMin;
-    private final String patternMax;
 
-    public Metric(String dateTimePattern, String patternMin, String patternMax) {
+    public Metric(String dateTimePattern) {
         this.dateTimePattern = dateTimePattern;
-        this.patternMin = patternMin;
-        this.patternMax = patternMax;
-
-    }
-
-    String getPatternMin() {
-        return patternMin;
-    }
-
-    String getPatternMax() {
-        return patternMax;
     }
 
     public String getDateTimePattern() {
