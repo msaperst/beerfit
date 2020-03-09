@@ -1,20 +1,31 @@
 package com.fatmax.beerfit.utilities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class Metric {
 
     private final String type;
     private final String dateTimePattern;
-    private List<String> filters;
-    private final String title;
+    private final String patternMin;
+    private final String patternMax;
 
-    public Metric(String type, String title, String dateTimePattern, List<String> filters) {
+    public Metric(String type, String dateTimePattern, String patternMin, String patternMax) {
         this.type = type;
-        this.title = title;
         this.dateTimePattern = dateTimePattern;
-        this.filters = filters;
+        this.patternMin = patternMin;
+        this.patternMax = patternMax;
+
+    }
+
+    String getPatternMin() {
+        return patternMin;
+    }
+
+    String getPatternMax() {
+        return patternMax;
     }
 
     public String getType() {
@@ -25,19 +36,33 @@ public class Metric {
         return dateTimePattern;
     }
 
-    public List<String> getFilters() {
-        return filters;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void updateFilter(String pattern, String replacement) {
-        List<String> newFilters = new ArrayList<>();
-        for (String filter : this.filters) {
-            newFilters.add(filter.replaceAll(pattern, replacement));
+    public String getTitle(String dateMetric) {
+        String[] bits = dateMetric.split(" ");
+        Calendar cal = Calendar.getInstance();
+        switch (bits.length) {
+            case 2:
+                try {
+                    cal.setTime(new SimpleDateFormat("yyyy MM", Locale.US).parse(bits[0] + " " + bits[1]));
+                } catch (ParseException e) {
+                    return dateMetric;
+                }
+                return new SimpleDateFormat("MMMM yyyy", Locale.US).format(cal.getTime());
+            case 3:
+                try {
+                    cal.setTime(new SimpleDateFormat("yyyy MM ww", Locale.US).parse(bits[0] + " " + bits[1] + " " + (Integer.parseInt(bits[2]) + 1)));
+                } catch (ParseException e) {
+                    return dateMetric;
+                }
+                return new SimpleDateFormat("'Week' W, MMMM yyyy", Locale.US).format(cal.getTime());
+            case 4:
+                try {
+                    cal.setTime(new SimpleDateFormat("yyyy D", Locale.US).parse(bits[0] + " " + bits[3]));
+                } catch (ParseException e) {
+                    return dateMetric;
+                }
+                return new SimpleDateFormat("EEEE, MMMM d yyyy", Locale.US).format(cal.getTime());
+            default:
+                return dateMetric;
         }
-        this.filters = newFilters;
     }
 }
