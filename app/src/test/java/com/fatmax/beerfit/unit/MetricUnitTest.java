@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 
 public class MetricUnitTest {
 
-    private Metric metric = new Metric(null, null, null, null);
+    private Metric metric = new Metric(null, null, null);
 
     @Test(expected = NullPointerException.class)
     public void getTitleNullTest() {
