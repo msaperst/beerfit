@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
+apply plugin: 'jacoco-android'
 
 def appiumTests = false
+
+jacoco {
+    toolVersion = '0.8.4' //Use latest version
+}
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -53,7 +61,7 @@ dependencies {
 task appiumTest(
         type: Test,
         description: 'Run appium tests only. Pass in \'-Pappium=true\'',
-        dependsOn: ['testDebugUnitTest', 'clean'] ) {
+        dependsOn: ['testDebugUnitTest', 'clean']) {
 
     //Turn on integration testing when argument exists and is true
     if (project.hasProperty('appium')) {
@@ -61,4 +69,10 @@ task appiumTest(
             appiumTests = true
         }
     }
+}
+
+jacocoAndroidUnitTestReport {
+    csv.enabled true
+    html.enabled true
+    xml.enabled true
 }
