@@ -50,7 +50,7 @@ public class Metric {
             case 3:
                 try {
                     cal.setTime(new SimpleDateFormat("yyyy MM ww", Locale.US).parse(bits[0] + " " + bits[1] + " " + (Integer.parseInt(bits[2]) + 1)));
-                } catch (ParseException e) {
+                } catch (NumberFormatException | ParseException e) {
                     return dateMetric;
                 }
                 return new SimpleDateFormat("'Week' W, MMMM yyyy", Locale.US).format(cal.getTime());
