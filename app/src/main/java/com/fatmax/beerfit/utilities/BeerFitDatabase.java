@@ -38,7 +38,7 @@ public class BeerFitDatabase {
             database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(2,'Ran','Run'," + Color.BLUE + ");");
             database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(3,'Cycled','Cycle'," + Color.RED + ");");
             database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(4,'Lifted','Lift'," + Color.MAGENTA + ");");
-            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(5,'Played Soccer','Play Soccer'," + Color.CYAN + ");");
+            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(5,'Played Soccer','Play Soccer'," + Color.DKGRAY + ");");
         }
         if (isTableMissing(GOALS_TABLE)) {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + GOALS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount NUMBER);");
