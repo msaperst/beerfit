@@ -54,6 +54,7 @@ dependencies {
     implementation 'com.jjoe64:graphview:4.2.2'
     testImplementation 'junit:junit:4.13'
     testImplementation 'io.appium:java-client:7.3.0'
+    testImplementation 'org.mockito:mockito-all:1.9.5'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
