@@ -15,9 +15,11 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.GOALS_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
+import com.fatmax.beerfit.utilities.BeerFitDatabase;
+
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.GOALS_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.MEASUREMENTS_TABLE;
 import static com.fatmax.beerfit.utilities.TableBuilder.createDeleteButton;
 import static com.fatmax.beerfit.utilities.TableBuilder.createEditButton;
 import static com.fatmax.beerfit.utilities.TableBuilder.createTextView;

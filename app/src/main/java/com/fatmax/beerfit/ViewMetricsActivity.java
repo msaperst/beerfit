@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fatmax.beerfit.utilities.BeerFitDatabase;
 import com.fatmax.beerfit.utilities.Data;
 import com.fatmax.beerfit.utilities.Metric;
 import com.jjoe64.graphview.GraphView;
@@ -23,9 +24,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITY_LOG_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.MEASUREMENTS_TABLE;
 
 public class ViewMetricsActivity extends AppCompatActivity {
     public static final String TIME_AS_DATE_FROM = "',time) AS date FROM ";

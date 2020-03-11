@@ -15,15 +15,17 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fatmax.beerfit.utilities.BeerFitDatabase;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITY_LOG_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.MEASUREMENTS_TABLE;
 import static com.fatmax.beerfit.utilities.TableBuilder.createDeleteButton;
 import static com.fatmax.beerfit.utilities.TableBuilder.createEditButton;
 import static com.fatmax.beerfit.utilities.TableBuilder.createTextView;

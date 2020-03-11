@@ -71,6 +71,7 @@ task appiumTest(
     }
 }
 
+// to generate code coverage, use take 'jacocoTestReport'
 jacocoAndroidUnitTestReport {
     csv.enabled true
     html.enabled true

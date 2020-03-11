@@ -14,12 +14,14 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
+import com.fatmax.beerfit.utilities.BeerFitDatabase;
 
-import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.GOALS_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
+import java.util.List;
+
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.GOALS_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.MEASUREMENTS_TABLE;
 
 public class AddGoalActivity extends AppCompatActivity {
 
@@ -98,7 +100,7 @@ public class AddGoalActivity extends AppCompatActivity {
     }
 
     private void createSpinner(String activity, String type, int p) {
-        ArrayList<Object> activities = beerFitDatabase.getFullColumn(activity, type);
+        List<Object> activities = beerFitDatabase.getFullColumn(activity, type);
         activities.add(0, "");
         ArrayAdapter<Object> activitiesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, activities);
         activitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
