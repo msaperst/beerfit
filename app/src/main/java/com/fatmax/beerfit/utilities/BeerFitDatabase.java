@@ -27,9 +27,6 @@ public class BeerFitDatabase {
     }
 
     public void setupDatabase() {
-        // TODO - will need to drop stashed and activity log based on new changes to get them rebuilt
-        // database.execSQL("DROP TABLE " + ACTIVITIES_TABLE);
-
         if (isTableMissing(MEASUREMENTS_TABLE)) {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + MEASUREMENTS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, unit VARCHAR);");
             database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(1,'time','minutes');");
