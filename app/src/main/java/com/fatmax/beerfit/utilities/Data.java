@@ -1,7 +1,5 @@
 package com.fatmax.beerfit.utilities;
 
-import android.graphics.Color;
-
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -10,15 +8,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 public class Data {
 
+    private BeerFitDatabase beerFitDatabase;
     private Map<String, List<DataPoint>> dataPoints;
-    private Random rnd = new Random();
 
-    public Data() {
+    public Data(BeerFitDatabase beerFitDatabase) {
+        this.beerFitDatabase = beerFitDatabase;
         dataPoints = new HashMap<>();
     }
 
@@ -39,7 +37,8 @@ public class Data {
             LineGraphSeries<DataPoint> series = new LineGraphSeries<>(activityDataPoints.toArray(new DataPoint[0]));
             series.setTitle(entry.getKey());
             series.setDrawDataPoints(true);
-            series.setColor(Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)));
+            series.setThickness(7);
+            series.setColor(beerFitDatabase.getActivityColor(entry.getKey()));
             graphSeries.add(series);
         }
         return graphSeries;

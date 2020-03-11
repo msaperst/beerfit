@@ -45,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
      * Calculates the number of beers remaining. Looks at the goals identified activities logged
      * against them and calculates the total number of beers earned.
      * Then subtracts all beers drank from the drank log.
-     *
-     * @return the number of beers remaining
      */
     void setBeersRemaining() {
         beerCounter.setText(String.valueOf(beerFitDatabase.getBeersRemaining()));

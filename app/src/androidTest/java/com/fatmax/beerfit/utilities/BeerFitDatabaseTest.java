@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Color;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -286,7 +287,18 @@ public class BeerFitDatabaseTest {
         beerFitDatabase.logBeer();
         assertEquals(1, beerFitDatabase.getOrdinal(ACTIVITY_LOG_TABLE, "amount", "1"));
         wipeOutDB();
+    }
 
+    @Test
+    public void getActivityColorTest() {
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        beerFitDatabase.setupDatabase();
+        assertEquals(Color.BLUE, beerFitDatabase.getActivityColor("Ran"));
+        assertEquals(Color.BLUE, beerFitDatabase.getActivityColor("Ran (kilometers)"));
+        assertEquals(Color.BLUE, beerFitDatabase.getActivityColor("Ran (minutes)"));
+        assertEquals(Color.YELLOW, beerFitDatabase.getActivityColor("Running"));
+        assertEquals(Color.YELLOW, beerFitDatabase.getActivityColor("Drank (beers)"));
     }
 
     @Test

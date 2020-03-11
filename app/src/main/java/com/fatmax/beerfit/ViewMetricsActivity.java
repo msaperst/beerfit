@@ -3,17 +3,17 @@ package com.fatmax.beerfit;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fatmax.beerfit.utilities.BeerFitDatabase;
 import com.fatmax.beerfit.utilities.Data;
 import com.fatmax.beerfit.utilities.Metric;
+import com.fatmax.beerfit.utilities.TableBuilder;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
@@ -36,6 +36,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
 
     SQLiteDatabase sqLiteDatabase;
     BeerFitDatabase beerFitDatabase;
+    TableBuilder tableBuilder;
 
     final List<Metric> metrics = new ArrayList<>();
     Iterator<Metric> metricsIterator;
@@ -51,6 +52,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
         beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
+        tableBuilder = new TableBuilder(this);
 
         //setup our metrics
         metrics.add(new Metric("%Y"));
@@ -88,20 +90,41 @@ public class ViewMetricsActivity extends AppCompatActivity {
     private void loopThroughActivitiesData(Metric metric, TableLayout metricsView, Cursor timeCursor) {
         String dateMetric = timeCursor.getString(0);
         // each date metric needs it's own title row and data
-        metricsView.addView(createTableRow(dateMetric, Collections.singletonList(createHeaderView(metric.getTitle(dateMetric)))));
+        List<TableRow> periodRows = new ArrayList<>();
+        // determine the beers drank
+        int beersDrank = 0;
+        int beersEarned = 0;
+        Cursor beersCursor = sqLiteDatabase.rawQuery("SELECT SUM(amount), strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " WHERE date = '" + dateMetric + "' AND " + ACTIVITY_LOG_TABLE + ".activity = 0 GROUP BY date", null);
+        if (beersCursor != null) {
+            if (beersCursor.getCount() > 0) {
+                beersCursor.moveToFirst();
+                while (!beersCursor.isAfterLast()) {
+                    beersDrank = beersCursor.getInt(0);
+                    //for each activity in the date metric, tally them all
+                    beersCursor.moveToNext();
+                }
+            }
+            beersCursor.close();
+        }
         //for each activity in the date metric, tally them all
-        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + ACTIVITIES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " LEFT JOIN " + ACTIVITIES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".activity = " + ACTIVITIES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' GROUP BY " + ACTIVITIES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
+        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + ACTIVITIES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, SUM(beers), strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " LEFT JOIN " + ACTIVITIES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".activity = " + ACTIVITIES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' AND " + ACTIVITY_LOG_TABLE + ".activity != 0 GROUP BY " + ACTIVITIES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
         if (activityCursor != null) {
             if (activityCursor.getCount() > 0) {
                 activityCursor.moveToFirst();
                 while (!activityCursor.isAfterLast()) {
+                    beersEarned += activityCursor.getInt(3);
                     String text = getActivityText(activityCursor);
-                    metricsView.addView(createTableRow(dateMetric, Collections.singletonList(createTextView(text))));
+                    periodRows.add(createMetricsRow(dateMetric, Collections.singletonList(tableBuilder.createTextView(text))));
                     //for each activity in the date metric, tally them all
                     activityCursor.moveToNext();
                 }
             }
             activityCursor.close();
+        }
+        // finally, add each of our rows
+        metricsView.addView(createMetricsRow(dateMetric, Collections.singletonList(tableBuilder.createHeaderView(metric.getTitle(dateMetric) + " (" + beersDrank + " drank / " + beersEarned + " earned beers)"))));
+        for (TableRow row : periodRows) {
+            metricsView.addView(row);
         }
     }
 
@@ -122,7 +145,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
     void createDataGraph(String tag, Metric metric) {
         GraphView graph = findViewById(R.id.metricsGraph);
         graph.removeAllSeries();
-        Data data = new Data();
+        Data data = new Data(beerFitDatabase);
         Cursor timeCursor = sqLiteDatabase.rawQuery("SELECT DISTINCT strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " ORDER BY date ASC", null);
         if (timeCursor != null) {
             if (timeCursor.getCount() > 0) {
@@ -168,14 +191,8 @@ public class ViewMetricsActivity extends AppCompatActivity {
         }
     }
 
-    TableRow createTableRow(final String tag, List<TextView> cells) {
-        TableRow row = new TableRow(this);
-        row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-        row.setTag(tag);
-        row.setWeightSum(1);
-        for (TextView cell : cells) {
-            row.addView(cell);
-        }
+    TableRow createMetricsRow(final String tag, List<View> cells) {
+        TableRow row = tableBuilder.createTableRow(tag, cells);
         row.setOnClickListener(v -> {
             if (metricsIterator.hasNext()) {
                 metric = metricsIterator.next();
@@ -184,20 +201,6 @@ public class ViewMetricsActivity extends AppCompatActivity {
             }
         });
         return row;
-    }
-
-    TextView createHeaderView(String text) {
-        TextView view = createTextView(text);
-        view.setTextAppearance(R.style.HeaderText);
-        view.setGravity(Gravity.CENTER);
-        return view;
-    }
-
-    TextView createTextView(String text) {
-        TextView view = new TextView(this);
-        view.setTextAppearance(R.style.BodyText);
-        view.setText(text);
-        return view;
     }
 
     void setupGraph(GraphView graph, Data data, String tag) {

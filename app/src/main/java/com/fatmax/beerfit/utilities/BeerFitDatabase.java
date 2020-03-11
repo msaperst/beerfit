@@ -3,6 +3,7 @@ package com.fatmax.beerfit.utilities;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.graphics.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class BeerFitDatabase {
 
     public void setupDatabase() {
         // TODO - will need to drop stashed and activity log based on new changes to get them rebuilt
+        // database.execSQL("DROP TABLE " + ACTIVITIES_TABLE);
 
         if (isTableMissing(MEASUREMENTS_TABLE)) {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + MEASUREMENTS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, unit VARCHAR);");
@@ -34,12 +36,12 @@ public class BeerFitDatabase {
             database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(2,'distance','kilometers');");
         }
         if (isTableMissing(ACTIVITIES_TABLE)) {
-            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITIES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, past VARCHAR, current VARCHAR);");
-            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(1,'Walked','Walk');");
-            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(2,'Ran','Run');");
-            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(3,'Cycled','Cycle');");
-            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(4,'Lifted','Lift');");
-            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(5,'Played Soccer','Play Soccer');");
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITIES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, past VARCHAR, current VARCHAR, color NUMBER);");
+            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(1,'Walked','Walk'," + Color.GREEN + ");");
+            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(2,'Ran','Run'," + Color.BLUE + ");");
+            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(3,'Cycled','Cycle'," + Color.RED + ");");
+            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(4,'Lifted','Lift'," + Color.MAGENTA + ");");
+            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(5,'Played Soccer','Play Soccer'," + Color.CYAN + ");");
         }
         if (isTableMissing(GOALS_TABLE)) {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + GOALS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount NUMBER);");
@@ -119,6 +121,23 @@ public class BeerFitDatabase {
             cursor.close();
         }
         return ordinal;
+    }
+
+    int getActivityColor(String activity) {
+        int color = Color.YELLOW;
+        int activityId = getOrdinal(ACTIVITIES_TABLE, "past", activity.split(" ")[0]);
+        Cursor cursor = database.rawQuery("SELECT color FROM " + ACTIVITIES_TABLE + WHERE_ID + activityId + "';", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    color = cursor.getInt(0);
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }
+        return color;
     }
 
     public void logActivity(String time, String activity, String units, double duration) {

@@ -9,25 +9,25 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
-import android.widget.TableLayout.LayoutParams;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fatmax.beerfit.utilities.BeerFitDatabase;
+import com.fatmax.beerfit.utilities.TableBuilder;
+
+import java.util.Arrays;
 
 import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.BeerFitDatabase.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.BeerFitDatabase.MEASUREMENTS_TABLE;
-import static com.fatmax.beerfit.utilities.TableBuilder.createDeleteButton;
-import static com.fatmax.beerfit.utilities.TableBuilder.createEditButton;
-import static com.fatmax.beerfit.utilities.TableBuilder.createTextView;
 
 public class ViewGoalsActivity extends AppCompatActivity {
 
     SQLiteDatabase sqLiteDatabase;
     BeerFitDatabase beerFitDatabase;
+    TableBuilder tableBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,31 +37,26 @@ public class ViewGoalsActivity extends AppCompatActivity {
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
         beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
+        tableBuilder = new TableBuilder(this);
 
         // dynamically build our table
         TableLayout tableLayout = findViewById(R.id.goalsTable);
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT " + GOALS_TABLE + ".id, " + ACTIVITIES_TABLE + ".current, " + GOALS_TABLE + ".amount, " + MEASUREMENTS_TABLE + ".unit FROM " + GOALS_TABLE + " LEFT JOIN " + ACTIVITIES_TABLE + " ON " + GOALS_TABLE + ".activity = " + ACTIVITIES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + GOALS_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id", null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            // setup our table row
-            TableRow row = new TableRow(this);
-            row.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-            row.setTag(cursor.getInt(0));
-
             // setup our cells
-            TextView activity = createTextView(this, "goal", cursor.getString(1) + " for " + cursor.getString(2) + " " + cursor.getString(3));
+            TextView activity = tableBuilder.createTextView(cursor.getString(1) + " for " + cursor.getString(2) + " " + cursor.getString(3), "goal");
             activity.setTextSize(20);
             // create and setup our edit button
-            ImageButton editButton = createEditButton(this);
+            ImageButton editButton = tableBuilder.createEditButton();
             editButton.setOnClickListener(this::editGoal);
             // create and setup our delete button
-            ImageButton deleteButton = createDeleteButton(this);
+            ImageButton deleteButton = tableBuilder.createDeleteButton();
             deleteButton.setOnClickListener(this::deleteGoal);
 
-            row.addView(activity);
-            row.addView(editButton);
-            row.addView(deleteButton);
-            tableLayout.addView(row);
+            // build our row
+            tableLayout.addView(tableBuilder.createTableRow(cursor.getString(0),
+                    Arrays.asList(activity, editButton, deleteButton)));
             cursor.moveToNext();
         }
         cursor.close();
@@ -74,7 +69,7 @@ public class ViewGoalsActivity extends AppCompatActivity {
 
     void editGoal(View editButton) {
         TableRow row = (TableRow) editButton.getParent();
-        int goalId = (int) row.getTag();
+        int goalId = Integer.parseInt(row.getTag().toString());
         Intent intent = new Intent(this, AddGoalActivity.class);
         intent.putExtra("goalId", goalId);
         startActivity(intent);
@@ -82,12 +77,12 @@ public class ViewGoalsActivity extends AppCompatActivity {
 
     void deleteGoal(View deleteButton) {
         final TableRow row = (TableRow) deleteButton.getParent();
-        final int activityId = (int) row.getTag();
+        final int goalId = Integer.parseInt(row.getTag().toString());
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Delete Goal");
         alert.setMessage("Are you sure to delete the goal of " + ((TextView) row.findViewWithTag("goal")).getText());
         alert.setPositiveButton("YES", (dialog, which) -> {
-            beerFitDatabase.removeGoal(activityId);
+            beerFitDatabase.removeGoal(goalId);
             ((LinearLayout) findViewById(R.id.goalsTable)).removeView(row);
             dialog.dismiss();
         });

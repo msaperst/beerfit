@@ -113,6 +113,7 @@ public class AddActivityActivity extends AppCompatActivity {
                 rootLayout.removeView(findViewById(R.id.activityDurationUnits));
                 rootLayout.addView(unit);
             }
+            cursor.close();
         } else {
             // otherwise initialize date time
             cal = Calendar.getInstance();
