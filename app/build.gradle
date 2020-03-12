@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
+apply plugin: 'jacoco-android'
 
 def appiumTests = false
+
+jacoco {
+    toolVersion = '0.8.4' //Use latest version
+}
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -18,6 +26,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
     testOptions {
         unitTests.all {
@@ -38,17 +50,18 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.jjoe64:graphview:4.2.2'
     testImplementation 'junit:junit:4.13'
     testImplementation 'io.appium:java-client:7.3.0'
+    testImplementation 'org.mockito:mockito-all:1.9.5'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.google.android.material:material:1.1.0'
 }
 
 task appiumTest(
         type: Test,
         description: 'Run appium tests only. Pass in \'-Pappium=true\'',
-        dependsOn: ['testDebugUnitTest', 'clean'] ) {
+        dependsOn: ['testDebugUnitTest', 'clean']) {
 
     //Turn on integration testing when argument exists and is true
     if (project.hasProperty('appium')) {
@@ -56,4 +69,15 @@ task appiumTest(
             appiumTests = true
         }
     }
+}
+
+// to generate code coverage, use take 'jacocoTestReport'
+jacocoAndroidUnitTestReport {
+    csv.enabled true
+    html.enabled true
+    xml.enabled true
+}
+
+build {
+    dependsOn jacocoTestReport
 }

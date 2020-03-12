@@ -14,12 +14,14 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
+import com.fatmax.beerfit.utilities.BeerFitDatabase;
 
-import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.GOALS_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
+import java.util.List;
+
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.GOALS_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.MEASUREMENTS_TABLE;
 
 public class AddGoalActivity extends AppCompatActivity {
 
@@ -55,6 +57,8 @@ public class AddGoalActivity extends AppCompatActivity {
             ((Spinner) findViewById(R.id.goalSelection)).setSelection(cursor.getInt(1));
             ((TextView) findViewById(R.id.goalDurationInput)).setText(cursor.getString(3));
             ((Spinner) findViewById(R.id.goalDurationUnits)).setSelection(cursor.getInt(2));
+
+            cursor.close();
         }
     }
 
@@ -87,16 +91,16 @@ public class AddGoalActivity extends AppCompatActivity {
             // if we're updating a goal
             int goalId = (int) header.getTag();
             beerFitDatabase.removeGoal(goalId);
-            beerFitDatabase.addGoal(String.valueOf(goalId), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
+            beerFitDatabase.addGoal(String.valueOf(goalId), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
         } else {
-            beerFitDatabase.addGoal(activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.valueOf(duration.getText().toString()));
+            beerFitDatabase.addGoal(activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
         }
         Intent intent = new Intent(this, ViewGoalsActivity.class);
         startActivity(intent);
     }
 
     private void createSpinner(String activity, String type, int p) {
-        ArrayList<Object> activities = beerFitDatabase.getFullColumn(activity, type);
+        List<Object> activities = beerFitDatabase.getFullColumn(activity, type);
         activities.add(0, "");
         ArrayAdapter<Object> activitiesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, activities);
         activitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

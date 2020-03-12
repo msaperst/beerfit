@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fatmax.beerfit.utilities.BeerFitDatabase;
+
 public class MainActivity extends AppCompatActivity {
 
     SQLiteDatabase sqLiteDatabase;
@@ -43,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
      * Calculates the number of beers remaining. Looks at the goals identified activities logged
      * against them and calculates the total number of beers earned.
      * Then subtracts all beers drank from the drank log.
-     *
-     * @return the number of beers remaining
      */
     void setBeersRemaining() {
         beerCounter.setText(String.valueOf(beerFitDatabase.getBeersRemaining()));
@@ -74,6 +74,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void viewGoals(View view) {
         Intent intent = new Intent(this, ViewGoalsActivity.class);
+        startActivity(intent);
+    }
+
+    public void viewMetrics(View view) {
+        Intent intent = new Intent(this, ViewMetricsActivity.class);
         startActivity(intent);
     }
 

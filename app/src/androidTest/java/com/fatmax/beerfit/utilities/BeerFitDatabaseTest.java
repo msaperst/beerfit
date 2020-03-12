@@ -1,10 +1,11 @@
-package com.fatmax.beerfit;
+package com.fatmax.beerfit.utilities;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Color;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -13,7 +14,6 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,15 +21,15 @@ import java.util.Date;
 import java.util.Locale;
 
 import static com.fatmax.beerfit.AddActivityActivity.DATE_FORMAT;
-import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.ACTIVITY_LOG_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.GOALS_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.MEASUREMENTS_TABLE;
-import static com.fatmax.beerfit.BeerFitDatabase.STASHED_BEERS_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.GOALS_TABLE;
+import static com.fatmax.beerfit.utilities.BeerFitDatabase.MEASUREMENTS_TABLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class BeerFitDatabaseTest {
@@ -47,7 +47,6 @@ public class BeerFitDatabaseTest {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
-        assertFalse(beerFitDatabase.isTableMissing(STASHED_BEERS_TABLE));
         assertFalse(beerFitDatabase.isTableMissing(MEASUREMENTS_TABLE));
         assertFalse(beerFitDatabase.isTableMissing(ACTIVITIES_TABLE));
         assertFalse(beerFitDatabase.isTableMissing(GOALS_TABLE));
@@ -80,7 +79,7 @@ public class BeerFitDatabaseTest {
         // no table exists
         try {
             beerFitDatabase.getColumnType("columnTypes", "t");
-            assertTrue(false);
+            fail();
         } finally {
             wipeOutDB();
         }
@@ -94,7 +93,7 @@ public class BeerFitDatabaseTest {
         db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
         try {
             beerFitDatabase.getColumnType("columnTypes", "x");
-            assertTrue(false);
+            fail();
         } finally {
             wipeOutDB();
         }
@@ -201,7 +200,7 @@ public class BeerFitDatabaseTest {
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         try {
             beerFitDatabase.getFullColumn("someTable", "something");
-            assertTrue(false);
+            fail();
         } finally {
             wipeOutDB();
         }
@@ -245,7 +244,7 @@ public class BeerFitDatabaseTest {
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         try {
             beerFitDatabase.getOrdinal(MEASUREMENTS_TABLE, "unit", "kilometer");
-            assertFalse(true);
+            fail();
         } finally {
             wipeOutDB();
         }
@@ -258,7 +257,7 @@ public class BeerFitDatabaseTest {
         db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
         try {
             beerFitDatabase.getOrdinal("fullColumn", "u", "kilometer");
-            assertFalse(true);
+            fail();
         } finally {
             wipeOutDB();
         }
@@ -288,7 +287,18 @@ public class BeerFitDatabaseTest {
         beerFitDatabase.logBeer();
         assertEquals(1, beerFitDatabase.getOrdinal(ACTIVITY_LOG_TABLE, "amount", "1"));
         wipeOutDB();
+    }
 
+    @Test
+    public void getActivityColorTest() {
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        beerFitDatabase.setupDatabase();
+        assertEquals(Color.BLUE, beerFitDatabase.getActivityColor("Ran"));
+        assertEquals(Color.BLUE, beerFitDatabase.getActivityColor("Ran (kilometers)"));
+        assertEquals(Color.BLUE, beerFitDatabase.getActivityColor("Ran (minutes)"));
+        assertEquals(Color.YELLOW, beerFitDatabase.getActivityColor("Running"));
+        assertEquals(Color.YELLOW, beerFitDatabase.getActivityColor("Drank (beers)"));
     }
 
     @Test
@@ -382,15 +392,13 @@ public class BeerFitDatabaseTest {
     }
 
     @Test
-    public void getBeersRecentlyDrankTest() {
+    public void getBeersDrankTest() {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
-        assertEquals(0, beerFitDatabase.getBeersRecentlyDrank());
+        assertEquals(0, beerFitDatabase.getBeersDrank());
         beerFitDatabase.logBeer();
-        assertEquals(1, beerFitDatabase.getBeersRecentlyDrank());
-        beerFitDatabase.logBeer();
-        beerFitDatabase.logBeer();
+        assertEquals(1, beerFitDatabase.getBeersDrank());
         beerFitDatabase.logBeer();
         beerFitDatabase.logBeer();
         beerFitDatabase.logBeer();
@@ -398,33 +406,49 @@ public class BeerFitDatabaseTest {
         beerFitDatabase.logBeer();
         beerFitDatabase.logBeer();
         beerFitDatabase.logBeer();
-        assertEquals(10, beerFitDatabase.getBeersRecentlyDrank());
+        beerFitDatabase.logBeer();
+        beerFitDatabase.logBeer();
+        assertEquals(10, beerFitDatabase.getBeersDrank());
         wipeOutDB();
     }
 
     @Test
-    public void getBeersRecentlyEarnedTest() {
+    public void getBeersEarnedTest() {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
         addGoals(db);
-        assertEquals(0, beerFitDatabase.getBeersRecentlyEarned(), 0);
+        assertEquals(1, beerFitDatabase.getBeersEarned("Ran", "kilometers", 5), 0);
+        assertEquals(0, beerFitDatabase.getBeersEarned("Ran", "kilometers", 0), 0);
+        assertEquals(1, beerFitDatabase.getBeersEarned("Walked", "kilometers", 5), 0);
+        assertEquals(0.5, beerFitDatabase.getBeersEarned("Played Soccer", "minutes", 15), 0);
+        assertEquals(0, beerFitDatabase.getBeersEarned("Played Soccer", "kilometers", 5), 0);
+        wipeOutDB();
+    }
+
+    @Test
+    public void getTotalBeersEarnedTest() {
+        SQLiteDatabase db = getDB();
+        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
+        beerFitDatabase.setupDatabase();
+        addGoals(db);
+        assertEquals(0, beerFitDatabase.getTotalBeersEarned(), 0);
         beerFitDatabase.logActivity(getDateTime(), "Ran", "kilometers", 5);
-        assertEquals(1, beerFitDatabase.getBeersRecentlyEarned(), 0);
+        assertEquals(1, beerFitDatabase.getTotalBeersEarned(), 0);
         beerFitDatabase.logActivity(getDateTime(), "Walked", "kilometers", 32);
-        assertEquals(7.4, beerFitDatabase.getBeersRecentlyEarned(), 0);
+        assertEquals(7.4, beerFitDatabase.getTotalBeersEarned(), 0);
         beerFitDatabase.logActivity(getDateTime(), "Played Soccer", "kilometers", 32);
-        assertEquals(7.4, beerFitDatabase.getBeersRecentlyEarned(), 0);
+        assertEquals(7.4, beerFitDatabase.getTotalBeersEarned(), 0);
         beerFitDatabase.logActivity(getDateTime(), "Soccered", "minutes", 30);
-        assertEquals(7.4, beerFitDatabase.getBeersRecentlyEarned(), 0);
+        assertEquals(7.4, beerFitDatabase.getTotalBeersEarned(), 0);
         beerFitDatabase.logActivity(getDateTime(), "Played Soccer", "minutes", 33);
-        assertEquals(8.5, beerFitDatabase.getBeersRecentlyEarned(), 0);
+        assertEquals(8.5, beerFitDatabase.getTotalBeersEarned(), 0);
         beerFitDatabase.logActivity(getDateTime(), "Lifted", "minutes", 15);
-        assertEquals(9.0, beerFitDatabase.getBeersRecentlyEarned(), 0);
+        assertEquals(9.0, beerFitDatabase.getTotalBeersEarned(), 0);
         beerFitDatabase.logActivity(getDateTime(), "Cycled", "minutes", 15);
-        assertEquals(9.0, beerFitDatabase.getBeersRecentlyEarned(), 0);
+        assertEquals(9.0, beerFitDatabase.getTotalBeersEarned(), 0);
         beerFitDatabase.logActivity(getDateTime(), "Cycled", "kilometers", 15);
-        assertEquals(10.5, beerFitDatabase.getBeersRecentlyEarned(), 0);
+        assertEquals(10.5, beerFitDatabase.getTotalBeersEarned(), 0);
         wipeOutDB();
     }
 
@@ -579,37 +603,7 @@ public class BeerFitDatabaseTest {
     }
 
     @Test
-    public void stashBeersRemaining() throws ParseException, InterruptedException {
-        SQLiteDatabase db = getDB();
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
-        beerFitDatabase.setupDatabase();
-        beerFitDatabase.stashBeersRemaining();
-        Thread.sleep(1000);
-        beerFitDatabase.logBeer();
-        Thread.sleep(1000);
-        beerFitDatabase.stashBeersRemaining();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + STASHED_BEERS_TABLE, null);
-        cursor.moveToFirst();
-        assertEquals(1, cursor.getInt(0));
-        String firstTime = cursor.getString(1);
-        assertTrue(firstTime.matches(DATETIME_FORMAT + ":\\d{2}"));
-        assertEquals(0, cursor.getInt(2));
-        cursor.moveToNext();
-        assertEquals(2, cursor.getInt(0));
-        String secondTime = cursor.getString(1);
-        assertTrue(secondTime.matches(DATETIME_FORMAT + ":\\d{2}"));
-        assertEquals(-1, cursor.getInt(2));
-        Date first = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(firstTime);
-        Date second = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(secondTime);
-        assertTrue(first.compareTo(second) < 0);
-        cursor.moveToNext();
-        assertTrue(cursor.isAfterLast());
-        cursor.close();
-        wipeOutDB();
-    }
-
-    @Test
-    public void changeGoalsTest() throws InterruptedException {
+    public void changeGoalsTest() {
         SQLiteDatabase db = getDB();
         BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
         beerFitDatabase.setupDatabase();
@@ -617,10 +611,8 @@ public class BeerFitDatabaseTest {
         beerFitDatabase.logActivity(getDateTime(), "Ran", "kilometers", 5);
         beerFitDatabase.logActivity(getDateTime(), "Walked", "kilometers", 10);
         assertEquals(3, beerFitDatabase.getBeersRemaining(), 0);
-        Thread.sleep(1000);
         beerFitDatabase.removeGoal(1);
         beerFitDatabase.removeGoal(2);
-        Thread.sleep(1000);
         assertEquals(3, beerFitDatabase.getBeersRemaining(), 0);
         String dateTime = getDateTime();
         beerFitDatabase.logActivity(dateTime, "Cycled", "kilometers", 20);
@@ -630,36 +622,10 @@ public class BeerFitDatabaseTest {
         beerFitDatabase.logActivity(dateTime, "Cycled", "kilometers", 20);
         beerFitDatabase.logBeer();
         assertEquals(5, beerFitDatabase.getBeersRemaining(), 0);
-        Thread.sleep(1000);
         beerFitDatabase.logBeer();
         beerFitDatabase.removeGoal(6);
         beerFitDatabase.addGoal("Run", "kilometers", 1);
         assertEquals(4, beerFitDatabase.getBeersRemaining(), 0);
-        wipeOutDB();
-    }
-
-    @Test
-    public void getBeersStashedTimeTest() {
-        SQLiteDatabase db = getDB();
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
-        beerFitDatabase.setupDatabase();
-        beerFitDatabase.stashBeersRemaining();
-        assertEquals(getDateTime(), beerFitDatabase.getBeersStashedTime());
-        wipeOutDB();
-    }
-
-    @Test
-    public void getBeersStashedCountTest() throws InterruptedException {
-        SQLiteDatabase db = getDB();
-        BeerFitDatabase beerFitDatabase = new BeerFitDatabase(db);
-        beerFitDatabase.setupDatabase();
-        beerFitDatabase.stashBeersRemaining();
-        assertEquals(0, beerFitDatabase.getBeersStashedCount(), 0);
-        Thread.sleep(1000);
-        beerFitDatabase.logBeer();
-        assertEquals(0, beerFitDatabase.getBeersStashedCount(), 0);
-        beerFitDatabase.stashBeersRemaining();
-        assertEquals(-1, beerFitDatabase.getBeersStashedCount(), 0);
         wipeOutDB();
     }
 
