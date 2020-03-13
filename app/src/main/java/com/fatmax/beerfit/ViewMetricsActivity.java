@@ -10,7 +10,7 @@ import android.widget.TableRow;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fatmax.beerfit.utilities.BeerFitDatabase;
+import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Data;
 import com.fatmax.beerfit.utilities.Metric;
 import com.fatmax.beerfit.utilities.TableBuilder;
@@ -24,9 +24,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITY_LOG_TABLE;
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.MEASUREMENTS_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class ViewMetricsActivity extends AppCompatActivity {
     public static final String TIME_AS_DATE_FROM = "',time) AS date FROM ";
@@ -35,7 +35,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
     // - on scroll, change other to match it
 
     SQLiteDatabase sqLiteDatabase;
-    BeerFitDatabase beerFitDatabase;
+    Database database;
     TableBuilder tableBuilder;
 
     final List<Metric> metrics = new ArrayList<>();
@@ -51,7 +51,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
 
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
-        beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
+        database = new Database(sqLiteDatabase);
         tableBuilder = new TableBuilder(this);
 
         //setup our metrics
@@ -145,7 +145,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
     void createDataGraph(String tag, Metric metric) {
         GraphView graph = findViewById(R.id.metricsGraph);
         graph.removeAllSeries();
-        Data data = new Data(beerFitDatabase);
+        Data data = new Data(database);
         Cursor timeCursor = sqLiteDatabase.rawQuery("SELECT DISTINCT strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " ORDER BY date ASC", null);
         if (timeCursor != null) {
             if (timeCursor.getCount() > 0) {

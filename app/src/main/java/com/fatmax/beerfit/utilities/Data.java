@@ -12,11 +12,11 @@ import java.util.Set;
 
 public class Data {
 
-    private BeerFitDatabase beerFitDatabase;
+    private Database database;
     private Map<String, List<DataPoint>> dataPoints;
 
-    public Data(BeerFitDatabase beerFitDatabase) {
-        this.beerFitDatabase = beerFitDatabase;
+    public Data(Database database) {
+        this.database = database;
         dataPoints = new HashMap<>();
     }
 
@@ -38,7 +38,7 @@ public class Data {
             series.setTitle(entry.getKey());
             series.setDrawDataPoints(true);
             series.setThickness(7);
-            series.setColor(beerFitDatabase.getActivityColor(entry.getKey()));
+            series.setColor(database.getActivityColor(entry.getKey()));
             graphSeries.add(series);
         }
         return graphSeries;

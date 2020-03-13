@@ -1,10 +1,14 @@
-package com.fatmax.beerfit.appium;
+package com.fatmax.beerfit;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.io.File;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
@@ -32,6 +36,7 @@ public class ExampleAppiumTest {
 
     @After
     public void tearDownDriver() {
+        File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
         driver.quit();
         service.stop();
     }

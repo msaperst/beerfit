@@ -1,4 +1,4 @@
-package com.fatmax.beerfit.unit;
+package com.fatmax.beerfit.utilities;
 
 import com.fatmax.beerfit.utilities.Metric;
 

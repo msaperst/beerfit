@@ -14,19 +14,19 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fatmax.beerfit.utilities.BeerFitDatabase;
+import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.TableBuilder;
 
 import java.util.Arrays;
 
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.GOALS_TABLE;
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.MEASUREMENTS_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
+import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class ViewGoalsActivity extends AppCompatActivity {
 
     SQLiteDatabase sqLiteDatabase;
-    BeerFitDatabase beerFitDatabase;
+    Database database;
     TableBuilder tableBuilder;
 
     @Override
@@ -36,7 +36,7 @@ public class ViewGoalsActivity extends AppCompatActivity {
 
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
-        beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
+        database = new Database(sqLiteDatabase);
         tableBuilder = new TableBuilder(this);
 
         // dynamically build our table
@@ -82,7 +82,7 @@ public class ViewGoalsActivity extends AppCompatActivity {
         alert.setTitle("Delete Goal");
         alert.setMessage("Are you sure to delete the goal of " + ((TextView) row.findViewWithTag("goal")).getText());
         alert.setPositiveButton("YES", (dialog, which) -> {
-            beerFitDatabase.removeGoal(goalId);
+            database.removeGoal(goalId);
             ((LinearLayout) findViewById(R.id.goalsTable)).removeView(row);
             dialog.dismiss();
         });

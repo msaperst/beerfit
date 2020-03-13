@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fatmax.beerfit.utilities.BeerFitDatabase;
+import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.TableBuilder;
 
 import java.text.SimpleDateFormat;
@@ -24,14 +24,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITY_LOG_TABLE;
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.MEASUREMENTS_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class ViewActivitiesActivity extends AppCompatActivity {
 
     SQLiteDatabase sqLiteDatabase;
-    BeerFitDatabase beerFitDatabase;
+    Database database;
     TableBuilder tableBuilder;
 
     final SimpleDateFormat datetimeFormat = new SimpleDateFormat("EEE, MMM d yyyy, kk:mm", Locale.US);
@@ -43,7 +43,7 @@ public class ViewActivitiesActivity extends AppCompatActivity {
 
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
-        beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
+        database = new Database(sqLiteDatabase);
         tableBuilder = new TableBuilder(this);
 
         // dynamically build our table
@@ -93,9 +93,9 @@ public class ViewActivitiesActivity extends AppCompatActivity {
         final int activityId = Integer.parseInt(row.getTag().toString());
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Delete Activity");
-        alert.setMessage("Are you sure to delete the activity on " + beerFitDatabase.getActivityTime(activityId));
+        alert.setMessage("Are you sure to delete the activity on " + database.getActivityTime(activityId));
         alert.setPositiveButton("YES", (dialog, which) -> {
-            beerFitDatabase.removeActivity(activityId);
+            database.removeActivity(activityId);
             ((LinearLayout) findViewById(R.id.activityBodyTable)).removeView(row);
             dialog.dismiss();
         });

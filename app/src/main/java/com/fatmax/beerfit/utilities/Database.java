@@ -8,7 +8,7 @@ import android.graphics.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BeerFitDatabase {
+public class Database {
 
     private static final String CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ";
     private static final String INSERT_INTO = "INSERT INTO ";
@@ -22,7 +22,7 @@ public class BeerFitDatabase {
 
     private SQLiteDatabase database;
 
-    public BeerFitDatabase(SQLiteDatabase database) {
+    public Database(SQLiteDatabase database) {
         this.database = database;
     }
 
@@ -69,9 +69,12 @@ public class BeerFitDatabase {
                 columnType = cursor.getString(0);
             }
             cursor.close();
-            return columnType;
+            if (columnType != null) {
+                return columnType;
+            }
+            throw new SQLiteException("No data in the column to check");
         }
-        throw new SQLiteException("No data in the column to check");
+        throw new SQLiteException("No table to check");
     }
 
     Object getTableValue(Cursor cursor, String table, String column) {
@@ -106,14 +109,11 @@ public class BeerFitDatabase {
 
     int getOrdinal(String table, String column, String lookup) {
         int ordinal = -1;
-        Cursor cursor = database.rawQuery("SELECT id FROM " + table + " WHERE " + column + " = " + "'" + lookup + "';", null);
+        Cursor cursor = database.rawQuery("SELECT id FROM " + table + " WHERE " + column + " = '" + lookup + "';", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                while (!cursor.isAfterLast()) {
-                    ordinal = cursor.getInt(0);
-                    cursor.moveToNext();
-                }
+                ordinal = cursor.getInt(0);
             }
             cursor.close();
         }
@@ -122,15 +122,12 @@ public class BeerFitDatabase {
 
     int getActivityColor(String activity) {
         int color = Color.YELLOW;
-        int activityId = getOrdinal(ACTIVITIES_TABLE, "past", activity.split(" ")[0]);
+        int activityId = getOrdinal(ACTIVITIES_TABLE, "past", activity.split(" \\(")[0]);
         Cursor cursor = database.rawQuery("SELECT color FROM " + ACTIVITIES_TABLE + WHERE_ID + activityId + "';", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                while (!cursor.isAfterLast()) {
-                    color = cursor.getInt(0);
-                    cursor.moveToNext();
-                }
+                color = cursor.getInt(0);
             }
             cursor.close();
         }
@@ -166,10 +163,7 @@ public class BeerFitDatabase {
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                while (!cursor.isAfterLast()) {
-                    time = cursor.getString(0);
-                    cursor.moveToNext();
-                }
+                time = cursor.getString(0);
             }
             cursor.close();
         }
@@ -197,10 +191,7 @@ public class BeerFitDatabase {
         if (goalResults != null) {
             if (goalResults.getCount() > 0) {
                 goalResults.moveToFirst();
-                while (!goalResults.isAfterLast()) {
-                    goalAmountForBeer = goalResults.getDouble(0);
-                    goalResults.moveToNext();
-                }
+                goalAmountForBeer = goalResults.getDouble(0);
             }
             goalResults.close();
         }
