@@ -20,7 +20,7 @@ import android.widget.TimePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fatmax.beerfit.utilities.BeerFitDatabase;
+import com.fatmax.beerfit.utilities.Database;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,14 +28,14 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.ACTIVITY_LOG_TABLE;
-import static com.fatmax.beerfit.utilities.BeerFitDatabase.MEASUREMENTS_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class AddActivityActivity extends AppCompatActivity {
 
     SQLiteDatabase sqLiteDatabase;
-    BeerFitDatabase beerFitDatabase;
+    Database database;
 
     Calendar cal;
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -48,7 +48,7 @@ public class AddActivityActivity extends AppCompatActivity {
 
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
-        beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
+        database = new Database(sqLiteDatabase);
 
         // setup our two spinners
         createSpinner(ACTIVITIES_TABLE, "past", R.id.activitySelection);
@@ -123,7 +123,7 @@ public class AddActivityActivity extends AppCompatActivity {
     }
 
     private void createSpinner(String activity, String type, int p) {
-        List<Object> activities = beerFitDatabase.getFullColumn(activity, type);
+        List<Object> activities = database.getFullColumn(activity, type);
         activities.add(0, "");
         ArrayAdapter<Object> activitiesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, activities);
         activitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -192,14 +192,14 @@ public class AddActivityActivity extends AppCompatActivity {
         if (header.getTag() instanceof Integer) {
             // if we're updating an activity
             int activityId = (int) header.getTag();
-            beerFitDatabase.removeActivity(activityId);
+            database.removeActivity(activityId);
             if (isBeerActivity()) {
-                beerFitDatabase.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", Integer.parseInt(duration.getText().toString()));
+                database.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", Integer.parseInt(duration.getText().toString()));
             } else {
-                beerFitDatabase.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
+                database.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
             }
         } else {
-            beerFitDatabase.logActivity(date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
+            database.logActivity(date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
         }
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

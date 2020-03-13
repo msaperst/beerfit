@@ -12,12 +12,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fatmax.beerfit.utilities.BeerFitDatabase;
+import com.fatmax.beerfit.utilities.Database;
 
 public class MainActivity extends AppCompatActivity {
 
     SQLiteDatabase sqLiteDatabase;
-    BeerFitDatabase beerFitDatabase;
+    Database database;
 
     TextView beerCounter;
     ImageButton drankBeer;
@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
         drankBeer = findViewById(R.id.drankABeer);
 
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
-        beerFitDatabase = new BeerFitDatabase(sqLiteDatabase);
-        beerFitDatabase.setupDatabase();
+        database = new Database(sqLiteDatabase);
+        database.setupDatabase();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
      * Then subtracts all beers drank from the drank log.
      */
     void setBeersRemaining() {
-        beerCounter.setText(String.valueOf(beerFitDatabase.getBeersRemaining()));
+        beerCounter.setText(String.valueOf(database.getBeersRemaining()));
     }
 
     /**
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void drinkBeer(View view) {
-        beerFitDatabase.logBeer();
+        database.logBeer();
         setBeersRemaining();
     }
 

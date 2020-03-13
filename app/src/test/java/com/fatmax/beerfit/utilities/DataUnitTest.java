@@ -1,7 +1,4 @@
-package com.fatmax.beerfit.unit;
-
-import com.fatmax.beerfit.utilities.BeerFitDatabase;
-import com.fatmax.beerfit.utilities.Data;
+package com.fatmax.beerfit.utilities;
 
 import org.junit.Test;
 import org.mockito.Mock;
@@ -14,9 +11,8 @@ import static org.junit.Assert.assertEquals;
 public class DataUnitTest {
 
     @Mock
-    BeerFitDatabase mockedBeerFitDatabase = Mockito.mock(BeerFitDatabase.class);
-    Data data = new Data(mockedBeerFitDatabase);
-    
+    Database mockedDatabase = Mockito.mock(Database.class);
+    private Data data = new Data(mockedDatabase);
 
     @Test
     public void getSeriesDataTest() {
