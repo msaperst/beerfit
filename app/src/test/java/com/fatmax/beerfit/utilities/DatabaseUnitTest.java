@@ -82,9 +82,6 @@ public class DatabaseUnitTest {
     public void getTableValueDefaultTest() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getString(0)).thenReturn("number");
-        when(mockedCursor.getInt(1)).thenReturn(10);
-        when(mockedCursor.getDouble(1)).thenReturn(11.123);
-        when(mockedCursor.getBlob(1)).thenReturn("foo".getBytes());
         when(mockedCursor.getString(1)).thenReturn("bar");
         when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
         when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
@@ -98,9 +95,6 @@ public class DatabaseUnitTest {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getString(0)).thenReturn("integer");
         when(mockedCursor.getInt(1)).thenReturn(10);
-        when(mockedCursor.getDouble(1)).thenReturn(11.123);
-        when(mockedCursor.getBlob(1)).thenReturn("foo".getBytes());
-        when(mockedCursor.getString(1)).thenReturn("bar");
         when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
         when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
 
@@ -112,10 +106,7 @@ public class DatabaseUnitTest {
     public void getTableValueDoubleTest() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getString(0)).thenReturn("real");
-        when(mockedCursor.getInt(1)).thenReturn(10);
         when(mockedCursor.getDouble(1)).thenReturn(11.123);
-        when(mockedCursor.getBlob(1)).thenReturn("foo".getBytes());
-        when(mockedCursor.getString(1)).thenReturn("bar");
         when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
         when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
 
@@ -128,10 +119,7 @@ public class DatabaseUnitTest {
         byte[] bytes = "foo".getBytes();
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getString(0)).thenReturn("blob");
-        when(mockedCursor.getInt(1)).thenReturn(10);
-        when(mockedCursor.getDouble(1)).thenReturn(11.123);
         when(mockedCursor.getBlob(1)).thenReturn(bytes);
-        when(mockedCursor.getString(1)).thenReturn("bar");
         when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
         when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
 
@@ -143,9 +131,6 @@ public class DatabaseUnitTest {
     public void getTableValueStringTest() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getString(0)).thenReturn("text");
-        when(mockedCursor.getInt(1)).thenReturn(10);
-        when(mockedCursor.getDouble(1)).thenReturn(11.123);
-        when(mockedCursor.getBlob(1)).thenReturn("foo".getBytes());
         when(mockedCursor.getString(1)).thenReturn("bar");
         when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
         when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
