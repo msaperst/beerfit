@@ -32,16 +32,19 @@ android {
         targetCompatibility = 1.8
     }
     testOptions {
-        unitTests.all {
-            test {
-                filter {
-                    if (appiumTests.toBoolean()) {
-                        includeTestsMatching "*AppiumTest"
-                    } else {
-                        includeTestsMatching "*UnitTest"
+        unitTests {
+            all {
+                test {
+                    filter {
+                        if (appiumTests.toBoolean()) {
+                            includeTestsMatching "*AppiumTest"
+                        } else {
+                            includeTestsMatching "*UnitTest"
+                        }
                     }
                 }
             }
+            returnDefaultValues = true
         }
     }
 }

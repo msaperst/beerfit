@@ -1,14 +1,19 @@
 package com.fatmax.beerfit.utilities;
 
-import com.fatmax.beerfit.utilities.Metric;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class MetricUnitTest {
 
     private Metric metric = new Metric(null);
+
+    @Test
+    public void getDateTimePatternTest() {
+        assertNull(metric.getDateTimePattern());
+        assertEquals("2020", new Metric("2020").getDateTimePattern());
+    }
 
     @Test(expected = NullPointerException.class)
     public void getTitleNullTest() {

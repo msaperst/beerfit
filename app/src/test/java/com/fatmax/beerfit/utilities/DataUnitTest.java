@@ -1,12 +1,17 @@
 package com.fatmax.beerfit.utilities;
 
+import com.jjoe64.graphview.series.DataPoint;
+
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DataUnitTest {
 
@@ -15,8 +20,61 @@ public class DataUnitTest {
     private Data data = new Data(mockedDatabase);
 
     @Test
+    public void addDataPointTest() {
+        Data data = new Data(mockedDatabase);
+        data.addDataPoint("activity", 0.0, 0.0);
+        assertEquals(1, data.getDataPointSpot("activity", 0.0));
+    }
+
+    @Test
+    public void addDataPointMultipleTest() {
+        Data data = new Data(mockedDatabase);
+        data.addDataPoint("activity", 0.0, 0.0);
+        data.addDataPoint("activity", 0.0, 0.0);
+        assertEquals(2, data.getDataPointSpot("activity", 0.0));
+    }
+
+    @Test
     public void getSeriesDataTest() {
         assertEquals(new ArrayList<>(), data.getSeriesData());
+    }
+
+    @Test
+    public void getSeriesDataSingleTest() {
+        Data data = new Data(mockedDatabase);
+        data.addDataPoint("activity", 0.0, 0.0);
+        assertEquals(1, data.getSeriesData().size());
+    }
+
+    @Test
+    public void zeroOutTest() {
+        Data data = new Data(mockedDatabase);
+        data.addDataPoint("activity one", 0.0, 0.0);
+        assertEquals(1, data.getDataPointSpot("activity one", 1.0));
+        data.addDataPoint("activity two", 1.0, 0.0);
+        assertEquals(1, data.getDataPointSpot("activity two", 1.0));
+        data.zeroOut();
+        assertEquals(2, data.getDataPointSpot("activity one", 1.0));
+        assertEquals(2, data.getDataPointSpot("activity two", 1.0));
+    }
+    //TODO - zeroOutTest
+
+    @Test
+    public void addDataPointSpotTest() {
+        Data data = new Data(mockedDatabase);
+        assertEquals(0, data.getDataPointSpot("activity", 5.0));
+        data.addDataPoint("activity", 0.0, 0.0);
+        assertEquals(0, data.getDataPointSpot("activity", -0.1));
+        assertEquals(1, data.getDataPointSpot("activity", 0.0));
+    }
+
+    @Test
+    public void doesDataPointsContainsXTest() {
+        List<DataPoint> dataPoints = new ArrayList<>();
+        dataPoints.add(new DataPoint(0.0, 0.0));
+        assertTrue(data.doesDataPointsContainX(0.0, dataPoints));
+        assertFalse(data.doesDataPointsContainX(1.0, dataPoints));
+        assertFalse(data.doesDataPointsContainX(0.0, new ArrayList<>()));
     }
 
     @Test
@@ -28,7 +86,7 @@ public class DataUnitTest {
         assertEquals(1.0 / 366, data.getMultiplier("0 0 0 0"), 0);
     }
 
-    @Test (expected = NumberFormatException.class)
+    @Test(expected = NumberFormatException.class)
     public void getXAxisTestBad() {
         data.getXAxis("d");
     }
@@ -47,12 +105,12 @@ public class DataUnitTest {
         assertEquals(2001, data.getXAxis("2000 1 0 367"), 0);
     }
 
-    @Test (expected = NumberFormatException.class)
+    @Test(expected = NumberFormatException.class)
     public void getXAxisMinBadTest() {
         data.getXAxisMin("d", null);
     }
 
-    @Test (expected = NumberFormatException.class)
+    @Test(expected = NumberFormatException.class)
     public void getXAxisMaxBadTest() {
         data.getXAxisMax("d", null);
     }

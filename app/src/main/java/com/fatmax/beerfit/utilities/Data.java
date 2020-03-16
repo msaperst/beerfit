@@ -44,7 +44,7 @@ public class Data {
         return graphSeries;
     }
 
-    public void zeroOut() {
+    void zeroOut() {
         List<Double> dates = new ArrayList<>();
         // get all of the dates
         for (Map.Entry<String, List<DataPoint>> entry : dataPoints.entrySet()) {
@@ -65,8 +65,11 @@ public class Data {
         }
     }
 
-    public int getDataPointSpot(String activity, Double date) {
+    int getDataPointSpot(String activity, Double date) {
         List<DataPoint> activityDataPoints = this.dataPoints.get(activity);
+        if (activityDataPoints == null) {
+            return 0;
+        }
         for (int pos = 0; pos < activityDataPoints.size(); pos++) {
             if (activityDataPoints.get(pos).getX() > date) {
                 return pos;
@@ -75,7 +78,7 @@ public class Data {
         return activityDataPoints.size();
     }
 
-    public boolean doesDataPointsContainX(Double x, List<DataPoint> dataPoints) {
+    boolean doesDataPointsContainX(Double x, List<DataPoint> dataPoints) {
         for (DataPoint datapoint : dataPoints) {
             if (x == datapoint.getX()) {
                 return true;
@@ -84,7 +87,7 @@ public class Data {
         return false;
     }
 
-    public Double getMultiplier(String datePattern) {
+    Double getMultiplier(String datePattern) {
         String[] bits = datePattern.split(" ");
         switch (bits.length) {
             case 2:
