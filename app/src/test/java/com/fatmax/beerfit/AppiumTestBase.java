@@ -2,24 +2,27 @@ package com.fatmax.beerfit;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.File;
+import java.util.function.Function;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 
-import static org.junit.Assert.assertEquals;
+public class AppiumTestBase {
 
-public class ExampleAppiumTest {
-    private AndroidDriver driver;
-    private AppiumDriverLocalService service = AppiumDriverLocalService.buildService(new AppiumServiceBuilder().usingAnyFreePort());
+    AndroidDriver driver;
+    AppiumDriverLocalService service = AppiumDriverLocalService.buildService(new AppiumServiceBuilder().usingAnyFreePort());
+
+    WebDriverWait wait;
+    long waitTime = 5;
+    long pollTime = 50;
 
     @Before
     public void setupDriver() {
@@ -32,19 +35,13 @@ public class ExampleAppiumTest {
         capabilities.setCapability("appPackage", "com.fatmax.beerfit");
         capabilities.setCapability("appActivity", "MainActivity");
         driver = new AndroidDriver(service, capabilities);
+        wait = new WebDriverWait(driver, waitTime, pollTime);
     }
 
     @After
     public void tearDownDriver() {
-        File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        String screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.BASE64);
         driver.quit();
         service.stop();
-    }
-
-    @Test
-    public void drinkABeer() {
-        int beers = Integer.parseInt(driver.findElement(By.id("beersLeft")).getText());
-        driver.findElement(By.id("drankABeer")).click();
-        assertEquals(beers - 1, Integer.parseInt(driver.findElement(By.id("beersLeft")).getText()));
     }
 }
