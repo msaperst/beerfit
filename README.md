@@ -31,6 +31,11 @@ and the jacoco results can be found at:
 
 #### Integration
 Instrumented integration tests exist. They can be run with the below command:
+```cmd
+./gradlew connectedAndroidTest
+```
+Junit results can be found at:
+`app/build/reports/androidTests/connected/index.html`
 
 #### Appium
 UI Appium tests exist. They can be run with the below command:
