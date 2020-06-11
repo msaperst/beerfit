@@ -80,7 +80,7 @@ public class AppiumTestBase {
             steps.append("<td>").append(step.getActual()).append("</td>");
             if (step.getScreenshot() != null) {
                 //TODO - toggle images
-                steps.append("<td>").append("<img height='200' src='data:image/png;base64," + step.getScreenshot() + "'/>").append("</td>");
+                steps.append("<td>").append("<img height='200' src='data:image/png;base64,").append(step.getScreenshot()).append("'/>").append("</td>");
             } else {
                 steps.append("<td></td>");
             }
