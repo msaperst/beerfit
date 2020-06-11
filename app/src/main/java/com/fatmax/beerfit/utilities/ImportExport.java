@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
@@ -68,7 +69,7 @@ public class ImportExport {
             cursor.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("bad export", e.getMessage());
         }
     }
 
@@ -107,9 +108,9 @@ public class ImportExport {
                     for (int col = 0; col < colNames.length; col++) {
                         String colType = database.getColumnType(table, colNames[col]);
                         if (colType.equals("TEXT") || colType.equals("VARCHAR")) {
-                            sqlStatement.append("'" + values[col] + "',");
+                            sqlStatement.append("'").append(values[col]).append("',");
                         } else {
-                            sqlStatement.append(values[col] + ",");
+                            sqlStatement.append(values[col]).append(",");
                         }
                     }
                     sqlStatement.setLength(sqlStatement.length() - 1);
@@ -120,7 +121,7 @@ public class ImportExport {
             }
             csvReader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("bad import", e.getMessage());
         }
     }
 }
