@@ -72,6 +72,30 @@ public class DatabaseInstrumentedTest {
         wipeOutDB();
     }
 
+    @Test
+    public void doesExistTrueTest() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertTrue(database.doesDataExist(ACTIVITIES_TABLE, 1));
+    }
+
+    @Test
+    public void doesExistNoDBTest() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertFalse(database.doesDataExist("someTable", 1));
+    }
+
+    @Test
+    public void doesExistFalseTest() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertFalse(database.doesDataExist(ACTIVITIES_TABLE, 6));
+    }
+
     @Test(expected = SQLiteException.class)
     public void getColumnTypeNoTableTest() {
         SQLiteDatabase db = getDB();
@@ -90,7 +114,7 @@ public class DatabaseInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         // column doesn't exist
-        db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
+        db.execSQL("CREATE TABLE columnTypes(t TEXT, v VARCHAR, i INTEGER, n NUMBER);");
         try {
             database.getColumnType("columnTypes", "x");
             fail();
@@ -100,25 +124,15 @@ public class DatabaseInstrumentedTest {
     }
 
     @Test
-    public void getColumnTypeNoDataTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
-        assertNull(database.getColumnType("columnTypes", "t"));
-        wipeOutDB();
-    }
-
-    @Test
     public void getColumnTypeStringTest() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
-        db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
-        db.execSQL("INSERT INTO columnTypes VALUES('500.0', '500.0', '500.0', '500.0', '500.0');");
-        assertEquals("text", database.getColumnType("columnTypes", "t"));
-        assertEquals("integer", database.getColumnType("columnTypes", "n"));
-        assertEquals("integer", database.getColumnType("columnTypes", "i"));
-        assertEquals("real", database.getColumnType("columnTypes", "r"));
-        assertEquals("text", database.getColumnType("columnTypes", "b"));
+        db.execSQL("CREATE TABLE columnTypes(t TEXT, v VARCHAR, i INTEGER, n NUMBER);");
+        db.execSQL("INSERT INTO columnTypes VALUES('500.0', '500.0', '500.0', '500.0');");
+        assertEquals("TEXT", database.getColumnType("columnTypes", "t"));
+        assertEquals("VARCHAR", database.getColumnType("columnTypes", "v"));
+        assertEquals("INTEGER", database.getColumnType("columnTypes", "i"));
+        assertEquals("NUMBER", database.getColumnType("columnTypes", "n"));
         wipeOutDB();
     }
 
@@ -126,13 +140,12 @@ public class DatabaseInstrumentedTest {
     public void getColumnTypeDoubleTest() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
-        db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
-        db.execSQL("INSERT INTO columnTypes VALUES(500.0, 500.0, 500.0, 500.0, 500.0);");
-        assertEquals("text", database.getColumnType("columnTypes", "t"));
-        assertEquals("integer", database.getColumnType("columnTypes", "n"));
-        assertEquals("integer", database.getColumnType("columnTypes", "i"));
-        assertEquals("real", database.getColumnType("columnTypes", "r"));
-        assertEquals("real", database.getColumnType("columnTypes", "b"));
+        db.execSQL("CREATE TABLE columnTypes(t TEXT, v VARCHAR, i INTEGER, n NUMBER);");
+        db.execSQL("INSERT INTO columnTypes VALUES(500.0, 500.0, 500.0, 500.0);");
+        assertEquals("TEXT", database.getColumnType("columnTypes", "t"));
+        assertEquals("VARCHAR", database.getColumnType("columnTypes", "v"));
+        assertEquals("INTEGER", database.getColumnType("columnTypes", "i"));
+        assertEquals("NUMBER", database.getColumnType("columnTypes", "n"));
         wipeOutDB();
     }
 
@@ -140,27 +153,12 @@ public class DatabaseInstrumentedTest {
     public void getColumnTypeIntegerTest() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
-        db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
-        db.execSQL("INSERT INTO columnTypes VALUES(500, 500, 500, 500, 500);");
-        assertEquals("text", database.getColumnType("columnTypes", "t"));
-        assertEquals("integer", database.getColumnType("columnTypes", "n"));
-        assertEquals("integer", database.getColumnType("columnTypes", "i"));
-        assertEquals("real", database.getColumnType("columnTypes", "r"));
-        assertEquals("integer", database.getColumnType("columnTypes", "b"));
-        wipeOutDB();
-    }
-
-    @Test
-    public void getColumnTypeBlobTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
-        db.execSQL("INSERT INTO columnTypes VALUES(x'0500', x'0500', x'0500', x'0500', x'0500');");
-        assertEquals("blob", database.getColumnType("columnTypes", "t"));
-        assertEquals("blob", database.getColumnType("columnTypes", "n"));
-        assertEquals("blob", database.getColumnType("columnTypes", "i"));
-        assertEquals("blob", database.getColumnType("columnTypes", "r"));
-        assertEquals("blob", database.getColumnType("columnTypes", "b"));
+        db.execSQL("CREATE TABLE columnTypes(t TEXT, v VARCHAR, i INTEGER, n NUMBER);");
+        db.execSQL("INSERT INTO columnTypes VALUES(500, 500, 500, 500);");
+        assertEquals("TEXT", database.getColumnType("columnTypes", "t"));
+        assertEquals("VARCHAR", database.getColumnType("columnTypes", "v"));
+        assertEquals("INTEGER", database.getColumnType("columnTypes", "i"));
+        assertEquals("NUMBER", database.getColumnType("columnTypes", "n"));
         wipeOutDB();
     }
 
@@ -168,13 +166,12 @@ public class DatabaseInstrumentedTest {
     public void getColumnTypeNullTest() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
-        db.execSQL("CREATE TABLE columnTypes(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
-        db.execSQL("INSERT INTO columnTypes VALUES(null, null, null, null, null);");
-        assertEquals("null", database.getColumnType("columnTypes", "t"));
-        assertEquals("null", database.getColumnType("columnTypes", "n"));
-        assertEquals("null", database.getColumnType("columnTypes", "i"));
-        assertEquals("null", database.getColumnType("columnTypes", "r"));
-        assertEquals("null", database.getColumnType("columnTypes", "b"));
+        db.execSQL("CREATE TABLE columnTypes(t TEXT, v VARCHAR, i INTEGER, n NUMBER);");
+        db.execSQL("INSERT INTO columnTypes VALUES(null, null, null, null);");
+        assertEquals("TEXT", database.getColumnType("columnTypes", "t"));
+        assertEquals("VARCHAR", database.getColumnType("columnTypes", "v"));
+        assertEquals("INTEGER", database.getColumnType("columnTypes", "i"));
+        assertEquals("NUMBER", database.getColumnType("columnTypes", "n"));
         wipeOutDB();
     }
 
@@ -182,15 +179,14 @@ public class DatabaseInstrumentedTest {
     public void getTableValue() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
-        db.execSQL("CREATE TABLE value(t  TEXT, n NUMERIC, i  INTEGER, r  REAL, b  BLOB);");
-        db.execSQL("INSERT INTO value VALUES('minutes', null, 1,4.5,x'0500');");
-        Cursor res = db.rawQuery("SELECT * FROM value", null);
+        db.execSQL("CREATE TABLE columnTypes(t TEXT, v VARCHAR, i INTEGER, n NUMBER);");
+        db.execSQL("INSERT INTO columnTypes VALUES('minutes', null, 1,4.5);");
+        Cursor res = db.rawQuery("SELECT * FROM columnTypes", null);
         res.moveToFirst();
-        assertEquals(1, database.getTableValue(res, "value", "i"));
-        assertEquals("minutes", database.getTableValue(res, "value", "t"));
-        assertEquals(Arrays.toString(new byte[]{(byte) 0x05, 0x00}), Arrays.toString((byte[]) database.getTableValue(res, "value", "b")));
-        assertEquals(4.5, database.getTableValue(res, "value", "r"));
-        assertNull(database.getTableValue(res, "value", "n"));
+        assertEquals("minutes", database.getTableValue(res, "columnTypes", "t"));
+        assertNull(database.getTableValue(res, "columnTypes", "v"));
+        assertEquals(1, database.getTableValue(res, "columnTypes", "i"));
+        assertEquals(4.5, database.getTableValue(res, "columnTypes", "n"));
         wipeOutDB();
     }
 
