@@ -1,43 +1,30 @@
 package com.fatmax.beerfit;
 
-import org.junit.After;
-import org.junit.Before;
+import com.testpros.fast.By;
+
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-
-import java.io.File;
-
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.remote.MobileCapabilityType;
-import io.appium.java_client.service.local.AppiumDriverLocalService;
-import io.appium.java_client.service.local.AppiumServiceBuilder;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class MainActivityAppiumTest extends AppiumTestBase {
 
     private final By drankABeer = By.id("drankABeer");
+    private final By beersLeft = By.id("beersLeft");
 
 
     @Test
     public void titleExists() {
-        assertEquals("Welcome to BeerFit", driver.findElement(By.id("welcomeHeader")).getText());
+        assertElementTextEquals("Welcome to BeerFit", By.id("welcomeHeader"));
     }
 
     @Test
     public void freshStartBeers() {
-        assertEquals(0, Integer.parseInt(driver.findElement(By.id("beersLeft")).getText()));
+        assertElementTextEquals("0", beersLeft);
     }
 
     @Test
     public void drinkABeer() {
         driver.findElement(drankABeer).click();
-        assertEquals( - 1, Integer.parseInt(driver.findElement(By.id("beersLeft")).getText()));
+        assertElementTextEquals("-1", beersLeft);
     }
 
     @Test
@@ -45,33 +32,30 @@ public class MainActivityAppiumTest extends AppiumTestBase {
         driver.findElement(drankABeer).click();
         driver.findElement(drankABeer).click();
         driver.findElement(drankABeer).click();
-        assertEquals( - 3, Integer.parseInt(driver.findElement(By.id("beersLeft")).getText()));
+        assertElementTextEquals("-3", beersLeft);
     }
 
     @Test
     public void earnBeer() {
         driver.findElement(By.id("earnedABeer")).click();
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.id("addActivityHeader")));
-        assertEquals("Add An Activity", driver.findElement(By.id("addActivityHeader")).getText());
+        assertElementTextEquals("Add An Activity", By.id("addActivityHeader"));
     }
 
     @Test
     public void viewActivities() {
         driver.findElement(By.id("viewActivities")).click();
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.id("viewActivitiesTitle")));
-        assertEquals("BeerFit Activities", driver.findElement(By.id("viewActivitiesTitle")).getText());
+        assertElementTextEquals("BeerFit Activities", By.id("viewActivitiesTitle"));
     }
 
     @Test
     public void viewMetrics() {
         driver.findElement(By.id("viewMetrics")).click();
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.id("metricsLayout")));
-        assertTrue(driver.findElement(By.id("metricsLayout")).isDisplayed());
+        assertElementDisplayed(By.id("metricsLayout"));
     }
 
     @Test
     public void viewGoals() {
         driver.findElement(By.id("viewGoals")).click();
-        assertEquals("BeerFit Goals", driver.findElement(By.id("viewGoalsTitle")).getText());
+        assertElementTextEquals("BeerFit Goals", By.id("viewGoalsTitle"));
     }
 }
