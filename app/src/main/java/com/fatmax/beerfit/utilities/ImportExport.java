@@ -11,8 +11,8 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +54,7 @@ public class ImportExport {
         File beerfitExport = new File(exportDir, table + ".csv");
         try {
             beerfitExport.createNewFile();
-            CSVWriter csvWriter = new CSVWriter(new FileWriter(beerfitExport));
+            CSVWriter csvWriter = new CSVWriter(new FileOutputStream(beerfitExport));
             Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + table, null);
             int columns = cursor.getColumnCount();
             csvWriter.writeNext(cursor.getColumnNames());
