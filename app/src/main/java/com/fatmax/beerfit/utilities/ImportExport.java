@@ -74,7 +74,7 @@ public class ImportExport {
     }
 
     public void importData() {
-        List<String> existingImports = new ArrayList();
+        List<String> existingImports = new ArrayList<>();
         List<String> allTables = Arrays.asList(Database.ACTIVITIES_TABLE, Database.GOALS_TABLE, Database.MEASUREMENTS_TABLE, Database.ACTIVITY_LOG_TABLE);
         for (String table : allTables) {
             if (new File(exportDir, table + ".csv").exists()) {
@@ -103,7 +103,7 @@ public class ImportExport {
             String[] colNames = csvReader.readNext();
             String[] values = csvReader.readNext();
             while (values != null) {
-                if (!database.doesDataExist(table, Integer.valueOf(values[0]))) {
+                if (!database.doesDataExist(table, Integer.parseInt(values[0]))) {
                     StringBuilder sqlStatement = new StringBuilder("INSERT INTO " + table + " VALUES (");
                     for (int col = 0; col < colNames.length; col++) {
                         String colType = database.getColumnType(table, colNames[col]);

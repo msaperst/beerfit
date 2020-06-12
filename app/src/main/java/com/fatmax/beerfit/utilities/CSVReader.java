@@ -102,7 +102,7 @@ public class CSVReader {
      * @return the next line from the file without trailing newline
      * @throws IOException if bad things happen during the read
      */
-    private String getNextLine() throws IOException {
+    String getNextLine() throws IOException {
         if (!this.linesSkipped) {
             for (int i = 0; i < skipLines; i++) {
                 br.readLine();
@@ -123,7 +123,7 @@ public class CSVReader {
      * @return the comma-tokenized list of elements, or null if nextLine is null
      * @throws IOException if bad things happen during the read
      */
-    private String[] parseLine(String nextLine) throws IOException {
+    String[] parseLine(String nextLine) throws IOException {
         if (nextLine == null) {
             return null;
         }
@@ -138,21 +138,19 @@ public class CSVReader {
                 if (nextLine == null)
                     break;
             }
-            inQuotes = isInQuotes(nextLine, tokensOnThisLine, sb, inQuotes);
+            inQuotes = isInAQuote(nextLine, tokensOnThisLine, sb, inQuotes);
         } while (inQuotes);
         tokensOnThisLine.add(sb.toString());
         return (String[]) tokensOnThisLine.toArray(new String[0]);
     }
 
-    private boolean isInQuotes(String nextLine, List<String> tokensOnThisLine, StringBuilder sb, boolean inQuotes) {
+    boolean isInAQuote(String nextLine, List<String> tokensOnThisLine, StringBuilder sb, boolean inQuotes) {
         for (int i = 0; i < nextLine.length(); i++) {
             char c = nextLine.charAt(i);
             if (c == quoteChar) {
                 // this gets complex... the quote may end a quoted block, or escape another quote.
                 // do a 1-char lookahead:
-                if (inQuotes  // we are in quotes, therefore there can be escaped quotes in here.
-                        && nextLine.length() > (i + 1)  // there is indeed another character to check.
-                        && nextLine.charAt(i + 1) == quoteChar) { // ..and that char. is a quote also.
+                if (isNextCharAlsoQuote(nextLine, inQuotes, i)) {
                     // we have two quote chars in a row == one quote char, so consume them both and
                     // put one on the token. we do *not* exit the quoted text.
                     sb.append(nextLine.charAt(i + 1));
@@ -160,11 +158,7 @@ public class CSVReader {
                 } else {
                     inQuotes = !inQuotes;
                     // the tricky case of an embedded quote in the middle: a,bc"d"ef,g
-                    if (i > 2 //not on the begining of the line
-                            && nextLine.charAt(i - 1) != this.separator //not at the begining of an escape sequence
-                            && nextLine.length() > (i + 1) &&
-                            nextLine.charAt(i + 1) != this.separator //not at the	end of an escape sequence
-                    ) {
+                    if (emdeddedQuote(nextLine, i)) {
                         sb.append(c);
                     }
                 }
@@ -176,6 +170,19 @@ public class CSVReader {
             }
         }
         return inQuotes;
+    }
+
+    boolean emdeddedQuote(String nextLine, int i) {
+        return i > 2 //not on the begining of the line
+                && nextLine.charAt(i - 1) != this.separator //not at the beginning of an escape sequence
+                && nextLine.length() > (i + 1) &&
+                nextLine.charAt(i + 1) != this.separator; //not at the end of an escape sequence
+    }
+
+    boolean isNextCharAlsoQuote(String nextLine, boolean inQuotes, int i) {
+        return inQuotes  // we are in quotes, therefore there can be escaped quotes in here.
+                && nextLine.length() > (i + 1)  // there is indeed another character to check.
+                && nextLine.charAt(i + 1) == quoteChar; // ..and that char. is a quote also.
     }
 
     /**

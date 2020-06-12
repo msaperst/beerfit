@@ -22,7 +22,7 @@ These tests each require an emulator or device running/plugged into your test ma
 #### Unit
 If you want to just run the unit tests, run the below command:
 ```cmd
-./gradlew test
+./gradlew jacocoTestReport
 ```
 JUnit results can be found at:
 `app/build/reports/tests`
