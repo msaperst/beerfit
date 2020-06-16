@@ -87,13 +87,13 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         menuOptions.get(0).click();
         driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
         byte[] activities = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/Beerfit/Activities.csv");
-        assertEquals(new String(activities), "\"id\",\"past\",\"current\",\"color\"\n" +
+        assertEquals(String.valueOf(activities), "\"id\",\"past\",\"current\",\"color\"\n" +
                         "\"1\",\"Walked\",\"Walk\",\"-16711936\"\n" +
                         "\"2\",\"Ran\",\"Run\",\"-16776961\"\n" +
                         "\"3\",\"Cycled\",\"Cycle\",\"-65536\"\n" +
                         "\"4\",\"Lifted\",\"Lift\",\"-65281\"\n" +
                         "\"5\",\"Played Soccer\",\"Play Soccer\",\"-12303292\"\n",
-                "Expected Base Activities Table", "Got: <br/>\n" + new String(activities));
+                "Expected Base Activities Table", "Got: <br/>\n" + String.valueOf(activities));
     }
 
     @Test
@@ -103,8 +103,8 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         menuOptions.get(0).click();
         driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
         byte[] activityLog = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/Beerfit/ActivityLog.csv");
-        assertEquals(new String(activityLog), "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n",
-                "Expected Base ActivityLog Table", "Got: <br/>\n" + new String(activityLog));
+        assertEquals(String.valueOf(activityLog), "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n",
+                "Expected Base ActivityLog Table", "Got: <br/>\n" + String.valueOf(activityLog));
     }
 
     @Test
@@ -114,8 +114,8 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         menuOptions.get(0).click();
         driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
         byte[] goals = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/Beerfit/Goals.csv");
-        assertEquals(new String(goals), "\"id\",\"activity\",\"measurement\",\"amount\"\n",
-                "Expected Base Goals Table", "Got: <br/>\n" + new String(goals));
+        assertEquals(String.valueOf(goals), "\"id\",\"activity\",\"measurement\",\"amount\"\n",
+                "Expected Base Goals Table", "Got: <br/>\n" + String.valueOf(goals));
     }
 
     @Test
@@ -125,10 +125,10 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         menuOptions.get(0).click();
         driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
         byte[] measurements = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/Beerfit/Measurements.csv");
-        assertEquals(new String(measurements), "\"id\",\"type\",\"unit\"\n" +
+        assertEquals(String.valueOf(measurements), "\"id\",\"type\",\"unit\"\n" +
                         "\"1\",\"time\",\"minutes\"\n" +
                         "\"2\",\"distance\",\"kilometers\"\n",
-                "Expected Base Measurements Table", "Got: <br/>\n" + new String(measurements));
+                "Expected Base Measurements Table", "Got: <br/>\n" + String.valueOf(measurements));
     }
 
     // TODO - check added goals provides data

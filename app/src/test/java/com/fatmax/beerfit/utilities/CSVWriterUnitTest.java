@@ -1,6 +1,6 @@
 package com.fatmax.beerfit.utilities;
 
-import com.google.common.base.Charsets;
+import java.nio.charset.StandardCharsets;
 import com.google.common.io.Files;
 
 import org.junit.After;
@@ -39,7 +39,7 @@ public class CSVWriterUnitTest {
         CSVWriter csvWriter = new CSVWriter(new FileOutputStream(sampleFile));
         csvWriter.writeNext(null);
         csvWriter.close();
-        assertEquals("",Files.toString(sampleFile, Charsets.UTF_8));
+        assertEquals("",Files.toString(sampleFile, StandardCharsets.UTF_8));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class CSVWriterUnitTest {
         CSVWriter csvWriter = new CSVWriter(new FileOutputStream(sampleFile));
         csvWriter.writeNext(new String[] {null});
         csvWriter.close();
-        assertEquals("\n",Files.toString(sampleFile, Charsets.UTF_8));
+        assertEquals("\n",Files.toString(sampleFile, StandardCharsets.UTF_8));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class CSVWriterUnitTest {
         CSVWriter csvWriter = new CSVWriter(new FileOutputStream(sampleFile));
         csvWriter.writeNext(new String[]{"hello","world"});
         csvWriter.close();
-        assertEquals("\"hello\",\"world\"\n",Files.toString(sampleFile, Charsets.UTF_8));
+        assertEquals("\"hello\",\"world\"\n",Files.toString(sampleFile, StandardCharsets.UTF_8));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class CSVWriterUnitTest {
         csvWriter.writeNext(new String[]{"hello"});
         csvWriter.writeNext(new String[]{"world"});
         csvWriter.close();
-        assertEquals("\"hello\"\n\"world\"\n",Files.toString(sampleFile, Charsets.UTF_8));
+        assertEquals("\"hello\"\n\"world\"\n",Files.toString(sampleFile, StandardCharsets.UTF_8));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class CSVWriterUnitTest {
                 NO_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER, DEFAULT_LINE_END);
         csvWriter.writeNext(new String[]{"hello","world"});
         csvWriter.close();
-        assertEquals("hello,world\n",Files.toString(sampleFile, Charsets.UTF_8));
+        assertEquals("hello,world\n",Files.toString(sampleFile, StandardCharsets.UTF_8));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class CSVWriterUnitTest {
         CSVWriter csvWriter = new CSVWriter(new FileOutputStream(sampleFile));
         csvWriter.writeNext(new String[]{"he\"llo","world"});
         csvWriter.close();
-        assertEquals("\"he\"\"llo\",\"world\"\n",Files.toString(sampleFile, Charsets.UTF_8));
+        assertEquals("\"he\"\"llo\",\"world\"\n",Files.toString(sampleFile, StandardCharsets.UTF_8));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class CSVWriterUnitTest {
                 DEFAULT_QUOTE_CHARACTER, NO_ESCAPE_CHARACTER, DEFAULT_LINE_END);
         csvWriter.writeNext(new String[]{"he\"llo","world"});
         csvWriter.close();
-        assertEquals("\"he\"llo\",\"world\"\n",Files.toString(sampleFile, Charsets.UTF_8));
+        assertEquals("\"he\"llo\",\"world\"\n",Files.toString(sampleFile, StandardCharsets.UTF_8));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class CSVWriterUnitTest {
                 DEFAULT_QUOTE_CHARACTER, '|', DEFAULT_LINE_END);
         csvWriter.writeNext(new String[]{"he|llo","world"});
         csvWriter.close();
-        assertEquals("\"he||llo\",\"world\"\n",Files.toString(sampleFile, Charsets.UTF_8));
+        assertEquals("\"he||llo\",\"world\"\n",Files.toString(sampleFile, StandardCharsets.UTF_8));
     }
 
     @Test
