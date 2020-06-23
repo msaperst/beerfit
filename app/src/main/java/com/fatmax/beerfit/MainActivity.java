@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.importData:
                 importExport.importData();
+                beerCounter.invalidate();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

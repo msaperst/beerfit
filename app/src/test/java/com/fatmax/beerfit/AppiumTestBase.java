@@ -117,17 +117,17 @@ public class AppiumTestBase {
     void assertElementTextEquals(String expected, WebElement element) {
         String actual = element.getText();
         assertEquals(actual, expected, "Expected element '" + element.getAttribute("resourceId") + "' to have text '" + expected + "'",
-                "Element " + element.getAttribute("resourceId") + "' has text '" + actual + "'");
+                "Element '" + element.getAttribute("resourceId") + "' has text '" + actual + "'");
     }
 
     void assertElementTextEquals(String expected, By element) {
         String actual = driver.findElement(element).getText();
         assertEquals(actual, expected, "Expected element '" + element + "' to have text '" + expected + "'",
-                "Element " + element + "' has text '" + actual + "'");
+                "Element '" + element + "' has text '" + actual + "'");
     }
 
     void assertElementDisplayed(By element) {
         assertEquals(true, driver.findElement(element).isDisplayed(), "Expected element '" + element + "' to be displayed",
-                "Element " + element + "' is visible");
+                "Element '" + element + "' is visible");
     }
 }
