@@ -7,19 +7,6 @@
     tools:context=".AddGoalActivity">
 
     <TextView
-        android:id="@+id/addGoalHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_a_goal"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/goalSelectionHeader"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/viewGoalsSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +16,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addGoalHeader" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/goalSelectionHeader"

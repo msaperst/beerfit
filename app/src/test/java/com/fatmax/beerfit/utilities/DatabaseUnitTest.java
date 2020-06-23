@@ -52,19 +52,51 @@ public class DatabaseUnitTest {
     }
 
     @Test
-    public void getColumnTypeTest() {
-        when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedCursor.getString(0)).thenReturn("number");
-        when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
+    public void doesExistFalseTest() {
+        when(mockedCursor.getCount()).thenReturn(0);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals("number", database.getColumnType(MEASUREMENTS_TABLE, "amount"));
+        assertFalse(database.doesDataExist(ACTIVITIES_TABLE, 1));
+    }
+
+    @Test
+    public void doesExistNoTableTest() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+
+        Database database = new Database(mockedSQLiteDatabase);
+        assertFalse(database.doesDataExist(ACTIVITIES_TABLE, 1));
+    }
+
+    @Test
+    public void doesExistTrueTest() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedSQLiteDatabase.rawQuery("SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name = '" + ACTIVITIES_TABLE + "'", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+
+        Database database = new Database(mockedSQLiteDatabase);
+        assertTrue(database.doesDataExist(ACTIVITIES_TABLE, 1));
+    }
+
+    @Test
+    public void getColumnTypeTest() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.isAfterLast()).thenReturn(false).thenReturn(true);
+        when(mockedCursor.getString(1)).thenReturn("time");
+        when(mockedCursor.getString(2)).thenReturn("INTEGER");
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
+
+        Database database = new Database(mockedSQLiteDatabase);
+        assertEquals("INTEGER", database.getColumnType(MEASUREMENTS_TABLE, "time"));
     }
 
     @Test(expected = SQLiteException.class)
     public void getColumnTypeNoColumnTest() {
-        when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.isAfterLast()).thenReturn(false).thenReturn(true);
+        when(mockedCursor.getString(1)).thenReturn("number");
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         database.getColumnType(MEASUREMENTS_TABLE, "amount");
@@ -81,10 +113,11 @@ public class DatabaseUnitTest {
     @Test
     public void getTableValueDefaultTest() {
         when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedCursor.getString(0)).thenReturn("number");
-        when(mockedCursor.getString(1)).thenReturn("bar");
+        when(mockedCursor.isAfterLast()).thenReturn(false).thenReturn(true);
+        when(mockedCursor.getString(1)).thenReturn("amount").thenReturn("bar");
+        when(mockedCursor.getString(2)).thenReturn("VARCHAR");
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
         when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
-        when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals("bar", database.getTableValue(mockedCursor, MEASUREMENTS_TABLE, "amount"));
@@ -93,10 +126,13 @@ public class DatabaseUnitTest {
     @Test
     public void getTableValueIntTest() {
         when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedCursor.getString(0)).thenReturn("integer");
-        when(mockedCursor.getInt(1)).thenReturn(10);
+        when(mockedCursor.isAfterLast()).thenReturn(false).thenReturn(true);
+        when(mockedCursor.getString(1)).thenReturn("amount");
+        when(mockedCursor.getString(2)).thenReturn("INTEGER");
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
         when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
-        when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
+        when(mockedCursor.getInt(1)).thenReturn(10);
+
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(10, database.getTableValue(mockedCursor, MEASUREMENTS_TABLE, "amount"));
@@ -105,35 +141,25 @@ public class DatabaseUnitTest {
     @Test
     public void getTableValueDoubleTest() {
         when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedCursor.getString(0)).thenReturn("real");
-        when(mockedCursor.getDouble(1)).thenReturn(11.123);
+        when(mockedCursor.isAfterLast()).thenReturn(false).thenReturn(true);
+        when(mockedCursor.getString(1)).thenReturn("amount");
+        when(mockedCursor.getString(2)).thenReturn("NUMBER");
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
         when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
-        when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
+        when(mockedCursor.getDouble(1)).thenReturn(11.123);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(11.123, database.getTableValue(mockedCursor, MEASUREMENTS_TABLE, "amount"));
     }
 
     @Test
-    public void getTableValueBlobTest() {
-        byte[] bytes = "foo".getBytes();
-        when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedCursor.getString(0)).thenReturn("blob");
-        when(mockedCursor.getBlob(1)).thenReturn(bytes);
-        when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
-        when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
-
-        Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(bytes, database.getTableValue(mockedCursor, MEASUREMENTS_TABLE, "amount"));
-    }
-
-    @Test
     public void getTableValueStringTest() {
         when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedCursor.getString(0)).thenReturn("text");
-        when(mockedCursor.getString(1)).thenReturn("bar");
+        when(mockedCursor.isAfterLast()).thenReturn(false).thenReturn(true);
+        when(mockedCursor.getString(1)).thenReturn("amount").thenReturn("bar");
+        when(mockedCursor.getString(2)).thenReturn("TEXT");
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
         when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
-        when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals("bar", database.getTableValue(mockedCursor, MEASUREMENTS_TABLE, "amount"));
@@ -157,11 +183,11 @@ public class DatabaseUnitTest {
     @Test
     public void getFullColumnSingleTest() {
         when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedCursor.isAfterLast()).thenReturn(false).thenReturn(true);
-        when(mockedCursor.getString(0)).thenReturn("text");
-        when(mockedCursor.getString(1)).thenReturn("foo");
+        when(mockedCursor.isAfterLast()).thenReturn(false).thenReturn(false).thenReturn(true);
+        when(mockedCursor.getString(1)).thenReturn("amount").thenReturn("foo");
+        when(mockedCursor.getString(2)).thenReturn("TEXT");
         when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
-        when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
@@ -170,16 +196,16 @@ public class DatabaseUnitTest {
 
     @Test
     public void getFullColumnMultipleTest() {
-        when(mockedCursor.getCount()).thenReturn(4);
-        when(mockedCursor.isAfterLast()).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(true);
-        when(mockedCursor.getString(0)).thenReturn("text");
-        when(mockedCursor.getString(1)).thenReturn("foo").thenReturn("bar");
+        when(mockedCursor.getCount()).thenReturn(2).thenReturn(1);
+        when(mockedCursor.isAfterLast()).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(true);
+        when(mockedCursor.getString(1)).thenReturn("amount").thenReturn("foo").thenReturn("amount").thenReturn("bar");
+        when(mockedCursor.getString(2)).thenReturn("TEXT");
         when(mockedCursor.getColumnIndex("amount")).thenReturn(1);
-        when(mockedSQLiteDatabase.rawQuery("SELECT typeof(amount) FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE, null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(Arrays.asList("foo","bar","bar","bar"), database.getFullColumn(MEASUREMENTS_TABLE, "amount"));
+        assertEquals(Arrays.asList("foo", "bar"), database.getFullColumn(MEASUREMENTS_TABLE, "amount"));
     }
 
     @Test

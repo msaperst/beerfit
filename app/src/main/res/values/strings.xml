@@ -1,14 +1,17 @@
 <resources>
     <string name="app_name">BeerFit</string>
-    <string name="beersLeft">10</string>
     <string name="add_an_activity">Add An Activity</string>
+    <string name="edit_your_activity">Edit Your Activity</string>
     <string name="select_activity">Select Activity</string>
     <string name="select_time">Select Time</string>
     <string name="enter_duration">Enter Duration</string>
-    <string name="log_activity">Log Activity</string>
+    <string name="add_activity">Add Activity</string>
+    <string name="update_activity">Update Activity</string>
     <string name="add_a_goal">Add A Goal</string>
+    <string name="edit_your_goal">Edit Your Goal</string>
     <string name="to_earn_a_beer">To Earn A Beer…</string>
     <string name="add_goal">Add Goal</string>
+    <string name="update_goal">Update Goal</string>
     <string name="welcome_to_beerfit">Welcome to BeerFit</string>
     <string name="beers_remaining">Beers Remaining</string>
     <string name="earned_a_beer">Earned A Beer</string>
@@ -19,6 +22,7 @@
     <string name="view_metrics">View Metrics</string>
     <string name="view_goals">View Goals</string>
     <string name="beerfit_activities">BeerFit Activities</string>
+    <string name="beerfit_metrics">BeerFit Metrics</string>
     <string name="time">Time</string>
     <string name="activity">Activity</string>
     <string name="beerfit_goals">BeerFit Goals</string>

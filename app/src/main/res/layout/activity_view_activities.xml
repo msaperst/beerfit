@@ -26,19 +26,6 @@
             <TableRow style="@style/HeaderRow">
 
                 <TextView
-                    android:id="@+id/viewActivitiesTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="center"
-                    android:text="@string/beerfit_activities"
-                    android:textSize="30sp"
-                    android:textStyle="bold" />
-            </TableRow>
-
-            <TableRow style="@style/HeaderRow">
-
-                <TextView
                     android:id="@+id/viewActivitiesTimeHeader"
                     style="@style/HeaderText"
                     android:text="@string/time" />
