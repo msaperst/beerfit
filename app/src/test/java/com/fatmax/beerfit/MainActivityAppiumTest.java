@@ -3,7 +3,6 @@ package com.fatmax.beerfit;
 import com.testpros.fast.By;
 
 import org.junit.Test;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class MainActivityAppiumTest extends AppiumTestBase {
 

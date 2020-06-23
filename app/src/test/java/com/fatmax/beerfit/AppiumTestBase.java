@@ -2,6 +2,7 @@ package com.fatmax.beerfit;
 
 import com.testpros.fast.AndroidDriver;
 import com.testpros.fast.By;
+import com.testpros.fast.WebElement;
 import com.testpros.fast.reporter.Step;
 
 import org.apache.commons.io.FileUtils;
@@ -16,9 +17,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
+import io.appium.java_client.service.local.flags.GeneralServerFlag;
 
 public class AppiumTestBase {
 
@@ -44,7 +47,8 @@ public class AppiumTestBase {
             "</body>\n" +
             "</html>";
     AndroidDriver driver;
-    AppiumDriverLocalService service = AppiumDriverLocalService.buildService(new AppiumServiceBuilder().usingAnyFreePort());
+    AppiumDriverLocalService service = AppiumDriverLocalService.buildService(
+            new AppiumServiceBuilder().usingAnyFreePort().withArgument(GeneralServerFlag.RELAXED_SECURITY));
     WebDriverWait wait;
     long waitTime = 5;
     long pollTime = 50;
@@ -110,14 +114,20 @@ public class AppiumTestBase {
         }
     }
 
+    void assertElementTextEquals(String expected, WebElement element) {
+        String actual = element.getText();
+        assertEquals(actual, expected, "Expected element '" + element.getAttribute("resourceId") + "' to have text '" + expected + "'",
+                "Element '" + element.getAttribute("resourceId") + "' has text '" + actual + "'");
+    }
+
     void assertElementTextEquals(String expected, By element) {
         String actual = driver.findElement(element).getText();
         assertEquals(actual, expected, "Expected element '" + element + "' to have text '" + expected + "'",
-                "Element " + element + "' has text '" + actual + "'");
+                "Element '" + element + "' has text '" + actual + "'");
     }
 
     void assertElementDisplayed(By element) {
         assertEquals(true, driver.findElement(element).isDisplayed(), "Expected element '" + element + "' to be displayed",
-                "Element " + element + "' is visible");
+                "Element '" + element + "' is visible");
     }
 }

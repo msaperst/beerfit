@@ -10,16 +10,14 @@ import java.util.List;
 
 public class Database {
 
-    private static final String CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ";
-    private static final String INSERT_INTO = "INSERT INTO ";
-    private static final String VALUES = " VALUES(";
-    private static final String WHERE_ID = " WHERE id = '";
-
     public static final String MEASUREMENTS_TABLE = "Measurements";
     public static final String ACTIVITIES_TABLE = "Activities";
     public static final String GOALS_TABLE = "Goals";
     public static final String ACTIVITY_LOG_TABLE = "ActivityLog";
-
+    private static final String CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ";
+    private static final String INSERT_INTO = "INSERT INTO ";
+    private static final String VALUES = " VALUES(";
+    private static final String WHERE_ID = " WHERE id = '";
     private SQLiteDatabase database;
 
     public Database(SQLiteDatabase database) {
@@ -60,32 +58,50 @@ public class Database {
         return !isExist;
     }
 
+    boolean doesDataExist(String tableName, int id) {
+        boolean isExist = false;
+        if (isTableMissing(tableName)) {
+            return false;
+        }
+        Cursor cursor = database.rawQuery("SELECT * FROM " + tableName + " WHERE id = " + id, null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                isExist = true;
+            }
+            cursor.close();
+        }
+        return isExist;
+    }
+
     String getColumnType(String table, String column) {
-        Cursor cursor = database.rawQuery("SELECT typeof(" + column + ") FROM " + table, null);
+        Cursor cursor = database.rawQuery("PRAGMA table_info(" + table + ")", null);
         if (cursor != null) {
             String columnType = null;
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                columnType = cursor.getString(0);
+                while (!cursor.isAfterLast()) {
+                    if (column.equalsIgnoreCase(cursor.getString(1))) {
+                        columnType = cursor.getString(2);
+                        break;
+                    }
+                    cursor.moveToNext();
+                }
             }
             cursor.close();
             if (columnType != null) {
                 return columnType;
             }
-            throw new SQLiteException("No data in the column to check");
+            throw new SQLiteException("No column exists");
         }
         throw new SQLiteException("No table to check");
     }
 
     Object getTableValue(Cursor cursor, String table, String column) {
-        switch (getColumnType(table, column).toLowerCase()) {
-            case "integer":
+        switch (getColumnType(table, column)) {
+            case "INTEGER":
                 return cursor.getInt(cursor.getColumnIndex(column));
-            case "real":
+            case "NUMBER":
                 return cursor.getDouble(cursor.getColumnIndex(column));
-            case "blob":
-                return cursor.getBlob(cursor.getColumnIndex(column));
-            case "text":
             default:
                 return cursor.getString(cursor.getColumnIndex(column));
         }
