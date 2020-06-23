@@ -31,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:gravity="center"
-                    android:text="BeerFit Activities"
+                    android:text="@string/beerfit_activities"
                     android:textSize="30sp"
                     android:textStyle="bold" />
             </TableRow>
@@ -41,13 +41,13 @@
                 <TextView
                     android:id="@+id/viewActivitiesTimeHeader"
                     style="@style/HeaderText"
-                    android:text="Time" />
+                    android:text="@string/time" />
 
                 <TextView
                     android:id="@+id/viewActivitiesActivityHeader"
                     style="@style/HeaderText"
                     android:layout_width="match_parent"
-                    android:text="Activity"
+                    android:text="@string/activity"
                     app:layout_constraintHorizontal_bias="0.75" />
             </TableRow>
         </TableLayout>
