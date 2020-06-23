@@ -10,6 +10,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_margin="15dp"
+        android:contentDescription="@string/app_name"
         android:background="@drawable/beerfit"/>
 
     <TextView

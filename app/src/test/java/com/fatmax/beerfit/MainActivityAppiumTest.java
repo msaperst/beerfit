@@ -1,5 +1,6 @@
 package com.fatmax.beerfit;
 
+import com.fatmax.beerfit.objects.Navigate;
 import com.testpros.fast.By;
 
 import org.junit.Test;
@@ -12,7 +13,7 @@ public class MainActivityAppiumTest extends AppiumTestBase {
 
     @Test
     public void titleExists() {
-        assertElementTextEquals("Welcome to BeerFit", By.id("welcomeHeader"));
+        assertElementTextEquals("BeerFit", By.className("android.widget.TextView"));
     }
 
     @Test
@@ -37,24 +38,24 @@ public class MainActivityAppiumTest extends AppiumTestBase {
     @Test
     public void earnBeer() {
         driver.findElement(By.id("earnedABeer")).click();
-        assertElementTextEquals("Add An Activity", By.id("addActivityHeader"));
+        assertElementTextEquals("Add An Activity", By.className("android.widget.TextView"));
     }
 
     @Test
     public void viewActivities() {
-        driver.findElement(By.id("viewActivities")).click();
-        assertElementTextEquals("BeerFit Activities", By.id("viewActivitiesTitle"));
+        new Navigate(driver).toActivities();
+        assertElementTextEquals("BeerFit Activities", By.className("android.widget.TextView"));
     }
 
     @Test
     public void viewMetrics() {
-        driver.findElement(By.id("viewMetrics")).click();
-        assertElementDisplayed(By.id("metricsLayout"));
+        new Navigate(driver).toMetrics();
+        assertElementTextEquals("BeerFit Metrics", By.className("android.widget.TextView"));
     }
 
     @Test
     public void viewGoals() {
-        driver.findElement(By.id("viewGoals")).click();
-        assertElementTextEquals("BeerFit Goals", By.id("viewGoalsTitle"));
+        new Navigate(driver).toGoals();
+        assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
     }
 }

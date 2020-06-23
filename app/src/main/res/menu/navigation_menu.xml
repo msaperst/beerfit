@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/activities"
+    <item android:id="@+id/viewActivities"
         android:title="@string/activities"
         android:onClick="viewActivities"/>
-    <item android:id="@+id/goals"
+    <item android:id="@+id/viewGoals"
         android:title="@string/goals"
         android:onClick="viewGoals"/>
-    <item android:id="@+id/metrics"
+    <item android:id="@+id/viewMetrics"
         android:title="@string/metrics"
         android:onClick="viewMetrics"/>
 
