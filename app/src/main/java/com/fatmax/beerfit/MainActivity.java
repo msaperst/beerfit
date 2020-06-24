@@ -16,11 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.ImportExport;
+import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
         return displayMetrics.widthPixels;
     }
 
+    private DrawerLayout dl;
+    private ActionBarDrawerToggle t;
+    private NavigationView nv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +55,13 @@ public class MainActivity extends AppCompatActivity {
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
         database = new Database(sqLiteDatabase);
         database.setupDatabase();
+
+        // setup our nav menu
+        dl = (DrawerLayout) findViewById(R.id.activity_main);
+        t = new ActionBarDrawerToggle(this, dl, R.string.Open, R.string.Close);
+        dl.addDrawerListener(t);
+        t.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -65,20 +79,27 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        String[] PERMISSIONS = {android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (!ImportExport.hasPermissions(this, PERMISSIONS)) {
-            // save off the menu, so we can use it once permissions granted
-            this.storedMenu = item;
-            //get required permissions
-            ActivityCompat.requestPermissions((Activity) this, PERMISSIONS, REQUEST);
-            return false;
-        } else {
-            return doImportExport(item);
+        if (item.getItemId() == R.id.exportData || item.getItemId() == R.id.importData) {
+            String[] PERMISSIONS = {android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            if (!ImportExport.hasPermissions(this, PERMISSIONS)) {
+                // save off the menu, so we can use it once permissions granted
+                this.storedMenu = item;
+                //get required permissions
+                ActivityCompat.requestPermissions((Activity) this, PERMISSIONS, REQUEST);
+                return false;
+            } else {
+                return doImportExport(item);
+            }
         }
+        if(t.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -130,17 +151,17 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void viewActivities(View view) {
+    public void viewActivities(MenuItem menuItem) {
         Intent intent = new Intent(this, ViewActivitiesActivity.class);
         startActivity(intent);
     }
 
-    public void viewGoals(View view) {
+    public void viewGoals(MenuItem menuItem) {
         Intent intent = new Intent(this, ViewGoalsActivity.class);
         startActivity(intent);
     }
 
-    public void viewMetrics(View view) {
+    public void viewMetrics(MenuItem menuItem) {
         Intent intent = new Intent(this, ViewMetricsActivity.class);
         startActivity(intent);
     }

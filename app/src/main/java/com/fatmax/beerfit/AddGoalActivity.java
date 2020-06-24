@@ -46,10 +46,10 @@ public class AddGoalActivity extends AppCompatActivity {
         Intent myIntent = getIntent();
         if (myIntent.hasExtra("goalId")) {
             int goalId = myIntent.getIntExtra("goalId", -1);
-            TextView header = findViewById(R.id.addGoalHeader);
-            header.setText("Edit Your Goal");
-            header.setTag(goalId);
-            ((Button) findViewById(R.id.submitGoal)).setText("Update Goal");
+            setTitle(getString(R.string.edit_your_goal));
+            Button submit = findViewById(R.id.submitGoal);
+            submit.setTag(goalId);
+            submit.setText(getString(R.string.update_goal));
 
             Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE id = " + goalId, null);
             cursor.moveToFirst();
@@ -86,10 +86,10 @@ public class AddGoalActivity extends AppCompatActivity {
         if (!isFilledOut) {
             return;
         }
-        TextView header = findViewById(R.id.addGoalHeader);
-        if (header.getTag() instanceof Integer) {
+        Button submit = findViewById(R.id.submitGoal);
+        if (submit.getTag() instanceof Integer) {
             // if we're updating a goal
-            int goalId = (int) header.getTag();
+            int goalId = (int) submit.getTag();
             database.removeGoal(goalId);
             database.addGoal(String.valueOf(goalId), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
         } else {

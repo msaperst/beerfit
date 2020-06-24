@@ -14,6 +14,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ViewMetricsActivity"
+            android:label="@string/beerfit_metrics"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -21,6 +22,7 @@
         </activity>
         <activity
             android:name=".AddGoalActivity"
+            android:label="@string/add_a_goal"
             android:parentActivityName=".ViewGoalsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -28,6 +30,7 @@
         </activity>
         <activity
             android:name=".ViewGoalsActivity"
+            android:label="@string/beerfit_goals"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -35,6 +38,7 @@
         </activity>
         <activity
             android:name=".ViewActivitiesActivity"
+            android:label="@string/beerfit_activities"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -42,12 +46,14 @@
         </activity>
         <activity
             android:name=".AddActivityActivity"
+            android:label="@string/add_an_activity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

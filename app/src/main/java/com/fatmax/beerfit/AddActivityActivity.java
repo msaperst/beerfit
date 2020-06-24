@@ -64,10 +64,10 @@ public class AddActivityActivity extends AppCompatActivity {
         if (myIntent.hasExtra("activityId")) {
             //if this is an existing activity
             int activityId = myIntent.getIntExtra("activityId", -1);
-            TextView header = findViewById(R.id.addActivityHeader);
-            header.setText("Edit Your Activity");
-            header.setTag(activityId);
-            ((Button) findViewById(R.id.submitActivity)).setText("Update Activity");
+            setTitle(getString(R.string.edit_your_activity));
+            Button submit = findViewById(R.id.submitActivity);
+            submit.setTag(activityId);
+            submit.setText(getString(R.string.update_activity));
 
             Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = " + activityId, null);
             cursor.moveToFirst();
@@ -158,7 +158,7 @@ public class AddActivityActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-    public void logActivity(View view) {
+    public void addActivity(View view) {
         boolean isFilledOut = true;
         Spinner activity = null;
         TextView date = findViewById(R.id.activityDate);
@@ -188,10 +188,10 @@ public class AddActivityActivity extends AppCompatActivity {
         if (!isFilledOut) {
             return;
         }
-        TextView header = findViewById(R.id.addActivityHeader);
-        if (header.getTag() instanceof Integer) {
+        Button submit = findViewById(R.id.submitActivity);
+        if (submit.getTag() instanceof Integer) {
             // if we're updating an activity
-            int activityId = (int) header.getTag();
+            int activityId = (int) submit.getTag();
             database.removeActivity(activityId);
             if (isBeerActivity()) {
                 database.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", Integer.parseInt(duration.getText().toString()));
