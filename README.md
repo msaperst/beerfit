@@ -46,15 +46,15 @@ JUnit results can be found at:
 `app/build/reports/tests`
 
 ### Features
-Below is some information about the features in the Beerfit app
+Below is some information about the features in the BeerFit app
 
 #### Import / Export
 In order to preserve, backup, or bulk edit your activities, or other items, an import/export
 feature exists. To export your data (backup), in the options menu, click the `Export Data` menu
 item. You'll need to give the app permissions to your shared media in or to save the data. All
-data will saved in the `/sdcard/Beerfit` folder. A CSV file will be created for each dataset present
+data will saved in the `/sdcard/BeerFit` folder. A CSV file will be created for each dataset present
 in the app. **Note that all prior data in the folder will be overwritten by the export.**
 
 In order to bulk modify the data in the app, you can import from a CSV file as well. Any files in the
-`/sdcard/Beerfit/` folder with a name matching a dataset can be selected. **Note that any imported 
+`/sdcard/BeerFit/` folder with a name matching a dataset can be selected. **Note that any imported 
 datasets will overwrite the existing data in the app.**

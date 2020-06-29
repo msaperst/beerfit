@@ -10,25 +10,35 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-import io.appium.java_client.MobileBy;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
 
+@RunWith(MyRunner.class)
 public class AppiumTestBase {
 
     @Rule
     public TestName name = new TestName();
+
+    File sqliteDatabase = new File("beerfit");
     File app = new File("build/outputs/apk/debug/app-debug.apk");
-    File testResults = new File("build/reports/tests");
+    static File testResults = new File("build/reports/tests");
+    String beerfitDatabase = "/data/data/com.fatmax.beerfit/databases/beerfit";
     String htmlTemplate = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \n" +
             "\"http://www.w3.org/TR/html4/loose.dtd\">\n" +
             "<html>\n" +
@@ -74,6 +84,7 @@ public class AppiumTestBase {
     public void tearDownDriver() throws IOException {
         driver.quit();
         service.stop();
+        sqliteDatabase.delete();
         // write out my report
         StringBuilder steps = new StringBuilder();
         for (Step step : driver.getReporter().getSteps()) {
@@ -100,6 +111,47 @@ public class AppiumTestBase {
         FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());
     }
 
+    void modifyDB(String statement) {
+        Map<String, Object> args = new HashMap<>();
+        args.put("command", "sqlite3 " + beerfitDatabase + " '" + statement + "'");
+        ((io.appium.java_client.android.AndroidDriver) driver.getDriver()).executeScript("mobile: shell", args);
+    }
+
+    ResultSet queryDB(String query) throws IOException, ClassNotFoundException, SQLException {
+        byte[] sqldatabase = ((io.appium.java_client.android.AndroidDriver) driver.getDriver()).pullFile(beerfitDatabase);
+        FileUtils.writeByteArrayToFile(sqliteDatabase, sqldatabase);
+        Class.forName("org.sqlite.JDBC");
+        String url = "jdbc:sqlite:beerfit";
+        Connection conn = DriverManager.getConnection(url);
+        return conn.createStatement().executeQuery(query);
+    }
+
+    void assertGoals(ResultSet resultSet, int id, int activity, int measurement, int amount) throws SQLException {
+        assertEquals(resultSet.getInt("id"), id, "Expected to find id of '" + id + "' for activity in DB",
+                "Actually found id of '" + resultSet.getInt("id") + "'");
+        assertEquals(resultSet.getInt("activity"), activity, "Expected to find activity of '" + activity + "' for activity in DB",
+                "Actually found activity of '" + resultSet.getInt("activity") + "'");
+        assertEquals(resultSet.getInt("measurement"), measurement, "Expected to find measurement of '" + measurement + "' for activity in DB",
+                "Actually found measurement of '" + resultSet.getInt("measurement") + "'");
+        assertEquals(resultSet.getInt("amount"), amount, "Expected to find amount of '" + amount + "' for activity in DB",
+                "Actually found amount of '" + resultSet.getInt("amount") + "'");
+    }
+
+    void assertActivityLog(ResultSet resultSet, int id, String dateTime, int activity, int measurement, int amount, int beers) throws SQLException {
+        assertEquals(resultSet.getInt("id"), id, "Expected to find id of '" + id + "' for activity in DB",
+                "Actually found id of '" + resultSet.getInt("id") + "'");
+        assertEquals(resultSet.getString("time"), dateTime, "Expected to find time of '" +
+                dateTime + "' for activity in DB", "Actually found id of '" + resultSet.getString("time") + "'");
+        assertEquals(resultSet.getInt("activity"), activity, "Expected to find activity of '" + activity + "' for activity in DB",
+                "Actually found activity of '" + resultSet.getInt("activity") + "'");
+        assertEquals(resultSet.getInt("measurement"), measurement, "Expected to find measurement of '" + measurement + "' for activity in DB",
+                "Actually found measurement of '" + resultSet.getInt("measurement") + "'");
+        assertEquals(resultSet.getInt("amount"), amount, "Expected to find amount of '" + amount + "' for activity in DB",
+                "Actually found amount of '" + resultSet.getInt("amount") + "'");
+        assertEquals(resultSet.getInt("beers"), beers, "Expected to find beers of '" + beers + "' for beers in DB",
+                "Actually found beers of '" + resultSet.getInt("beers") + "'");
+    }
+
     void assertEquals(Object actual, Object expected, String expectedString, String actualString) {
         Step step = new Step("", expectedString);
         try {
@@ -124,6 +176,11 @@ public class AppiumTestBase {
         String actual = driver.findElement(element).getText();
         assertEquals(actual, expected, "Expected element '" + element + "' to have text '" + expected + "'",
                 "Element '" + element + "' has text '" + actual + "'");
+    }
+
+    void assertElementDisplayed(WebElement element) {
+        assertEquals(true, element.isDisplayed(), "Expected element '" + element.getAttribute("resourceId") + "' to be displayed",
+                "Element '" + element.getAttribute("resourceId") + "' is visible");
     }
 
     void assertElementDisplayed(By element) {
