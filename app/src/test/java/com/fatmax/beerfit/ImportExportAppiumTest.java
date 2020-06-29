@@ -217,4 +217,6 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         // TODO - there is a bug, want this to be redrawn (no page switching needed)
         assertElementTextEquals("2", By.id("beersLeft"));
     }
+
+    //TODO - consider doing the verification through DB calls, as UI shouldn't be needed
 }
