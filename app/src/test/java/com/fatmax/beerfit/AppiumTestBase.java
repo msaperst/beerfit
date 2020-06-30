@@ -4,9 +4,11 @@ import com.testpros.fast.AndroidDriver;
 import com.testpros.fast.By;
 import com.testpros.fast.WebElement;
 import com.testpros.fast.reporter.Step;
+import com.testpros.fast.reporter.Step.Status;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -14,14 +16,20 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.appium.java_client.remote.MobileCapabilityType;
@@ -29,7 +37,6 @@ import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
 
-@RunWith(MyRunner.class)
 public class AppiumTestBase {
 
     @Rule
@@ -39,23 +46,12 @@ public class AppiumTestBase {
     File app = new File("build/outputs/apk/debug/app-debug.apk");
     static File testResults = new File("build/reports/tests");
     String beerfitDatabase = "/data/data/com.fatmax.beerfit/databases/beerfit";
-    String htmlTemplate = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \n" +
-            "\"http://www.w3.org/TR/html4/loose.dtd\">\n" +
-            "<html>\n" +
-            "<head>\n" +
-            "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" +
-            "<style>.PASS { color:green; } .FAIL { color:red; } table { border:2px solid darkgrey; border-collapse:collapse; } td,th { border:1px solid grey; }</style>\n" +
-            "<title>$testCaseName</title>\n" +
-            "</head>\n" +
-            "<body>\n" +
-            "<h1>$testCaseName</h1>\n" +
-            "<h2 class='$testCaseStatus'><span>$testCaseStatus</span> <span>$testCaseTime<span></h2>\n" +
-            "<table>\n" +
-            "<tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Screenshot</th><th>Status</th><th>Time (ms)</th></tr>\n" +
-            "$rows" +
-            "</table>\n" +
-            "</body>\n" +
-            "</html>";
+
+    final static String testCaseTemplate = "";
+    final static String testResultTemplate = "";
+    static Status overallStatus = Status.PASS;
+    static List<String> testsExecuted = new ArrayList<>();
+
     AndroidDriver driver;
     AppiumDriverLocalService service = AppiumDriverLocalService.buildService(
             new AppiumServiceBuilder().usingAnyFreePort().withArgument(GeneralServerFlag.RELAXED_SECURITY));
@@ -85,6 +81,17 @@ public class AppiumTestBase {
         driver.quit();
         service.stop();
         sqliteDatabase.delete();
+        // add to overall status
+        if( testsExecuted.contains(name.getMethodName())) {
+            System.out.println( "WARNING, this test case name already exists!");
+        }
+        testsExecuted.add(name.getMethodName());
+        Status testStatus = driver.getReporter().getStatus();
+        if( testStatus == Status.CHECK && overallStatus != Status.FAIL) {
+            overallStatus = Status.CHECK;
+        } else if ( testStatus == Status.FAIL ) {
+            overallStatus = Status.FAIL;
+        }
         // write out my report
         StringBuilder steps = new StringBuilder();
         for (Step step : driver.getReporter().getSteps()) {
@@ -103,12 +110,38 @@ public class AppiumTestBase {
             steps.append("<td>").append(step.getTime()).append("</td>");
             steps.append("</tr>");
         }
-        String report = htmlTemplate.replace("$testCaseName", name.getMethodName())
-                .replace("$testCaseStatus", driver.getReporter().getStatus().toString())
+        String report = getContent(new URL(testCaseTemplate)).replace("$testCaseName", name.getMethodName())
+                .replace("$testCaseStatus", testStatus.toString())
                 .replace("$testCaseTime", driver.getReporter().getRunTime() + " ms")
                 .replace("$rows", steps.toString());
         File reportFile = new File(testResults, name.getMethodName() + ".html");
         FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());
+    }
+
+    @AfterClass
+    public static void allDone() throws IOException {
+        System.out.println( "============================" + overallStatus + "============================" );
+//        String report = getContent(new URL(testResultTemplate)).replace("$testSuiteName", "Test Suite")
+//                .replace("$overallResult", overallStatus.toString())
+//                .replace("$totalTests", String.valueOf(result.getRunCount()))
+//                .replace("$testsPassed", String.valueOf(result.getRunCount() - result.getFailureCount() - result.getIgnoreCount()))
+//                .replace("$testFailed", String.valueOf(result.getFailureCount()))
+//                .replace("$testsIgnored", String.valueOf(result.getIgnoreCount()))
+//                .replace("$totalTime", String.valueOf(result.getRunTime()) + " ms")
+//                .replace("$testResults", "")
+//                .replaceAll("\\$(.*?)Status", "PASS");
+//        File reportFile = new File(testResults, "index.html");
+//        FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());
+    }
+
+    private static String getContent(URL url) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
+            for (String line; (line = reader.readLine()) != null;) {
+                stringBuilder.append(line);
+            }
+        }
+        return stringBuilder.toString();
     }
 
     void modifyDB(String statement) {
@@ -174,8 +207,8 @@ public class AppiumTestBase {
 
     void assertElementTextEquals(String expected, By element) {
         String actual = driver.findElement(element).getText();
-        assertEquals(actual, expected, "Expected element '" + element + "' to have text '" + expected + "'",
-                "Element '" + element + "' has text '" + actual + "'");
+        assertEquals(actual, expected, "Expected element '" + element.getBy() + "' to have text '" + expected + "'",
+                "Element '" + element.getBy() + "' has text '" + actual + "'");
     }
 
     void assertElementDisplayed(WebElement element) {
@@ -184,7 +217,7 @@ public class AppiumTestBase {
     }
 
     void assertElementDisplayed(By element) {
-        assertEquals(true, driver.findElement(element).isDisplayed(), "Expected element '" + element + "' to be displayed",
-                "Element '" + element + "' is visible");
+        assertEquals(true, driver.findElement(element).isDisplayed(), "Expected element '" + element.getBy() + "' to be displayed",
+                "Element '" + element.getBy() + "' is visible");
     }
 }

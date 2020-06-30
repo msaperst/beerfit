@@ -16,7 +16,7 @@ import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 public class GoalsSeededActivityAppiumTest extends AppiumTestBase {
 
     @Before
-    public void navigateToAddActivity() throws SQLException, IOException, ClassNotFoundException {
+    public void navigateToAddActivity() {
         modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,5);");
         new Navigate(driver).toGoals();
     }

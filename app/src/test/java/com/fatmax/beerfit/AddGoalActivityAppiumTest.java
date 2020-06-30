@@ -28,12 +28,12 @@ public class AddGoalActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void activityHeaderExists() {
+    public void goalHeaderExists() {
         assertElementTextEquals("To Earn A Beer…", By.id("viewGoalsSubtitle"));
     }
 
     @Test
-    public void activitySubHeaderExists() {
+    public void goalSubHeaderExists() {
         assertElementTextEquals("Select Activity", By.id("goalSelectionHeader"));
     }
 

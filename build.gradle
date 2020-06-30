@@ -4,12 +4,10 @@ buildscript {
     repositories {
         google()
         jcenter()
-
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.1'
         classpath 'com.dicedmelon.gradle:jacoco-android:0.1.4'
-        classpath 'org.xerial:sqlite-jdbc:3.8.9.1'
     }
     ext.compileSdkVersion = 28
     ext.buildToolsVersion = '29.0.2'
@@ -23,7 +21,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-
     }
 }
 
