@@ -1,9 +1,10 @@
 package com.fatmax.beerfit.utilities;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MetricUnitTest {
 
@@ -15,9 +16,10 @@ public class MetricUnitTest {
         assertEquals("2020", new Metric("2020").getDateTimePattern());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void getTitleNullTest() {
-        metric.getTitle(null);
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> metric.getTitle(null));
+        assertNull( exception.getMessage());
     }
 
     @Test

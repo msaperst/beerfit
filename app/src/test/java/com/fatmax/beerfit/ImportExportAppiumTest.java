@@ -5,8 +5,8 @@ import com.testpros.fast.By;
 import com.testpros.fast.WebElement;
 
 import org.apache.commons.codec.binary.Base64;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -24,7 +24,7 @@ import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 
 public class ImportExportAppiumTest extends AppiumTestBase {
 
-    @Before
+    @BeforeEach
     public void wipeOutData() {
         Map<String, Object> args = new HashMap<>();
         args.put("command", "rm -rf /sdcard/BeerFit");

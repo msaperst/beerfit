@@ -3,7 +3,7 @@ package com.fatmax.beerfit;
 import com.fatmax.beerfit.objects.Navigate;
 import com.testpros.fast.By;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MainActivityAppiumTest extends AppiumTestBase {
 

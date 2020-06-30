@@ -1,15 +1,16 @@
 package com.fatmax.beerfit.utilities;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CSVReaderUnitTest {
 
@@ -22,37 +23,54 @@ public class CSVReaderUnitTest {
     @Test
     public void readNextTest() throws IOException {
         CSVReader csvReader = new CSVReader(new StringReader("hello world"));
-        assertEquals(new String[]{"hello world"}, csvReader.readNext());
+        String[] first = csvReader.readNext();
+        assertEquals(1, first.length);
+        assertEquals("hello world", first[0]);
         assertNull(csvReader.readNext());
     }
 
     @Test
     public void readNextTwoLinesTest() throws IOException {
         CSVReader csvReader = new CSVReader(new StringReader("hello world\nfoo"));
-        assertEquals(new String[]{"hello world"}, csvReader.readNext());
-        assertEquals(new String[]{"foo"}, csvReader.readNext());
+        String[] first = csvReader.readNext();
+        assertEquals(1, first.length);
+        assertEquals("hello world", first[0]);
+
+        String[] second = csvReader.readNext();
+        assertEquals(1, second.length);
+        assertEquals("foo", second[0]);
         assertNull(csvReader.readNext());
     }
 
     @Test
     public void readNextTwoColsTest() throws IOException {
         CSVReader csvReader = new CSVReader(new StringReader("hello,world\nfoo"));
-        assertEquals(new String[]{"hello", "world"}, csvReader.readNext());
-        assertEquals(new String[]{"foo"}, csvReader.readNext());
+        String[] first = csvReader.readNext();
+        assertEquals(2, first.length);
+        assertEquals("hello", first[0]);
+        assertEquals("world", first[1]);
+
+        String[] second = csvReader.readNext();
+        assertEquals(1, second.length);
+        assertEquals("foo", second[0]);
         assertNull(csvReader.readNext());
     }
 
     @Test
     public void readNextLineSkipped() throws IOException {
         CSVReader csvReader = new CSVReader(new StringReader("hello|world\nfoo"), '|', '"', 1);
-        assertEquals(new String[]{"foo"}, csvReader.readNext());
+        String[] first = csvReader.readNext();
+        assertEquals(1, first.length);
+        assertEquals("foo", first[0]);
         assertNull(csvReader.readNext());
     }
 
     @Test
     public void readNextLineInQuotesSkipped() throws IOException {
         CSVReader csvReader = new CSVReader(new StringReader("hello\"|world\nfoo\""), '|', '"', 0);
-        assertEquals(new String[]{"hello|world\nfoo"}, csvReader.readNext());
+        String[] first = csvReader.readNext();
+        assertEquals(1, first.length);
+        assertEquals("hello|world\nfoo", first[0]);
         assertNull(csvReader.readNext());
     }
 
@@ -65,19 +83,25 @@ public class CSVReaderUnitTest {
     @Test
     public void parseLineRegular() throws IOException {
         CSVReader csvReader = new CSVReader(new StringReader(""));
-        assertEquals(new String[]{"foo"}, csvReader.parseLine("foo"));
+        String[] line = csvReader.parseLine("foo");
+        assertEquals(1, line.length);
+        assertEquals("foo", line[0]);
     }
 
     @Test
     public void parseLineWithQuoteTest() throws IOException {
         CSVReader csvReader = new CSVReader(new StringReader(""));
-        assertEquals(new String[]{"hello \"world\n"}, csvReader.parseLine("hello \"world"));
+        String[] line = csvReader.parseLine("hello \"world");
+        assertEquals(1, line.length);
+        assertEquals("hello \"world\n", line[0]);
     }
 
     @Test
     public void parseLineWithQuotesTest() throws IOException {
         CSVReader csvReader = new CSVReader(new StringReader(""));
-        assertEquals(new String[]{"hello \"world"}, csvReader.parseLine("hello \"world\""));
+        String[] line = csvReader.parseLine("hello \"world\"");
+        assertEquals(1, line.length);
+        assertEquals("hello \"world", line[0]);
     }
 
     @Test
@@ -188,14 +212,16 @@ public class CSVReaderUnitTest {
         assertTrue(csvReader.isNextCharAlsoQuote("hello `world", true, 5));
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void closeTest() throws IOException {
         CSVReader csvReader = new CSVReader(new StringReader("hello world"));
-        assertEquals(new String[]{"hello world"}, csvReader.readNext());
+        String[] first = csvReader.readNext();
+        assertEquals(1, first.length);
+        assertEquals("hello world", first[0]);
         csvReader.close();
-        csvReader.readNext();
+        IOException exception = assertThrows(IOException.class, () -> csvReader.readNext());
+        assertEquals("Stream closed", exception.getMessage());
     }
-
 
 //    @Test
 //    public void readNextDifferentParsersTest() throws IOException {

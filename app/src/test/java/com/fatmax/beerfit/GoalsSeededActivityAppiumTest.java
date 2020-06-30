@@ -4,8 +4,8 @@ import com.fatmax.beerfit.objects.Navigate;
 import com.testpros.fast.By;
 import com.testpros.fast.WebElement;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,7 +15,7 @@ import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 
 public class GoalsSeededActivityAppiumTest extends AppiumTestBase {
 
-    @Before
+    @BeforeEach
     public void navigateToAddActivity() throws SQLException, IOException, ClassNotFoundException {
         modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,5);");
         new Navigate(driver).toGoals();

@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.util.ArrayList;
@@ -16,10 +16,11 @@ import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -91,7 +92,7 @@ public class DatabaseUnitTest {
         assertEquals("INTEGER", database.getColumnType(MEASUREMENTS_TABLE, "time"));
     }
 
-    @Test(expected = SQLiteException.class)
+    @Test
     public void getColumnTypeNoColumnTest() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.isAfterLast()).thenReturn(false).thenReturn(true);
@@ -99,15 +100,15 @@ public class DatabaseUnitTest {
         when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
-        database.getColumnType(MEASUREMENTS_TABLE, "amount");
-        fail();
+        SQLiteException exception = assertThrows(SQLiteException.class, () -> database.getColumnType(MEASUREMENTS_TABLE, "amount"));
+        assertNull(exception.getMessage());
     }
 
-    @Test(expected = SQLiteException.class)
+    @Test
     public void getColumnTypeNoTableTest() {
         Database database = new Database(mockedSQLiteDatabase);
-        database.getColumnType(MEASUREMENTS_TABLE, "amount");
-        fail();
+        SQLiteException exception = assertThrows(SQLiteException.class, () -> database.getColumnType(MEASUREMENTS_TABLE, "amount"));
+        assertNull(exception.getMessage());
     }
 
     @Test
@@ -315,7 +316,7 @@ public class DatabaseUnitTest {
     @Test
     public void getBeersEarnedNullTest() {
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(0.0, database.getBeersEarned("Ran", "kilometers", 10), 0);
+        assertEquals(0.0, database.getBeersEarned("Ran", "kilometers", 10));
     }
 
     @Test
@@ -324,7 +325,7 @@ public class DatabaseUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT amount FROM " + GOALS_TABLE + " WHERE activity = -1 AND measurement = -1;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(0.0, database.getBeersEarned("Ran", "kilometers", 10), 0);
+        assertEquals(0.0, database.getBeersEarned("Ran", "kilometers", 10));
     }
 
     @Test
@@ -334,13 +335,13 @@ public class DatabaseUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT amount FROM " + GOALS_TABLE + " WHERE activity = -1 AND measurement = -1;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(2.0, database.getBeersEarned("Ran", "kilometers", 10), 0);
+        assertEquals(2.0, database.getBeersEarned("Ran", "kilometers", 10));
     }
 
     @Test
     public void getTotalBeersEarnedNullTest() {
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(0.0, database.getTotalBeersEarned(), 0);
+        assertEquals(0.0, database.getTotalBeersEarned());
     }
 
     @Test
@@ -349,7 +350,7 @@ public class DatabaseUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITY_LOG_TABLE + " WHERE activity != 0;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(0.0, database.getTotalBeersEarned(), 0);
+        assertEquals(0.0, database.getTotalBeersEarned());
     }
 
     @Test
@@ -359,7 +360,7 @@ public class DatabaseUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITY_LOG_TABLE + " WHERE activity != 0;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(10.0, database.getTotalBeersEarned(), 0);
+        assertEquals(10.0, database.getTotalBeersEarned());
     }
 
     @Test

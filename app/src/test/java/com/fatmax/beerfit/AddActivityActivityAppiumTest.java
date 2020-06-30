@@ -3,8 +3,8 @@ package com.fatmax.beerfit;
 import com.testpros.fast.By;
 import com.testpros.fast.WebElement;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -20,7 +20,7 @@ import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
 
 public class AddActivityActivityAppiumTest extends AppiumTestBase {
 
-    @Before
+    @BeforeEach
     public void navigateToAddActivity() {
         driver.findElement(By.id("earnedABeer")).click();
     }

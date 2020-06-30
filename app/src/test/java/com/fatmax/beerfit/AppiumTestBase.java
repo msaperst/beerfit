@@ -6,11 +6,9 @@ import com.testpros.fast.WebElement;
 import com.testpros.fast.reporter.Step;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestName;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -29,11 +27,8 @@ import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
 
-@RunWith(MyRunner.class)
+//@RunWith(MyRunner.class)
 public class AppiumTestBase {
-
-    @Rule
-    public TestName name = new TestName();
 
     File sqliteDatabase = new File("beerfit");
     File app = new File("build/outputs/apk/debug/app-debug.apk");
@@ -63,7 +58,7 @@ public class AppiumTestBase {
     long waitTime = 5;
     long pollTime = 50;
 
-    @Before
+    @BeforeEach
     public void setupDriver() throws IOException {
         service.start();
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -80,8 +75,8 @@ public class AppiumTestBase {
         wait = new WebDriverWait(driver, waitTime, pollTime);
     }
 
-    @After
-    public void tearDownDriver() throws IOException {
+    @AfterEach
+    public void tearDownDriver(TestInfo testInfo) throws IOException {
         driver.quit();
         service.stop();
         sqliteDatabase.delete();
@@ -103,11 +98,11 @@ public class AppiumTestBase {
             steps.append("<td>").append(step.getTime()).append("</td>");
             steps.append("</tr>");
         }
-        String report = htmlTemplate.replace("$testCaseName", name.getMethodName())
+        String report = htmlTemplate.replace("$testCaseName", testInfo.getDisplayName())
                 .replace("$testCaseStatus", driver.getReporter().getStatus().toString())
                 .replace("$testCaseTime", driver.getReporter().getRunTime() + " ms")
                 .replace("$rows", steps.toString());
-        File reportFile = new File(testResults, name.getMethodName() + ".html");
+        File reportFile = new File(testResults, testInfo.getDisplayName() + ".html");
         FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());
     }
 
@@ -155,7 +150,7 @@ public class AppiumTestBase {
     void assertEquals(Object actual, Object expected, String expectedString, String actualString) {
         Step step = new Step("", expectedString);
         try {
-            org.junit.Assert.assertEquals(expected, actual);
+            org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
             step.setPassed();
         } catch (AssertionError e) {
             step.setFailed();
@@ -174,8 +169,8 @@ public class AppiumTestBase {
 
     void assertElementTextEquals(String expected, By element) {
         String actual = driver.findElement(element).getText();
-        assertEquals(actual, expected, "Expected element '" + element + "' to have text '" + expected + "'",
-                "Element '" + element + "' has text '" + actual + "'");
+        assertEquals(actual, expected, "Expected element '" + element.getBy() + "' to have text '" + expected + "'",
+                "Element '" + element.getBy() + "' has text '" + actual + "'");
     }
 
     void assertElementDisplayed(WebElement element) {
@@ -184,7 +179,7 @@ public class AppiumTestBase {
     }
 
     void assertElementDisplayed(By element) {
-        assertEquals(true, driver.findElement(element).isDisplayed(), "Expected element '" + element + "' to be displayed",
-                "Element '" + element + "' is visible");
+        assertEquals(true, driver.findElement(element).isDisplayed(), "Expected element '" + element.getBy() + "' to be displayed",
+                "Element '" + element.getBy() + "' is visible");
     }
 }

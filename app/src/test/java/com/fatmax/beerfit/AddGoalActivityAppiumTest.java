@@ -4,8 +4,8 @@ import com.fatmax.beerfit.objects.Navigate;
 import com.testpros.fast.By;
 import com.testpros.fast.WebElement;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -16,7 +16,7 @@ import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 
 public class AddGoalActivityAppiumTest extends AppiumTestBase {
 
-    @Before
+    @BeforeEach
     public void navigateToAddActivity() {
         new Navigate(driver).toGoals();
         driver.findElement(By.id("addGoalButton")).click();
@@ -28,12 +28,12 @@ public class AddGoalActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void activityHeaderExists() {
+    public void goalHeaderExists() {
         assertElementTextEquals("To Earn A Beer…", By.id("viewGoalsSubtitle"));
     }
 
     @Test
-    public void activitySubHeaderExists() {
+    public void goalSubHeaderExists() {
         assertElementTextEquals("Select Activity", By.id("goalSelectionHeader"));
     }
 

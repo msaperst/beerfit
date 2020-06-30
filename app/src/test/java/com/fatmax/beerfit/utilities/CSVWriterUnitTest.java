@@ -3,9 +3,9 @@ package com.fatmax.beerfit.utilities;
 import java.nio.charset.StandardCharsets;
 import com.google.common.io.Files;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,18 +18,18 @@ import static com.fatmax.beerfit.utilities.CSVWriter.DEFAULT_QUOTE_CHARACTER;
 import static com.fatmax.beerfit.utilities.CSVWriter.DEFAULT_SEPARATOR;
 import static com.fatmax.beerfit.utilities.CSVWriter.NO_ESCAPE_CHARACTER;
 import static com.fatmax.beerfit.utilities.CSVWriter.NO_QUOTE_CHARACTER;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CSVWriterUnitTest {
 
     File sampleFile = new File("sample.csv");
 
-    @Before
+    @BeforeEach
     public void createFile() throws IOException {
         sampleFile.createNewFile();
     }
 
-    @After
+    @AfterEach
     public void deleteFile() throws IOException {
         sampleFile.delete();
     }

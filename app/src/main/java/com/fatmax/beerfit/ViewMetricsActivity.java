@@ -235,7 +235,11 @@ public class ViewMetricsActivity extends AppCompatActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         TableLayout table = findViewById(R.id.metricsBodyTable);
-        TableRow row = (TableRow) table.getChildAt(0);
-        rowHeight = row.getHeight();
+        if( table.getChildCount() > 0 ) {
+            TableRow row = (TableRow) table.getChildAt(0);
+            rowHeight = row.getHeight();
+        } else {
+            //SOMETHING
+        }
     }
 }
