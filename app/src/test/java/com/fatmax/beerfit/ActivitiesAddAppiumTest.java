@@ -19,7 +19,7 @@ import static com.fatmax.beerfit.AddActivityActivity.TIME_FORMAT;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 
-public class AddActivityActivityAppiumTest extends AppiumTestBase {
+public class ActivitiesAddAppiumTest extends AppiumTestBase {
 
     @Before
     public void navigateToAddActivity() {
@@ -99,7 +99,7 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
         int currentMonth = calendar.get(Calendar.MONTH);
         int currentYear = calendar.get(Calendar.YEAR);
         calendar.add(Calendar.DATE, -1);
-        if( currentMonth != calendar.get(Calendar.MONTH) || currentYear != calendar.get(Calendar.YEAR)) {
+        if (currentMonth != calendar.get(Calendar.MONTH) || currentYear != calendar.get(Calendar.YEAR)) {
             driver.findElement(By.id("android:id/prev")).click();
         }
         driver.findElement(By.AccessibilityId(new SimpleDateFormat("dd MMMM yyyy", Locale.US).format(calendar.getTime()))).click();
@@ -117,12 +117,12 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
     public void accurateTimeSelector() {
         Calendar calendar = Calendar.getInstance();
         driver.findElement(By.id("activityTime")).click();
-        assertElementTextEquals(new SimpleDateFormat("kk", Locale.US).format(calendar.getTime()), By.id("android:id/hours"));
+        assertElementTextEquals(new SimpleDateFormat("h", Locale.US).format(calendar.getTime()), By.id("android:id/hours"));
         assertElementTextEquals(new SimpleDateFormat("mm", Locale.US).format(calendar.getTime()), By.id("android:id/minutes"));
         int ampm = calendar.get(Calendar.AM_PM);
         String amState = driver.findElement(By.id("android:id/am_label")).getAttribute("checked");
         String pmState = driver.findElement(By.id("android:id/pm_label")).getAttribute("checked");
-        if( ampm == Calendar.AM ) {
+        if (ampm == Calendar.AM) {
             assertEquals(amState, "true", "Expected AM to be checked", "AM checked state is " + amState);
             assertEquals(pmState, "false", "Expected PM to not be checked", "PM checked state is " + amState);
         } else {
@@ -197,7 +197,7 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
         int currentMonth = calendar.get(Calendar.MONTH);
         int currentYear = calendar.get(Calendar.YEAR);
         calendar.add(Calendar.DATE, -1);
-        if( currentMonth != calendar.get(Calendar.MONTH) || currentYear != calendar.get(Calendar.YEAR)) {
+        if (currentMonth != calendar.get(Calendar.MONTH) || currentYear != calendar.get(Calendar.YEAR)) {
             driver.findElement(By.id("android:id/prev")).click();
         }
         driver.findElement(By.AccessibilityId(new SimpleDateFormat("dd MMMM yyyy", Locale.US).format(calendar.getTime()))).click();
@@ -235,7 +235,7 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
         int currentMonth = calendar.get(Calendar.MONTH);
         int currentYear = calendar.get(Calendar.YEAR);
         calendar.add(Calendar.DATE, -1);
-        if( currentMonth != calendar.get(Calendar.MONTH) || currentYear != calendar.get(Calendar.YEAR)) {
+        if (currentMonth != calendar.get(Calendar.MONTH) || currentYear != calendar.get(Calendar.YEAR)) {
             driver.findElement(By.id("android:id/prev")).click();
         }
         driver.findElement(By.AccessibilityId(new SimpleDateFormat("dd MMMM yyyy", Locale.US).format(calendar.getTime()))).click();

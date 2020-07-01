@@ -9,10 +9,10 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class GoalsActivityAppiumTest extends AppiumTestBase {
+public class GoalsAppiumTest extends AppiumTestBase {
 
     @Before
-    public void navigateToAddActivity() {
+    public void navigateToGoals() {
         new Navigate(driver).toGoals();
     }
 

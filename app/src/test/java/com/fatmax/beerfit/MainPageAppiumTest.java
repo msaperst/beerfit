@@ -5,7 +5,7 @@ import com.testpros.fast.By;
 
 import org.junit.Test;
 
-public class MainActivityAppiumTest extends AppiumTestBase {
+public class MainPageAppiumTest extends AppiumTestBase {
 
     private final By drankABeer = By.id("drankABeer");
     private final By beersLeft = By.id("beersLeft");

@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class MetricsActivityAppiumTest extends AppiumTestBase {
+public class MetricsAppiumTest extends AppiumTestBase {
 
     @Before
     public void navigateToAddActivity() {

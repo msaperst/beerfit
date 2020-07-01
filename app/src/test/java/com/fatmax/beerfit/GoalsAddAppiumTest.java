@@ -14,10 +14,10 @@ import java.util.List;
 
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 
-public class AddGoalActivityAppiumTest extends AppiumTestBase {
+public class GoalsAddAppiumTest extends AppiumTestBase {
 
     @Before
-    public void navigateToAddActivity() {
+    public void navigateToAddGoals() {
         new Navigate(driver).toGoals();
         driver.findElement(By.id("addGoalButton")).click();
     }

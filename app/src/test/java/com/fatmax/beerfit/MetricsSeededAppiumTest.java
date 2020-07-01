@@ -15,7 +15,7 @@ import io.appium.java_client.touch.offset.PointOption;
 
 import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
 
-public class MetricsSeededActivityAppiumTest extends AppiumTestBase {
+public class MetricsSeededAppiumTest extends AppiumTestBase {
 
     public static final By METRICS_BODY_TABLE = By.id("metricsBodyTable");
     public static final By TABLE_ROW = By.className("android.widget.TableRow");
@@ -160,7 +160,7 @@ public class MetricsSeededActivityAppiumTest extends AppiumTestBase {
         driver.findElement(METRICS_BODY_TABLE).findElements(TABLE_ROW).get(0).click();
         driver.findElement(METRICS_BODY_TABLE).findElements(TABLE_ROW).get(0).click();
         TouchAction action = new TouchAction((AndroidDriver) driver.getDriver());
-        action.press(PointOption.point(100,220)).moveTo(PointOption.point(100,0)).release().perform();
+        action.press(PointOption.point(100, 220)).moveTo(PointOption.point(100, 0)).release().perform();
         List<WebElement> tableRows = driver.findElement(METRICS_BODY_TABLE).findElements(TABLE_ROW);
         assertEquals(tableRows.size(), 24, "Expected to find '24' data rows", "Actually found '" + tableRows.size() + "'");
         assertElementTextEquals("Friday, January 3 2020 (0 drank / 1 earned beers)", tableRows.get(18).findElement(TEXT_VIEW));
@@ -192,7 +192,7 @@ public class MetricsSeededActivityAppiumTest extends AppiumTestBase {
         driver.findElement(METRICS_BODY_TABLE).findElements(TABLE_ROW).get(0).click();
         driver.findElement(METRICS_BODY_TABLE).findElements(TABLE_ROW).get(0).click();
         TouchAction action = new TouchAction((AndroidDriver) driver.getDriver());
-        action.press(PointOption.point(100,220)).moveTo(PointOption.point(100,0)).release().perform();
+        action.press(PointOption.point(100, 220)).moveTo(PointOption.point(100, 0)).release().perform();
         List<WebElement> tableRows = driver.findElement(METRICS_BODY_TABLE).findElements(TABLE_ROW);
         assertElementTextEquals(WALKED_FOR_5_KILOMETERS, tableRows.get(19).findElement(TEXT_VIEW));
         assertElementTextEquals(WALKED_FOR_5_KILOMETERS, tableRows.get(21).findElement(TEXT_VIEW));
