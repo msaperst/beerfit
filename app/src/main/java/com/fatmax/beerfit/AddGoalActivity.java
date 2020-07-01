@@ -71,7 +71,7 @@ public class AddGoalActivity extends AppCompatActivity {
             TextView errorText = (TextView) activity.getSelectedView();
             errorText.setError("");
             errorText.setTextColor(Color.RED);
-            errorText.setText("You need to indicate some activity");
+            errorText.setText(R.string.indicate_activity);
             isFilledOut = false;
         }
         if ("".equals(units.getSelectedItem().toString())) {
@@ -80,7 +80,7 @@ public class AddGoalActivity extends AppCompatActivity {
             isFilledOut = false;
         }
         if ("".equals(duration.getText().toString())) {
-            duration.setError("You need to indicate some duration of your activity");
+            duration.setError(getString(R.string.indicate_duration));
             isFilledOut = false;
         }
         if (!isFilledOut) {
