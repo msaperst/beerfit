@@ -17,6 +17,7 @@ import java.util.Locale;
 import static com.fatmax.beerfit.AddActivityActivity.DATE_FORMAT;
 import static com.fatmax.beerfit.AddActivityActivity.TIME_FORMAT;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 
 public class AddActivityActivityAppiumTest extends AppiumTestBase {
 
@@ -26,7 +27,7 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void titleExists() {
+    public void activityTitleExists() {
         assertElementTextEquals("Add An Activity", By.className("android.widget.TextView"));
     }
 
@@ -41,7 +42,7 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void durationHeaderExists() {
+    public void activityDurationHeaderExists() {
         assertElementTextEquals("Enter Duration", By.id("activityDurationHeader"));
     }
 
@@ -84,10 +85,23 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
+    public void accurateDateSelector() {
+        Calendar calendar = Calendar.getInstance();
+        driver.findElement(By.id("activityDate")).click();
+        assertElementTextEquals(new SimpleDateFormat("yyyy", Locale.US).format(calendar.getTime()), By.id("android:id/date_picker_header_year"));
+        assertElementTextEquals(new SimpleDateFormat("EEE, MMM d", Locale.US).format(calendar.getTime()), By.id("android:id/date_picker_header_date"));
+    }
+
+    @Test
     public void canChangeDate() {
         driver.findElement(By.id("activityDate")).click();
         Calendar calendar = Calendar.getInstance();
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentYear = calendar.get(Calendar.YEAR);
         calendar.add(Calendar.DATE, -1);
+        if( currentMonth != calendar.get(Calendar.MONTH) || currentYear != calendar.get(Calendar.YEAR)) {
+            driver.findElement(By.id("android:id/prev")).click();
+        }
         driver.findElement(By.AccessibilityId(new SimpleDateFormat("dd MMMM yyyy", Locale.US).format(calendar.getTime()))).click();
         driver.findElement(By.id("android:id/button1")).click();
         assertElementTextEquals(DATE_FORMAT.format(calendar.getTime()), By.id("activityDate"));
@@ -97,6 +111,24 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
     public void currentTimeDisplayed() {
         Calendar calendar = Calendar.getInstance();
         assertElementTextEquals(TIME_FORMAT.format(calendar.getTime()), By.id("activityTime"));
+    }
+
+    @Test
+    public void accurateTimeSelector() {
+        Calendar calendar = Calendar.getInstance();
+        driver.findElement(By.id("activityTime")).click();
+        assertElementTextEquals(new SimpleDateFormat("kk", Locale.US).format(calendar.getTime()), By.id("android:id/hours"));
+        assertElementTextEquals(new SimpleDateFormat("mm", Locale.US).format(calendar.getTime()), By.id("android:id/minutes"));
+        int ampm = calendar.get(Calendar.AM_PM);
+        String amState = driver.findElement(By.id("android:id/am_label")).getAttribute("checked");
+        String pmState = driver.findElement(By.id("android:id/pm_label")).getAttribute("checked");
+        if( ampm == Calendar.AM ) {
+            assertEquals(amState, "true", "Expected AM to be checked", "AM checked state is " + amState);
+            assertEquals(pmState, "false", "Expected PM to not be checked", "PM checked state is " + amState);
+        } else {
+            assertEquals(amState, "false", "Expected AM to not be checked", "AM checked state is " + amState);
+            assertEquals(pmState, "true", "Expected PM to be checked", "PM checked state is " + amState);
+        }
     }
 
     @Test
@@ -120,7 +152,7 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void allDurationsExist() {
+    public void allActivityDurationsExist() {
         driver.findElement(By.id("activityDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         assertEquals(durationList.size(), 3, "Expected to find '3' durations", "Actually found '" + durationList.size() + "' durations");
@@ -130,7 +162,7 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void defaultSubmissionPossible() throws IOException, ClassNotFoundException, SQLException {
+    public void defaultActivitySubmissionPossible() throws IOException, ClassNotFoundException, SQLException {
         driver.findElement(By.id("activitySelection")).click();
         Calendar calendar = Calendar.getInstance();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
@@ -151,6 +183,7 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
 
     @Test
     public void newDateSubmissionPossibleAM() throws IOException, SQLException, ClassNotFoundException {
+        modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,5);");
         driver.findElement(By.id("activitySelection")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(1).click();
@@ -161,7 +194,12 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
         //set the date
         driver.findElement(By.id("activityDate")).click();
         Calendar calendar = Calendar.getInstance();
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentYear = calendar.get(Calendar.YEAR);
         calendar.add(Calendar.DATE, -1);
+        if( currentMonth != calendar.get(Calendar.MONTH) || currentYear != calendar.get(Calendar.YEAR)) {
+            driver.findElement(By.id("android:id/prev")).click();
+        }
         driver.findElement(By.AccessibilityId(new SimpleDateFormat("dd MMMM yyyy", Locale.US).format(calendar.getTime()))).click();
         driver.findElement(By.id("android:id/button1")).click();
         //set the time
@@ -178,13 +216,12 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
         String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(calendar.getTime()) + " 01:30";
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";");
         resultSet.next();
-        assertActivityLog(resultSet, 1, dateTime, 1, 2, 10, 0);
-
-        // TODO - add a goal to this so that beer isn't empty
+        assertActivityLog(resultSet, 1, dateTime, 1, 2, 10, 2);
     }
 
     @Test
     public void newDateSubmissionPossiblePM() throws IOException, SQLException, ClassNotFoundException {
+        modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,1);");
         driver.findElement(By.id("activitySelection")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(1).click();
@@ -195,7 +232,12 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
         //set the date
         driver.findElement(By.id("activityDate")).click();
         Calendar calendar = Calendar.getInstance();
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentYear = calendar.get(Calendar.YEAR);
         calendar.add(Calendar.DATE, -1);
+        if( currentMonth != calendar.get(Calendar.MONTH) || currentYear != calendar.get(Calendar.YEAR)) {
+            driver.findElement(By.id("android:id/prev")).click();
+        }
         driver.findElement(By.AccessibilityId(new SimpleDateFormat("dd MMMM yyyy", Locale.US).format(calendar.getTime()))).click();
         driver.findElement(By.id("android:id/button1")).click();
         //set the time
@@ -212,8 +254,6 @@ public class AddActivityActivityAppiumTest extends AppiumTestBase {
         String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(calendar.getTime()) + " 13:30";
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";");
         resultSet.next();
-        assertActivityLog(resultSet, 1, dateTime, 1, 2, 10, 0);
-
-        // TODO - add a goal to this so that beer isn't empty
+        assertActivityLog(resultSet, 1, dateTime, 1, 2, 10, 10);
     }
 }

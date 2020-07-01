@@ -12,7 +12,7 @@ public class MainActivityAppiumTest extends AppiumTestBase {
 
 
     @Test
-    public void titleExists() {
+    public void mainTitleExists() {
         assertElementTextEquals("BeerFit", By.className("android.widget.TextView"));
     }
 

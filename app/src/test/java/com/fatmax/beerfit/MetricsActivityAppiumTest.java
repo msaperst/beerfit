@@ -17,7 +17,7 @@ public class MetricsActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void titleExists() {
+    public void metricsTitleExists() {
         assertElementTextEquals("BeerFit Metrics", By.className("android.widget.TextView"));
     }
 

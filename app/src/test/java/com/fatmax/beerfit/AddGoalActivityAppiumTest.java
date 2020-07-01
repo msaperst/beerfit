@@ -23,7 +23,7 @@ public class AddGoalActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void titleExists() {
+    public void goalTitleExists() {
         assertElementTextEquals("Add A Goal", By.className("android.widget.TextView"));
     }
 
@@ -38,7 +38,7 @@ public class AddGoalActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void durationHeaderExists() {
+    public void goalDurationHeaderExists() {
         assertElementTextEquals("Enter Duration", By.id("goalDurationHeader"));
     }
 
@@ -54,7 +54,7 @@ public class AddGoalActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void addEmptyActivity() {
+    public void addEmptyGoal() {
         driver.findElement(By.id("submitGoal")).click();
         assertElementTextEquals("You need to indicate some activity", driver.findElement(By.id("goalSelection")).findElement(By.className("android.widget.TextView")));
         assertElementTextEquals("", By.id("goalDurationInput"));
@@ -62,7 +62,7 @@ public class AddGoalActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void allActivitiesExist() {
+    public void allGoalActivitiesExist() {
         driver.findElement(By.id("goalSelection")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         assertEquals(activityList.size(), 6, "Expected to find '6' activities", "Actually found '" + activityList.size() + "' activities");
@@ -75,7 +75,7 @@ public class AddGoalActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void allDurationsExist() {
+    public void allGoalDurationsExist() {
         driver.findElement(By.id("goalDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         assertEquals(durationList.size(), 3, "Expected to find '3' durations", "Actually found '" + durationList.size() + "' durations");
@@ -85,7 +85,7 @@ public class AddGoalActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void defaultSubmissionPossible() throws IOException, ClassNotFoundException, SQLException {
+    public void defaultGoalSubmissionPossible() throws IOException, ClassNotFoundException, SQLException {
         driver.findElement(By.id("goalSelection")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(1).click();

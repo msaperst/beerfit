@@ -17,7 +17,7 @@ public class GoalsActivityAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void titleExists() {
+    public void goalsTitleExists() {
         assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
     }
 

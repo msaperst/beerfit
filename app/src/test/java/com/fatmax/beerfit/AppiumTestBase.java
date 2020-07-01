@@ -3,6 +3,7 @@ package com.fatmax.beerfit;
 import com.testpros.fast.AndroidDriver;
 import com.testpros.fast.By;
 import com.testpros.fast.WebElement;
+import com.testpros.fast.reporter.Reporter;
 import com.testpros.fast.reporter.Step;
 import com.testpros.fast.reporter.Step.Status;
 
@@ -12,7 +13,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.junit.runner.RunWith;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -20,16 +20,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import io.appium.java_client.remote.MobileCapabilityType;
@@ -47,20 +45,25 @@ public class AppiumTestBase {
     static File testResults = new File("build/reports/tests");
     String beerfitDatabase = "/data/data/com.fatmax.beerfit/databases/beerfit";
 
-    final static String testCaseTemplate = "";
-    final static String testResultTemplate = "";
+    final static String testCaseTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/feature/appiumTests/app/src/test/resources/testCaseTemplate.html";
+    final static String testResultTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/feature/appiumTests/app/src/test/resources/testResultTemplate.html";
     static Status overallStatus = Status.PASS;
-    static List<String> testsExecuted = new ArrayList<>();
+    static long startTime = new Date().getTime();
+    static Map<String, Reporter> testsExecuted = new HashMap<>();
 
     AndroidDriver driver;
-    AppiumDriverLocalService service = AppiumDriverLocalService.buildService(
-            new AppiumServiceBuilder().usingAnyFreePort().withArgument(GeneralServerFlag.RELAXED_SECURITY));
+    AppiumDriverLocalService service;
     WebDriverWait wait;
     long waitTime = 5;
     long pollTime = 50;
 
     @Before
     public void setupDriver() throws IOException {
+        service = AppiumDriverLocalService.buildService(
+                new AppiumServiceBuilder().usingAnyFreePort()
+                        .withArgument(GeneralServerFlag.RELAXED_SECURITY)
+                        .withLogFile(new File(testResults, name.getMethodName() + ".appium.log"))
+                        .withArgument(GeneralServerFlag.LOG_LEVEL, "error:debug"));
         service.start();
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
@@ -82,14 +85,14 @@ public class AppiumTestBase {
         service.stop();
         sqliteDatabase.delete();
         // add to overall status
-        if( testsExecuted.contains(name.getMethodName())) {
-            System.out.println( "WARNING, this test case name already exists!");
+        if (testsExecuted.containsKey(name.getMethodName())) {
+            System.out.println("WARNING, test case name '" + name.getMethodName() + "' a duplicate! This will mess up your reports");
         }
-        testsExecuted.add(name.getMethodName());
+        testsExecuted.put(name.getMethodName(), driver.getReporter());
         Status testStatus = driver.getReporter().getStatus();
-        if( testStatus == Status.CHECK && overallStatus != Status.FAIL) {
+        if (testStatus == Status.CHECK && overallStatus != Status.FAIL) {
             overallStatus = Status.CHECK;
-        } else if ( testStatus == Status.FAIL ) {
+        } else if (testStatus == Status.FAIL) {
             overallStatus = Status.FAIL;
         }
         // write out my report
@@ -114,30 +117,59 @@ public class AppiumTestBase {
                 .replace("$testCaseStatus", testStatus.toString())
                 .replace("$testCaseTime", driver.getReporter().getRunTime() + " ms")
                 .replace("$rows", steps.toString());
-        File reportFile = new File(testResults, name.getMethodName() + ".html");
+        File reportFile = new File(testResults, name.getMethodName() + ".webdriver.html");
         FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());
     }
 
     @AfterClass
     public static void allDone() throws IOException {
-        System.out.println( "============================" + overallStatus + "============================" );
-//        String report = getContent(new URL(testResultTemplate)).replace("$testSuiteName", "Test Suite")
-//                .replace("$overallResult", overallStatus.toString())
-//                .replace("$totalTests", String.valueOf(result.getRunCount()))
-//                .replace("$testsPassed", String.valueOf(result.getRunCount() - result.getFailureCount() - result.getIgnoreCount()))
-//                .replace("$testFailed", String.valueOf(result.getFailureCount()))
-//                .replace("$testsIgnored", String.valueOf(result.getIgnoreCount()))
-//                .replace("$totalTime", String.valueOf(result.getRunTime()) + " ms")
-//                .replace("$testResults", "")
-//                .replaceAll("\\$(.*?)Status", "PASS");
-//        File reportFile = new File(testResults, "index.html");
-//        FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());
+        StringBuilder testCaseList = new StringBuilder();
+        int passed = 0;
+        int failed = 0;
+        int checked = 0;
+        int ignored = 0;    // TODO - need to add capability
+        for (Map.Entry<String, Reporter> testCase : testsExecuted.entrySet()) {
+            Status status = testCase.getValue().getStatus();
+            switch (status) {
+                case PASS:
+                    passed++;
+                    break;
+                case FAIL:
+                    failed++;
+                    break;
+                case CHECK:
+                    checked++;
+                    break;
+                default:
+                    ignored++;
+            }
+            testCaseList.append("<tr class='").append(status.toString()).append("'>");
+            testCaseList.append("<td>").append(testCase.getKey()).append("</td>");
+            testCaseList.append("<td>").append(status.toString()).append("</td>");
+            testCaseList.append("<td>").append(testCase.getValue().getRunTime()).append(" ms</td>");
+            testCaseList.append("<td>");
+            testCaseList.append("<a href='").append(testCase.getKey()).append(".webdriver.html'>WebDriver</a> ");
+            testCaseList.append("<a href='").append(testCase.getKey()).append(".appium.log'>Appium</a>");
+            testCaseList.append("</td>");
+            testCaseList.append("</tr>");
+        }
+        String report = getContent(new URL(testResultTemplate)).replace("$testSuiteName", "Test Suite")
+                .replace("$overallResult", overallStatus.toString())
+                .replace("$totalTests", String.valueOf(testsExecuted.size()))
+                .replace("$testsPassed", String.valueOf(passed))
+                .replace("$testFailed", String.valueOf(failed))
+                .replace("$testChecked", String.valueOf(checked))
+                .replace("$testsIgnored", String.valueOf(ignored))
+                .replace("$totalTime", new Date().getTime() - startTime + " ms")
+                .replace("$testResults", testCaseList.toString());
+        File reportFile = new File(testResults, "index.html");
+        FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());
     }
 
     private static String getContent(URL url) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
-            for (String line; (line = reader.readLine()) != null;) {
+            for (String line; (line = reader.readLine()) != null; ) {
                 stringBuilder.append(line);
             }
         }
