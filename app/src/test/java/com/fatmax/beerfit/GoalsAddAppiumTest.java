@@ -49,7 +49,7 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
 
     @Test
     public void backGoesToGoals() {
-        driver.findElement(By.AccessibilityId("Navigate up")).click();
+        new Navigate(driver).goBack();
         assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
     }
 
@@ -85,7 +85,7 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void defaultGoalSubmissionPossible() throws IOException, ClassNotFoundException, SQLException {
+    public void addingGoalGoesToGoalsPage() {
         driver.findElement(By.id("goalSelection")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(1).click();
@@ -96,11 +96,18 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("submitGoal")).click();
         // verify we're back on main page
         assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
-        List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
-        assertEquals(tableRows.size(), 1, "Expected to find '1' goals", "Actually found '" + tableRows.size() + "'");
-        assertElementTextEquals("Walk for 10 kilometers", tableRows.get(0).findElement(By.className("android.widget.TextView")));
-        assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Edit Activity")));
-        assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Delete Activity")));
+    }
+
+    @Test
+    public void defaultGoalSubmissionPossible() throws IOException, ClassNotFoundException, SQLException {
+        driver.findElement(By.id("goalSelection")).click();
+        List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        activityList.get(1).click();
+        driver.findElement(By.id("goalDurationInput")).sendKeys("10");
+        driver.findElement(By.id("goalDurationUnits")).click();
+        List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        durationList.get(2).click();
+        driver.findElement(By.id("submitGoal")).click();
         //verify the data is in there
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
         resultSet.next();

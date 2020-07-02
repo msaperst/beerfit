@@ -7,13 +7,14 @@ import com.testpros.fast.WebElement;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
-import static com.fatmax.beerfit.MetricsSeededAppiumTest.LIFTED_FOR_30_MINUTES;
-import static com.fatmax.beerfit.MetricsSeededAppiumTest.RAN_FOR_5_KILOMETERS;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
 
-public class ActivitiesEditAppiumTest extends AppiumTestBase {
+public class ActivitiesEditActivityAppiumTest extends AppiumTestBase {
 
     @Before
     public void seedAndNavigateToActivities() {
@@ -22,24 +23,13 @@ public class ActivitiesEditAppiumTest extends AppiumTestBase {
         driver.findElement(By.AccessibilityId("Edit Activity")).click();
     }
 
-    private WebElement getFirstActivityTime(List<WebElement> tableRows) {
-        List<WebElement> textViews = tableRows.get(0).findElements(By.className("android.widget.TextView"));
-        return textViews.get(0);
-    }
-
-    private WebElement getFirstActivityActivity(List<WebElement> tableRows) {
-        List<WebElement> textViews = tableRows.get(0).findElements(By.className("android.widget.TextView"));
-        return textViews.get(1);
-    }
-
     @Test
-    public void editActivityGoBack() {
-        driver.findElement(By.AccessibilityId("Navigate up")).click();
+    public void editActivityGoBack() throws SQLException, IOException, ClassNotFoundException {
+        new Navigate(driver).goBack();
         //verify the activity is not changed
-        new Navigate(driver).toActivities();
-        List<WebElement> tableRows = driver.findElement(By.id("activityBodyTable")).findElements(By.className("android.widget.TableRow"));
-        assertElementTextEquals("Sat, Feb 15 2020, 23:59", getFirstActivityTime(tableRows));
-        assertElementTextEquals(RAN_FOR_5_KILOMETERS, getFirstActivityActivity(tableRows));
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '15';");
+        resultSet.next();
+        assertActivityLog(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 1);
     }
 
     @Test
@@ -85,17 +75,24 @@ public class ActivitiesEditAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void editGoalNoChanges() {
+    public void editActivityGoesToActivityPage() {
         driver.findElement(By.id("submitActivity")).click();
-        //verify the goal is not changed
-        new Navigate(driver).toActivities();
-        List<WebElement> tableRows = driver.findElement(By.id("activityBodyTable")).findElements(By.className("android.widget.TableRow"));
-        assertElementTextEquals("Sat, Feb 15 2020, 23:59", getFirstActivityTime(tableRows));
-        assertElementTextEquals(RAN_FOR_5_KILOMETERS, getFirstActivityActivity(tableRows));
+        // verify we're back on view activities page
+        assertElementTextEquals("BeerFit Activities", By.className("android.widget.TextView"));
     }
 
     @Test
-    public void editGoalChange() {
+    public void editActivityNoChanges() throws SQLException, IOException, ClassNotFoundException {
+        driver.findElement(By.id("submitActivity")).click();
+        //verify the activity is not changed
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '15';");
+        resultSet.next();
+        // beer changes to none, as no activities are set
+        assertActivityLog(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 0);
+    }
+
+    @Test
+    public void editActivityChange() throws SQLException, IOException, ClassNotFoundException {
         driver.findElement(By.id("activitySelection")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(4).click();
@@ -116,12 +113,10 @@ public class ActivitiesEditAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("android:id/button1")).click();
         // submit it
         driver.findElement(By.id("submitActivity")).click();
-        //verify the goal is changed
-        new Navigate(driver).toActivities();
-        List<WebElement> tableRows = driver.findElement(By.id("activityBodyTable")).findElements(By.className("android.widget.TableRow"));
-        assertElementTextEquals("Sun, Feb 16 2020, 13:30", getFirstActivityTime(tableRows));
-        assertElementTextEquals(LIFTED_FOR_30_MINUTES, getFirstActivityActivity(tableRows));
+        //verify the activity is changed
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '15';");
+        resultSet.next();
+        // beer changes to none, as no activities are set
+        assertActivityLog(resultSet, 15, "2020-02-16 13:30", 4, 1, 30, 0);
     }
-
-    //TODO - edit beer page
 }

@@ -7,6 +7,9 @@ import com.testpros.fast.WebElement;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import io.appium.java_client.TouchAction;
@@ -110,22 +113,21 @@ public class ActivitiesSeededAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void dontDeleteActivity() {
+    public void dontDeleteActivity() throws SQLException, IOException, ClassNotFoundException {
         driver.findElement(By.AccessibilityId("Delete Activity")).click();
         driver.findElement(By.id("android:id/button2")).click();
         //verify the activity is still there
-        List<WebElement> tableRows = driver.findElement(By.id("activityBodyTable")).findElements(By.className("android.widget.TableRow"));
-        assertElementTextEquals("Sat, Feb 15 2020, 23:59", getTime(tableRows, 0));
-        assertElementTextEquals(RAN_FOR_5_KILOMETERS, getActivity(tableRows, 0));
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '15';");
+        resultSet.next();
+        assertActivityLog(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 1);
     }
 
     @Test
-    public void deleteActivity() {
+    public void deleteActivity() throws SQLException, IOException, ClassNotFoundException {
         driver.findElement(By.AccessibilityId("Delete Activity")).click();
         driver.findElement(By.id("android:id/button1")).click();
         //verify the activity is gone
-        List<WebElement> tableRows = driver.findElement(By.id("activityBodyTable")).findElements(By.className("android.widget.TableRow"));
-        assertElementTextEquals("Fri, Feb 14 2020, 13:00", getTime(tableRows, 0));
-        assertElementTextEquals(WALKED_FOR_5_KILOMETERS, getActivity(tableRows, 0));
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '15';");
+        assertEquals(false, resultSet.next(), "Expected no results", "");
     }
 }

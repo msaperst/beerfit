@@ -143,8 +143,9 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         new Navigate(driver).export();
         byte[] activityLog = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/ActivityLog.csv");
         assertEquals(new String(activityLog), "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n" +
-                        "\"1\",\"" + date + "\",\"0\",\"0\",\"1\",\"-1\"\n",
-                "Expected Base ActivityLog Table", "Got: <br/>\n" + new String(activityLog));
+                "\"1\",\"" + date + "\",\"0\",\"0\",\"1\",\"-1\"\n", "Expected Base ActivityLog Table: <br/>\n" +
+                "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n" +
+                "\"1\",\"" + date + "\",\"0\",\"0\",\"1\",\"-1\"\n", "Got: <br/>\n" + new String(activityLog));
     }
 
     @Test
@@ -214,9 +215,6 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";");
         resultSet.next();
         assertActivityLog(resultSet, 1, "2020-04-10 12:46:00", 2, 2, 10, 2);
-        // TODO - there is a bug, want this to be redrawn (no page switching needed)
         assertElementTextEquals("2", By.id("beersLeft"));
     }
-
-    //TODO - consider doing the verification through DB calls, as UI shouldn't be needed
 }

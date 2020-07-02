@@ -7,6 +7,9 @@ import com.testpros.fast.WebElement;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
@@ -30,31 +33,40 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void dontDeleteGoal() {
+    public void dontDeleteGoal() throws SQLException, IOException, ClassNotFoundException {
         driver.findElement(By.AccessibilityId("Delete Activity")).click();
         driver.findElement(By.id("android:id/button2")).click();
         //verify the goal is still there
-        List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
-        assertEquals(tableRows.size(), 1, "Expected to find '1' goals", "Actually found '" + tableRows.size() + "'");
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
+        resultSet.next();
+        assertGoals(resultSet, 1, 1, 2, 5);
     }
 
     @Test
-    public void deleteGoal() {
+    public void deleteGoal() throws SQLException, IOException, ClassNotFoundException {
         driver.findElement(By.AccessibilityId("Delete Activity")).click();
         driver.findElement(By.id("android:id/button1")).click();
         //verify the goal is gone
-        List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
-        assertEquals(tableRows.size(), 0, "Expected to find '0' goals", "Actually found '" + tableRows.size() + "'");
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
+        assertEquals(false, resultSet.next(), "Expected no results", "");
     }
 
     @Test
-    public void editGoalGoBack() {
+    public void editGoalGoesToGoalPage() {
         driver.findElement(By.AccessibilityId("Edit Activity")).click();
-        driver.findElement(By.AccessibilityId("Navigate up")).click();
+        driver.findElement(By.id("submitGoal")).click();
+        // verify we're back on view activities page
+        assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
+    }
+
+    @Test
+    public void editGoalGoBack() throws SQLException, IOException, ClassNotFoundException {
+        driver.findElement(By.AccessibilityId("Edit Activity")).click();
+        new Navigate(driver).goBack();
         //verify the goal is not changed
-        List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
-        assertEquals(tableRows.size(), 1, "Expected to find '1' goals", "Actually found '" + tableRows.size() + "'");
-        assertElementTextEquals("Walk for 5 kilometers", tableRows.get(0).findElement(By.className("android.widget.TextView")));
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
+        resultSet.next();
+        assertGoals(resultSet, 1, 1, 2, 5);
     }
 
     @Test
@@ -78,17 +90,17 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void editGoalNoChanges() {
+    public void editGoalNoChanges() throws SQLException, IOException, ClassNotFoundException {
         driver.findElement(By.AccessibilityId("Edit Activity")).click();
         driver.findElement(By.id("submitGoal")).click();
         //verify the goal is not changed
-        List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
-        assertEquals(tableRows.size(), 1, "Expected to find '1' goals", "Actually found '" + tableRows.size() + "'");
-        assertElementTextEquals("Walk for 5 kilometers", tableRows.get(0).findElement(By.className("android.widget.TextView")));
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
+        resultSet.next();
+        assertGoals(resultSet, 1, 1, 2, 5);
     }
 
     @Test
-    public void editGoalChange() {
+    public void editGoalChange() throws SQLException, IOException, ClassNotFoundException {
         driver.findElement(By.AccessibilityId("Edit Activity")).click();
         driver.findElement(By.id("goalSelection")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
@@ -100,8 +112,8 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         durationList.get(1).click();
         driver.findElement(By.id("submitGoal")).click();
         //verify the goal is changed
-        List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
-        assertEquals(tableRows.size(), 1, "Expected to find '1' goals", "Actually found '" + tableRows.size() + "'");
-        assertElementTextEquals("Run for 30 minutes", tableRows.get(0).findElement(By.className("android.widget.TextView")));
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
+        resultSet.next();
+        assertGoals(resultSet, 1, 2, 1, 30);
     }
 }

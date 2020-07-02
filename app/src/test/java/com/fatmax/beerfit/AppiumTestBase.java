@@ -1,27 +1,28 @@
 package com.fatmax.beerfit;
 
+import com.fatmax.beerfit.objects.Report;
 import com.testpros.fast.AndroidDriver;
 import com.testpros.fast.By;
 import com.testpros.fast.WebElement;
+import com.testpros.fast.reporter.FailedStepException;
 import com.testpros.fast.reporter.Reporter;
 import com.testpros.fast.reporter.Step;
-import com.testpros.fast.reporter.Step.Status;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.AssumptionViolatedException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -35,21 +36,55 @@ import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
 
+import static com.fatmax.beerfit.objects.Report.convertStackTrace;
+import static com.fatmax.beerfit.objects.Report.testResults;
+
 public class AppiumTestBase {
 
     @Rule
     public TestName name = new TestName();
 
+    @Rule(order = Integer.MIN_VALUE)
+    public TestWatcher watchman = new TestWatcher() {
+        @Override
+        protected void failed(Throwable e, Description description) {
+            //if you failed, and the reporter didn't catch it, get the failure, and stuff it into the report
+            if (!(e instanceof FailedStepException)) {
+                Step step = new Step("", "Didn't expected any errors to be thrown, however, one was.");
+                step.setFailed(e.getClass() + ": " + e.getMessage() + "<br/>\n" + convertStackTrace(e));
+                driver.getReporter().addStep(step);
+            }
+        }
+
+        @Override
+        protected void skipped(AssumptionViolatedException e, Description description) {
+            //TODO - deal with you later
+        }
+
+        @Override
+        protected void finished(Description description) {
+            driver.quit();
+            service.stop();
+            sqliteDatabase.delete();
+
+            Report.addTestCase(testsExecuted, driver, name.getMethodName());
+            overallStatus = Report.updateOverallStatus(overallStatus, driver);
+            try {
+                Report.writeTestReport(driver, name.getMethodName());
+            } catch (IOException e) {
+                log.error("Unable to create test report");
+            }
+        }
+    };
+
+    private static final Logger log = LoggerFactory.getLogger(AppiumTestBase.class);
     File sqliteDatabase = new File("beerfit");
     File app = new File("build/outputs/apk/debug/app-debug.apk");
-    static File testResults = new File("build/reports/tests");
     String beerfitDatabase = "/data/data/com.fatmax.beerfit/databases/beerfit";
 
-    final static String testCaseTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/feature/appiumTests/app/src/test/resources/testCaseTemplate.html";
-    final static String testResultTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/feature/appiumTests/app/src/test/resources/testResultTemplate.html";
-    static Status overallStatus = Status.PASS;
-    static long startTime = new Date().getTime();
     static Map<String, Reporter> testsExecuted = new HashMap<>();
+    static Step.Status overallStatus = Step.Status.PASS;
+    static long startTime = new Date().getTime();
 
     AndroidDriver driver;
     AppiumDriverLocalService service;
@@ -79,101 +114,9 @@ public class AppiumTestBase {
         wait = new WebDriverWait(driver, waitTime, pollTime);
     }
 
-    @After
-    public void tearDownDriver() throws IOException {
-        driver.quit();
-        service.stop();
-        sqliteDatabase.delete();
-        // add to overall status
-        if (testsExecuted.containsKey(name.getMethodName())) {
-            System.out.println("WARNING, test case name '" + name.getMethodName() + "' a duplicate! This will mess up your reports");
-        }
-        testsExecuted.put(name.getMethodName(), driver.getReporter());
-        Status testStatus = driver.getReporter().getStatus();
-        if (testStatus == Status.CHECK && overallStatus != Status.FAIL) {
-            overallStatus = Status.CHECK;
-        } else if (testStatus == Status.FAIL) {
-            overallStatus = Status.FAIL;
-        }
-        // write out my report
-        StringBuilder steps = new StringBuilder();
-        for (Step step : driver.getReporter().getSteps()) {
-            steps.append("<tr>");
-            steps.append("<td>").append(step.getNumber()).append("</td>");
-            steps.append("<td>").append(step.getAction()).append("</td>");
-            steps.append("<td>").append(step.getExpected()).append("</td>");
-            steps.append("<td>").append(step.getActual()).append("</td>");
-            if (step.getScreenshot() != null) {
-                //TODO - toggle images
-                steps.append("<td>").append("<img height='200' src='data:image/png;base64,").append(step.getScreenshot()).append("'/>").append("</td>");
-            } else {
-                steps.append("<td></td>");
-            }
-            steps.append("<td class='").append(step.getStatus()).append("'>").append(step.getStatus()).append("</td>");
-            steps.append("<td>").append(step.getTime()).append("</td>");
-            steps.append("</tr>");
-        }
-        String report = getContent(new URL(testCaseTemplate)).replace("$testCaseName", name.getMethodName())
-                .replace("$testCaseStatus", testStatus.toString())
-                .replace("$testCaseTime", driver.getReporter().getRunTime() + " ms")
-                .replace("$rows", steps.toString());
-        File reportFile = new File(testResults, name.getMethodName() + ".webdriver.html");
-        FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());
-    }
-
     @AfterClass
     public static void allDone() throws IOException {
-        StringBuilder testCaseList = new StringBuilder();
-        int passed = 0;
-        int failed = 0;
-        int checked = 0;
-        int ignored = 0;    // TODO - need to add capability
-        for (Map.Entry<String, Reporter> testCase : testsExecuted.entrySet()) {
-            Status status = testCase.getValue().getStatus();
-            switch (status) {
-                case PASS:
-                    passed++;
-                    break;
-                case FAIL:
-                    failed++;
-                    break;
-                case CHECK:
-                    checked++;
-                    break;
-                default:
-                    ignored++;
-            }
-            testCaseList.append("<tr class='").append(status.toString()).append("'>");
-            testCaseList.append("<td>").append(testCase.getKey()).append("</td>");
-            testCaseList.append("<td>").append(status.toString()).append("</td>");
-            testCaseList.append("<td>").append(testCase.getValue().getRunTime()).append(" ms</td>");
-            testCaseList.append("<td>");
-            testCaseList.append("<a href='").append(testCase.getKey()).append(".webdriver.html'>WebDriver</a> ");
-            testCaseList.append("<a href='").append(testCase.getKey()).append(".appium.log'>Appium</a>");
-            testCaseList.append("</td>");
-            testCaseList.append("</tr>");
-        }
-        String report = getContent(new URL(testResultTemplate)).replace("$testSuiteName", "Test Suite")
-                .replace("$overallResult", overallStatus.toString())
-                .replace("$totalTests", String.valueOf(testsExecuted.size()))
-                .replace("$testsPassed", String.valueOf(passed))
-                .replace("$testFailed", String.valueOf(failed))
-                .replace("$testChecked", String.valueOf(checked))
-                .replace("$testsIgnored", String.valueOf(ignored))
-                .replace("$totalTime", new Date().getTime() - startTime + " ms")
-                .replace("$testResults", testCaseList.toString());
-        File reportFile = new File(testResults, "index.html");
-        FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());
-    }
-
-    private static String getContent(URL url) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
-            for (String line; (line = reader.readLine()) != null; ) {
-                stringBuilder.append(line);
-            }
-        }
-        return stringBuilder.toString();
+        Report.writeOverallReport(testsExecuted, overallStatus, startTime);
     }
 
     void modifyDB(String statement) {

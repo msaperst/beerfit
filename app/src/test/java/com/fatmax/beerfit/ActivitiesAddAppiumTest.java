@@ -1,5 +1,6 @@
 package com.fatmax.beerfit;
 
+import com.fatmax.beerfit.objects.Navigate;
 import com.testpros.fast.By;
 import com.testpros.fast.WebElement;
 
@@ -27,7 +28,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void activityTitleExists() {
+    public void addActivityTitleExists() {
         assertElementTextEquals("Add An Activity", By.className("android.widget.TextView"));
     }
 
@@ -53,7 +54,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
 
     @Test
     public void backGoesToMain() {
-        driver.findElement(By.AccessibilityId("Navigate up")).click();
+        new Navigate(driver).goBack();
         assertElementTextEquals("BeerFit", By.className("android.widget.TextView"));
     }
 
@@ -162,6 +163,20 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
     }
 
     @Test
+    public void addingActivityGoesToMainPage() {
+        driver.findElement(By.id("activitySelection")).click();
+        List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        activityList.get(1).click();
+        driver.findElement(By.id("activityDurationInput")).sendKeys("10");
+        driver.findElement(By.id("activityDurationUnits")).click();
+        List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        durationList.get(2).click();
+        driver.findElement(By.id("submitActivity")).click();
+        // verify we're back on main page
+        assertElementTextEquals("BeerFit", By.className("android.widget.TextView"));
+    }
+
+    @Test
     public void defaultActivitySubmissionPossible() throws IOException, ClassNotFoundException, SQLException {
         driver.findElement(By.id("activitySelection")).click();
         Calendar calendar = Calendar.getInstance();
@@ -172,8 +187,6 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(2).click();
         driver.findElement(By.id("submitActivity")).click();
-        // verify we're back on main page
-        assertElementTextEquals("BeerFit", By.className("android.widget.TextView"));
         //verify the data is in there
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";");
@@ -210,8 +223,6 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("android:id/button1")).click();
         // submit it
         driver.findElement(By.id("submitActivity")).click();
-        // verify we're back on main page
-        assertElementTextEquals("BeerFit", By.className("android.widget.TextView"));
         //verify the data is in there
         String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(calendar.getTime()) + " 01:30";
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";");
@@ -248,8 +259,6 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("android:id/button1")).click();
         // submit it
         driver.findElement(By.id("submitActivity")).click();
-        // verify we're back on main page
-        assertElementTextEquals("BeerFit", By.className("android.widget.TextView"));
         //verify the data is in there
         String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(calendar.getTime()) + " 13:30";
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";");
