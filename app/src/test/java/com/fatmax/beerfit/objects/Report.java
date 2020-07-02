@@ -1,6 +1,5 @@
 package com.fatmax.beerfit.objects;
 
-import com.fatmax.beerfit.AppiumTestBase;
 import com.testpros.fast.WebDriver;
 import com.testpros.fast.reporter.Reporter;
 import com.testpros.fast.reporter.Step;
