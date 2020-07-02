@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -23,7 +24,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.ImportExport;
-import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,9 +40,7 @@ public class MainActivity extends AppCompatActivity {
         return displayMetrics.widthPixels;
     }
 
-    private DrawerLayout dl;
     private ActionBarDrawerToggle t;
-    private NavigationView nv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         database.setupDatabase();
 
         // setup our nav menu
-        dl = (DrawerLayout) findViewById(R.id.activity_main);
+        DrawerLayout dl = findViewById(R.id.activity_main);
         t = new ActionBarDrawerToggle(this, dl, R.string.Open, R.string.Close);
         dl.addDrawerListener(t);
         t.syncState();
@@ -85,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 // save off the menu, so we can use it once permissions granted
                 this.storedMenu = item;
                 //get required permissions
-                ActivityCompat.requestPermissions((Activity) this, PERMISSIONS, REQUEST);
+                ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST);
                 return false;
             } else {
                 return doImportExport(item);
@@ -139,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
      * Specifically, adds a beer drank to the beer log, and then
      * recalculates how many beers are remaining
      *
-     * @param view
+     * @param view the view to be used
      */
     public void drinkBeer(View view) {
         database.logBeer();
@@ -149,6 +147,11 @@ public class MainActivity extends AppCompatActivity {
     public void addActivity(View view) {
         Intent intent = new Intent(this, AddActivityActivity.class);
         startActivity(intent);
+    }
+
+    public void viewSite(View view) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://beerfit.app"));
+        startActivity(browserIntent);
     }
 
     public void viewActivities(MenuItem menuItem) {
