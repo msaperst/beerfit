@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>
+        .title { background:lightgrey; }
+        .PASS { background:darkseagreen; }
+        .FAIL { background:lightcoral; }
+        table { border:2px solid darkgrey; border-collapse:collapse; }
+        td,th { border:1px solid grey; padding:10px; }
+    </style>
+    <title>$testSuiteName Overall Results</title>
+</head>
+<body>
+<h1>$testSuiteName Overall Results</h1>
+<table>
+    <tr class='title'>
+        <th>Total Tests Run</th>
+        <th>Passed</th>
+        <th>Failed</th>
+        <th>To Check</th>
+        <th>Ignored</th>
+        <th>Total Time</th>
+    </tr>
+    <tr class='$overallResult'>
+        <td>$totalTests</td>
+        <td>$testsPassed</td>
+        <td>$testFailed</td>
+        <td>$testChecked</td>
+        <td>$testsIgnored</td>
+        <td>$totalTime</td>
+    </tr>
+</table>
+<h2>Individual Test Results</h2>
+<table>
+    <tr class='title'>
+        <th>Test Name</th>
+        <th>Status</th>
+        <th>Run Time</th>
+        <th>Reports</th>
+    </tr>
+    $testResults
+</table>
+</body>
+</html>

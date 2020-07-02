@@ -39,7 +39,7 @@ public class AddActivityActivity extends AppCompatActivity {
 
     Calendar cal;
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-    static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm", Locale.US);
+    public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class AddActivityActivity extends AppCompatActivity {
             String dateTime = cursor.getString(1);
 
             cal.set(Calendar.YEAR, Integer.parseInt(dateTime.split(" ")[0].split("-")[0]));
-            cal.set(Calendar.MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[1]));
+            cal.set(Calendar.MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[1])-1);  //subtracting one as that's how months are counted
             cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[2]));
             cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(dateTime.split(" ")[1].split(":")[0]));
             cal.set(Calendar.MINUTE, Integer.parseInt(dateTime.split(" ")[1].split(":")[1]));
@@ -85,19 +85,19 @@ public class AddActivityActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.activityDurationInput)).setText(cursor.getString(4));
             ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(cursor.getInt(3));
 
-            ((TextView) findViewById(R.id.activityDateTimeHeader)).setText("Update Time");
+            ((TextView) findViewById(R.id.activityDateTimeHeader)).setText(R.string.update_time);
 
             //if beer activity
             if (cursor.getInt(2) == 0) {
-                ((TextView) findViewById(R.id.activitySelectionHeader)).setText("Activity");
-                ((TextView) findViewById(R.id.activityDurationHeader)).setText("Enter Amount");
+                ((TextView) findViewById(R.id.activitySelectionHeader)).setText(R.string.activity);
+                ((TextView) findViewById(R.id.activityDurationHeader)).setText(R.string.enter_amount);
                 ((EditText) findViewById(R.id.activityDurationInput)).setInputType(InputType.TYPE_CLASS_NUMBER);
                 //fix our activity
                 Spinner activitySpinner = findViewById(R.id.activitySelection);
                 ViewGroup.LayoutParams activityLayoutParams = activitySpinner.getLayoutParams();
                 TextView activity = new TextView(this);
                 activity.setId(activitySpinner.getId());
-                activity.setText("Drank Beer");
+                activity.setText(R.string.drank_beer);
                 activity.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 activity.setLayoutParams(activityLayoutParams);
                 ViewGroup rootLayout = (ViewGroup) activitySpinner.getParent();
@@ -108,7 +108,7 @@ public class AddActivityActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams unitLayoutParams = unitSpinner.getLayoutParams();
                 TextView unit = new TextView(this);
                 unit.setId(unitSpinner.getId());
-                unit.setText("beers");
+                unit.setText(R.string.beers);
                 unit.setLayoutParams(unitLayoutParams);
                 rootLayout.removeView(findViewById(R.id.activityDurationUnits));
                 rootLayout.addView(unit);
@@ -171,7 +171,7 @@ public class AddActivityActivity extends AppCompatActivity {
                 TextView errorText = (TextView) activity.getSelectedView();
                 errorText.setError("");
                 errorText.setTextColor(Color.RED);
-                errorText.setText("You need to indicate some activity");
+                errorText.setText(R.string.indicate_activity);
                 isFilledOut = false;
             }
             units = findViewById(R.id.activityDurationUnits);
@@ -182,7 +182,7 @@ public class AddActivityActivity extends AppCompatActivity {
             }
         }
         if ("".equals(duration.getText().toString())) {
-            duration.setError("You need to indicate some duration of your activity");
+            duration.setError(getString(R.string.indicate_duration));
             isFilledOut = false;
         }
         if (!isFilledOut) {

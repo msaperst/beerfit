@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ImportExport {
 
-    File exportDir = new File(Environment.getExternalStorageDirectory(), "Beerfit");
+    File exportDir = new File(Environment.getExternalStorageDirectory(), "BeerFit");
     Context context;
     private SQLiteDatabase sqLiteDatabase;
 

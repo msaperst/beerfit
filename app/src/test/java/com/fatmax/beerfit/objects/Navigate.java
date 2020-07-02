@@ -16,7 +16,12 @@ public class Navigate {
 
     private List<WebElement> getMainMenu() {
         driver.findElement(By.AccessibilityId("Open")).click();
+        driver.waitForElementPresent(By.className("android.widget.CheckedTextView"));
         return driver.findElements(By.className("android.widget.CheckedTextView"));
+    }
+
+    public void goBack() {
+        driver.findElement(By.AccessibilityId("Navigate up")).click();
     }
 
     public void toActivities() {
@@ -41,7 +46,7 @@ public class Navigate {
         driver.findElement(By.AccessibilityId("More options")).click();
         List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
         menuOptions.get(0).click();
-        if(driver.isElementPresent(By.id("com.android.permissioncontroller:id/permission_allow_button"))) {
+        if (driver.isElementPresent(By.id("com.android.permissioncontroller:id/permission_allow_button"))) {
             driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
         }
     }
@@ -50,7 +55,7 @@ public class Navigate {
         driver.findElement(By.AccessibilityId("More options")).click();
         List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
         menuOptions.get(1).click();
-        if(driver.isElementPresent(By.id("com.android.permissioncontroller:id/permission_allow_button"))) {
+        if (driver.isElementPresent(By.id("com.android.permissioncontroller:id/permission_allow_button"))) {
             driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
         }
     }

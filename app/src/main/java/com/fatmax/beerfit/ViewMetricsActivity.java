@@ -7,11 +7,12 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Data;
+import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Metric;
 import com.fatmax.beerfit.utilities.TableBuilder;
 import com.jjoe64.graphview.GraphView;
@@ -20,6 +21,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -65,6 +67,13 @@ public class ViewMetricsActivity extends AppCompatActivity {
         // draw the data
         createDataTable(null, metric);
         createDataGraph(null, metric);
+        // if no data
+        TableLayout table = findViewById(R.id.metricsBodyTable);
+        if (table.getChildCount() == 0) {
+            TextView text = tableBuilder.createHeaderView("No Data Present");
+            TableRow row = tableBuilder.createTableRow(Arrays.asList(text));
+            table.addView(row);
+        }
     }
 
     void createDataTable(String tag, Metric metric) {
