@@ -24,8 +24,8 @@ public class Report {
 
     private static final Logger log = LoggerFactory.getLogger(Report.class);
 
-    final static String testCaseTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/feature/appiumTests/app/src/test/resources/testCaseTemplate.html";
-    final static String testResultTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/feature/appiumTests/app/src/test/resources/testResultTemplate.html";
+    final static String testCaseTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/master/app/src/test/resources/testCaseTemplate.html";
+    final static String testResultTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/master/app/src/test/resources/testResultTemplate.html";
     public final static File testResults = new File("build/reports/tests");
 
     public static void addTestCase(Map<String, Reporter> testsExecuted, WebDriver driver, String methodName) {
