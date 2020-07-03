@@ -2,8 +2,11 @@ package com.fatmax.beerfit;
 
 import com.fatmax.beerfit.objects.Navigate;
 import com.testpros.fast.By;
+import com.testpros.fast.WebElement;
 
 import org.junit.Test;
+
+import java.util.List;
 
 public class MainPageAppiumTest extends AppiumTestBase {
 
@@ -39,6 +42,25 @@ public class MainPageAppiumTest extends AppiumTestBase {
     public void earnBeer() {
         driver.findElement(By.id("earnedABeer")).click();
         assertElementTextEquals("Add An Activity", By.className("android.widget.TextView"));
+    }
+
+    @Test
+    public void checkMainMenu() {
+        driver.findElement(By.AccessibilityId("Open")).click();
+        assertElementDisplayed(By.id("nav_header_image"));
+        assertElementTextEquals("BeerFit", By.id("nav_header_title"));
+        // menu items
+        List<WebElement> menuList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        assertEquals(menuList.size(), 3, "Expected to find '3' menu items", "Actually found '" + menuList.size() + "' items");
+        assertElementTextEquals("Activities", menuList.get(0));
+        assertElementTextEquals("Goals", menuList.get(1));
+        assertElementTextEquals("Metrics", menuList.get(2));
+    }
+
+    @Test
+    public void viewSite() {
+        new Navigate(driver).toSite();
+        assertElementTextEquals("https://beerfit.app", By.className("android.widget.EditText"));
     }
 
     @Test

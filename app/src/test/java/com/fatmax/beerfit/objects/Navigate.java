@@ -6,6 +6,8 @@ import com.testpros.fast.WebElement;
 
 import java.util.List;
 
+import static org.junit.Assert.fail;
+
 public class Navigate {
 
     private final WebDriver driver;
@@ -34,6 +36,11 @@ public class Navigate {
 
     public void toMetrics() {
         getMainMenu().get(2).click();
+    }
+
+    public void toSite() {
+        driver.findElement(By.AccessibilityId("Open")).click();
+        driver.findElement(By.id("nav_header_image")).click();
     }
 
     public void clickOnExport() {
