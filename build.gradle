@@ -14,7 +14,7 @@ buildscript {
     ext.minSdkVersion = 26
     ext.targetSdkVersion = 28
     ext.versionCode = 1
-    ext.versionName = '1.0-SNAPSHOT'
+    ext.versionName = '1.0.0'
 }
 
 allprojects {
