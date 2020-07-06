@@ -35,7 +35,7 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         assertElementTextEquals("Run for 5 kilometers", tableRows.get(0).findElement(By.className("android.widget.TextView")));
         // log our activity
         navigate.goBack();
-        assertElementTextEquals("0", BEERS_LEFT);
+        assertElementTextEquals("0 Beers Left", BEERS_LEFT);
         Calendar cal = Calendar.getInstance();
         driver.findElement(By.id("earnedABeer")).click();
         driver.findElement(By.id("activitySelection")).click();
@@ -48,11 +48,11 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         durationList.get(2).click();
         driver.findElement(By.id("submitActivity")).click();
         //verify the run counted for beers
-        assertElementTextEquals("2", BEERS_LEFT);
+        assertElementTextEquals("2 Beers Left", BEERS_LEFT);
         // drink our beer
         driver.findElement(By.id("drankABeer")).click();
         //verify we drank the beer
-        assertElementTextEquals("1", BEERS_LEFT);
+        assertElementTextEquals("1 Beer Left", BEERS_LEFT);
         // TODO - verify activities list
         // TODO - verify metrics list
 

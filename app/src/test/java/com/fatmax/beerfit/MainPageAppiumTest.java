@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+
 public class MainPageAppiumTest extends AppiumTestBase {
 
     private final By drankABeer = By.id("drankABeer");
@@ -21,13 +23,13 @@ public class MainPageAppiumTest extends AppiumTestBase {
 
     @Test
     public void freshStartBeers() {
-        assertElementTextEquals("0", beersLeft);
+        assertElementTextEquals("0 Beers Left", beersLeft);
     }
 
     @Test
     public void drinkABeer() {
         driver.findElement(drankABeer).click();
-        assertElementTextEquals("-1", beersLeft);
+        assertElementTextEquals("-1 Beers Left", beersLeft);
     }
 
     @Test
@@ -35,7 +37,23 @@ public class MainPageAppiumTest extends AppiumTestBase {
         driver.findElement(drankABeer).click();
         driver.findElement(drankABeer).click();
         driver.findElement(drankABeer).click();
-        assertElementTextEquals("-3", beersLeft);
+        assertElementTextEquals("-3 Beers Left", beersLeft);
+    }
+
+    @Test
+    public void oneBeerIsSingular() {
+        //kludge to have it redraw
+        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,2);");
+        driver.findElement(drankABeer).click();
+        assertElementTextEquals("1 Beer Left", beersLeft);
+    }
+
+    @Test
+    public void twoBeersArePlural() {
+        //kludge to have it redraw
+        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,3);");
+        driver.findElement(drankABeer).click();
+        assertElementTextEquals("2 Beers Left", beersLeft);
     }
 
     @Test

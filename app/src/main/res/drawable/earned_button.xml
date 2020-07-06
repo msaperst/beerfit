@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape android:shape="rectangle" android:padding="10dp">
+            <!-- you can use any color you want I used here gray color-->
+            <solid android:color="@color/colorPrimaryDark"/>
+            <corners android:radius="10dp"/>
+        </shape>
+    </item>
+    <item
+        android:drawable="@drawable/run_guy"
+        android:top="25dp"
+        android:left="25dp"
+        android:right="25dp"
+        android:width="100dp"
+        android:height="100dp"/>
+</layer-list>

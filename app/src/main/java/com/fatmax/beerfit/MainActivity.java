@@ -12,7 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase sqLiteDatabase;
     Database database;
     TextView beerCounter;
-    ImageButton drankBeer;
+    Button drankBeer;
     private MenuItem storedMenu;
 
     public static int getScreenWidth(Context context) {
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 return doImportExport(item);
             }
         }
-        if(t.onOptionsItemSelected(item)) {
+        if (t.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -129,7 +129,12 @@ public class MainActivity extends AppCompatActivity {
      * Then subtracts all beers drank from the drank log.
      */
     void setBeersRemaining() {
-        beerCounter.setText(String.valueOf(database.getBeersRemaining()));
+        int beersLeft = database.getBeersRemaining();
+        if ( beersLeft == 1 ) {
+            beerCounter.setText(getString(R.string.one_beer_left));
+        } else {
+            beerCounter.setText(getString(R.string.beers_left, beersLeft));
+        }
     }
 
     /**

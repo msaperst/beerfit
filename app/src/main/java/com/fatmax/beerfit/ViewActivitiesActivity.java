@@ -59,7 +59,7 @@ public class ViewActivitiesActivity extends AppCompatActivity {
             if (cursor.getString(2) == null) {
                 activity = tableBuilder.createTextView("Drank " + cursor.getInt(3) + " beer");
                 if (cursor.getInt(3) > 1) {
-                    activity.setText(activity.getText() + "s");
+                    activity.setText(getString(R.string.plural, activity.getText()));
                 }
             } else {
                 activity = tableBuilder.createTextView(cursor.getString(2) + " for " + cursor.getDouble(3) + " " + cursor.getString(4));
