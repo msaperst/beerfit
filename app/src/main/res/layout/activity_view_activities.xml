@@ -13,35 +13,9 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <TableLayout
-            android:id="@+id/activityHeaderTable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TableRow style="@style/HeaderRow">
-
-                <TextView
-                    android:id="@+id/viewActivitiesTimeHeader"
-                    style="@style/HeaderText"
-                    android:text="@string/time" />
-
-                <TextView
-                    android:id="@+id/viewActivitiesActivityHeader"
-                    style="@style/HeaderText"
-                    android:layout_width="match_parent"
-                    android:text="@string/activity"
-                    app:layout_constraintHorizontal_bias="0.75" />
-            </TableRow>
-        </TableLayout>
-
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <TableLayout
                 android:id="@+id/activityBodyTable"

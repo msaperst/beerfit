@@ -71,7 +71,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
         TableLayout table = findViewById(R.id.metricsBodyTable);
         if (table.getChildCount() == 0) {
             TextView text = tableBuilder.createHeaderView("No Data Present");
-            TableRow row = tableBuilder.createTableRow(Arrays.asList(text));
+            TableRow row = tableBuilder.createTableRow(Collections.singletonList(text));
             table.addView(row);
         }
     }

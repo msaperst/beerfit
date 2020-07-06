@@ -13,84 +13,52 @@
         android:id="@+id/main_content">
 
         <TextView
-            android:id="@+id/beersLeftHeader"
+            android:id="@+id/beersLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/beers_remaining"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/beersLeft"
+            android:layout_marginTop="15dp"
+            android:shadowColor="@color/colorAccent"
+            android:text="@string/beers_left"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/drankABeer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/beersLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@+id/drankABeerHeader"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/beersLeftHeader" />
-
-        <TextView
-            android:id="@+id/earnedABeerHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <Button
+            android:id="@+id/earnedABeer"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            android:background="@drawable/earned_button"
+            android:gravity="center|bottom"
+            android:onClick="addActivity"
+            android:paddingBottom="10dp"
             android:text="@string/earned_a_beer"
             android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/earnedABeer"
-            app:layout_constraintEnd_toStartOf="@+id/drankABeerHeader"
-            app:layout_constraintHorizontal_bias="0.25"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/beersLeft" />
-
-        <TextView
-            android:id="@+id/drankABeerHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/drank_a_beer"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/drankABeer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.75"
-            app:layout_constraintStart_toEndOf="@+id/earnedABeerHeader"
-            app:layout_constraintTop_toBottomOf="@+id/beersLeft" />
-
-        <ImageButton
-            android:id="@+id/earnedABeer"
-            android:layout_width="100dp"
-            android:layout_height="200dp"
-            android:layout_marginBottom="76dp"
-            android:background="@null"
-            android:contentDescription="@string/exercised"
-            android:onClick="addActivity"
-            android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/drankABeer"
             app:layout_constraintHorizontal_bias="0.25"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/earnedABeerHeader"
-            app:srcCompat="@drawable/exercise" />
+            app:layout_constraintTop_toBottomOf="@+id/beersLeft" />
 
-        <ImageButton
+        <Button
             android:id="@+id/drankABeer"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="200dp"
-            android:layout_marginBottom="76dp"
-            android:background="@null"
-            android:contentDescription="@string/drank"
+            android:background="@drawable/beer_button"
+            android:gravity="center|bottom"
             android:onClick="drinkBeer"
-            android:scaleType="centerInside"
+            android:paddingBottom="10dp"
+            android:text="@string/drank_a_beer"
+            android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.75"
             app:layout_constraintStart_toEndOf="@+id/earnedABeer"
-            app:layout_constraintTop_toBottomOf="@+id/drankABeerHeader"
-            app:srcCompat="@drawable/beer" />
+            app:layout_constraintTop_toBottomOf="@+id/beersLeft" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

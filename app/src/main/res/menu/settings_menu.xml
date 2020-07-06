@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/exportData"
-        android:title="Export Data" />
+        android:title="@string/export_data" />
     <item
         android:id="@+id/importData"
-        android:title="Import Data" />
+        android:title="@string/import_data" />
 </menu>

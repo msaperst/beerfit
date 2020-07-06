@@ -3,6 +3,7 @@
     <string name="add_an_activity">Add An Activity</string>
     <string name="edit_your_activity">Edit Your Activity</string>
     <string name="select_activity">Select Activity</string>
+    <string name="activity">Activity</string>
     <string name="select_time">Select Time</string>
     <string name="enter_duration">Enter Duration</string>
     <string name="add_activity">Add Activity</string>
@@ -12,19 +13,12 @@
     <string name="to_earn_a_beer">To Earn A Beer…</string>
     <string name="add_goal">Add Goal</string>
     <string name="update_goal">Update Goal</string>
-    <string name="welcome_to_beerfit">Welcome to BeerFit</string>
-    <string name="beers_remaining">Beers Remaining</string>
+    <string name="one_beer_left">1 Beer Left</string>
+    <string name="beers_left">%1$d Beers Left</string>
     <string name="earned_a_beer">Earned A Beer</string>
     <string name="drank_a_beer">Drank A Beer</string>
-    <string name="exercised">Exercised</string>
-    <string name="drank">Drank</string>
-    <string name="view_activities">View Activities</string>
-    <string name="view_metrics">View Metrics</string>
-    <string name="view_goals">View Goals</string>
     <string name="beerfit_activities">BeerFit Activities</string>
     <string name="beerfit_metrics">BeerFit Metrics</string>
-    <string name="time">Time</string>
-    <string name="activity">Activity</string>
     <string name="beerfit_goals">BeerFit Goals</string>
     <string name="activities">Activities</string>
     <string name="goals">Goals</string>
@@ -37,4 +31,7 @@
     <string name="beers">beers</string>
     <string name="indicate_activity">You need to indicate some activity</string>
     <string name="indicate_duration">"You need to indicate some duration of your activity"</string>
+    <string name="export_data">Export Data</string>
+    <string name="import_data">Import Data</string>
+    <string name="plural">%1$ss</string>
 </resources>

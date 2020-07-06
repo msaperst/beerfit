@@ -22,17 +22,6 @@ public class ActivitiesAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void activityHeaderTableExists() {
-        assertElementDisplayed(By.id("activityHeaderTable"));
-    }
-
-    @Test
-    public void activityHeaderTableAccurate() {
-        assertElementTextEquals("Time", By.id("viewActivitiesTimeHeader"));
-        assertElementTextEquals("Activity", By.id("viewActivitiesActivityHeader"));
-    }
-
-    @Test
     public void activityActivityTableExists() {
         assertElementDisplayed(By.id("activityBodyTable"));
     }
