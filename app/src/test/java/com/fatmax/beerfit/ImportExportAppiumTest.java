@@ -215,6 +215,6 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";");
         resultSet.next();
         assertActivityLog(resultSet, 1, "2020-04-10 12:46:00", 2, 2, 10, 2);
-        assertElementTextEquals("2", By.id("beersLeft"));
+        assertElementTextEquals("2 Beers Left", By.id("beersLeft"));
     }
 }
