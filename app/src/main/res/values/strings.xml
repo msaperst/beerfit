@@ -34,4 +34,24 @@
     <string name="export_data">Export Data</string>
     <string name="import_data">Import Data</string>
     <string name="plural">%1$ss</string>
+    <string name="edit_activities">Edit Activities</string>
+    <string name="edit_activity">Edit Activity</string>
+    <string name="delete_activity">Delete Activity</string>
+    <string name="modify_activity">Select Activity To Modify</string>
+    <string name="add_new">Add New</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="activity_description">Activity Description (Run)</string>
+    <string name="past_tense_activity_description">Past Tense Activity Description (Ran)</string>
+    <string name="metrics_color">Activity Color</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="choose">Choose</string>
+    <string name="choose_color">Choose Color</string>
+    <string name="duplicate_activity_color">Another Activity Already Has This Color</string>
+    <string name="duplicate_activity_description">This Activity Description Already Exists!</string>
+    <string name="past_activity_required">Past Tense Activity Description is Required!</string>
+    <string name="activity_required">Activity Description is Required!</string>
+    <string name="confirm_activity_delete">Do you really want to delete the activity \'%1$s\'?</string>
+    <string name="unable_to_delete_activity">Unable to delete this activity, as you have goals and/or activities utilizing this activity!</string>
 </resources>

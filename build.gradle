@@ -13,14 +13,15 @@ buildscript {
     ext.buildToolsVersion = '29.0.2'
     ext.minSdkVersion = 26
     ext.targetSdkVersion = 28
-    ext.versionCode = 1
-    ext.versionName = '1.0-SNAPSHOT'
+    ext.versionCode = 2
+    ext.versionName = '1.1-SNAPSHOT'
 }
 
 allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "https://jitpack.io" }
     }
 }
 

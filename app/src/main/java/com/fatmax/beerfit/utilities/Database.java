@@ -15,9 +15,9 @@ public class Database {
     public static final String GOALS_TABLE = "Goals";
     public static final String ACTIVITY_LOG_TABLE = "ActivityLog";
     private static final String CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ";
-    private static final String INSERT_INTO = "INSERT INTO ";
+    static final String INSERT_INTO = "INSERT INTO ";
     private static final String VALUES = " VALUES(";
-    private static final String WHERE_ID = " WHERE id = '";
+    static final String WHERE_ID = " WHERE id = '";
     private SQLiteDatabase database;
 
     public Database(SQLiteDatabase database) {

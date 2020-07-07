@@ -626,12 +626,12 @@ public class DatabaseInstrumentedTest {
         wipeOutDB();
     }
 
-    private void wipeOutDB() {
+    static void wipeOutDB() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
     }
 
-    private SQLiteDatabase getDB() {
+    static SQLiteDatabase getDB() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
             @Override
