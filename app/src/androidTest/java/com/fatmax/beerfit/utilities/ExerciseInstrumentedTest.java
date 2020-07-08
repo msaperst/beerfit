@@ -7,7 +7,7 @@ import android.graphics.Color;
 import org.junit.After;
 import org.junit.Test;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.getDB;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.wipeOutDB;
 import static org.junit.Assert.assertEquals;
@@ -15,63 +15,64 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class ActivityInstrumentedTest {
+public class ExerciseInstrumentedTest {
+
     @After
     public void cleanupDB() {
         wipeOutDB();
     }
 
     @Test
-    public void activityExistsTest() {
+    public void exerciseExistsTest() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db, "Walk");
-        assertEquals(1, activity.getId());
-        assertEquals("Walk", activity.getCurrent());
-        assertEquals("Walked", activity.getPast());
-        assertEquals(Color.GREEN, activity.getColor());
+        Exercise exercise = new Exercise(db, "Walk");
+        assertEquals(1, exercise.getId());
+        assertEquals("Walk", exercise.getCurrent());
+        assertEquals("Walked", exercise.getPast());
+        assertEquals(Color.GREEN, exercise.getColor());
     }
 
     @Test
-    public void activityNotExistsTest() {
+    public void exerciseNotExistsTest() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db, "walk");
-        assertEquals(0, activity.getId());
-        assertNull(activity.getCurrent());
-        assertNull(activity.getPast());
+        Exercise exercise = new Exercise(db, "walk");
+        assertEquals(0, exercise.getId());
+        assertNull(exercise.getCurrent());
+        assertNull(exercise.getPast());
         // not checking color, as it's random
     }
 
     @Test
-    public void existingActivityUnique() {
+    public void existingExerciseUnique() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db, "Walk");
-        assertTrue(activity.isActivityUnique());
+        Exercise exercise = new Exercise(db, "Walk");
+        assertTrue(exercise.isCurrentUnique());
     }
 
     @Test
-    public void newActivityUnique() {
+    public void newExerciseUnique() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db);
-        activity.setCurrent("Wulk");
-        assertTrue(activity.isActivityUnique());
+        Exercise exercise = new Exercise(db);
+        exercise.setCurrent("Wulk");
+        assertTrue(exercise.isCurrentUnique());
     }
 
     @Test
-    public void newActivityNotUnique() {
+    public void newExerciseNotUnique() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db);
-        activity.setCurrent("Walk");
-        assertFalse(activity.isActivityUnique());
+        Exercise exercise = new Exercise(db);
+        exercise.setCurrent("Walk");
+        assertFalse(exercise.isCurrentUnique());
     }
 
     @Test
@@ -79,8 +80,8 @@ public class ActivityInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db, "Walk");
-        assertTrue(activity.isColorUnique());
+        Exercise exercise = new Exercise(db, "Walk");
+        assertTrue(exercise.isColorUnique());
     }
 
     @Test
@@ -88,9 +89,9 @@ public class ActivityInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db);
-        activity.setColor(1234);
-        assertTrue(activity.isColorUnique());
+        Exercise exercise = new Exercise(db);
+        exercise.setColor(1234);
+        assertTrue(exercise.isColorUnique());
     }
 
     @Test
@@ -98,20 +99,20 @@ public class ActivityInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db);
-        activity.setColor(Color.GREEN);
-        assertFalse(activity.isColorUnique());
+        Exercise exercise = new Exercise(db);
+        exercise.setColor(Color.GREEN);
+        assertFalse(exercise.isColorUnique());
     }
 
     @Test
-    public void saveExistingActivity() {
+    public void saveExistingExercise() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db, "Walk");
-        activity.setColor(Color.BLACK);
-        activity.saveActivity();
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + ";", null);
+        Exercise exercise = new Exercise(db, "Walk");
+        exercise.setColor(Color.BLACK);
+        exercise.save();
+        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE + ";", null);
         assertEquals(5, res.getCount());
         res.moveToFirst();
         assertEquals(1, res.getInt(0));
@@ -121,16 +122,16 @@ public class ActivityInstrumentedTest {
     }
 
     @Test
-    public void saveNewActivity() {
+    public void saveNewExercise() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db);
-        activity.setCurrent("Wulk");
-        activity.setPast("Wulked");
-        activity.setColor(Color.BLACK);
-        activity.saveActivity();
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + ";", null);
+        Exercise exercise = new Exercise(db);
+        exercise.setCurrent("Wulk");
+        exercise.setPast("Wulked");
+        exercise.setColor(Color.BLACK);
+        exercise.save();
+        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE + ";", null);
         assertEquals(6, res.getCount());
         res.moveToLast();
         assertEquals(6, res.getInt(0));
@@ -140,58 +141,58 @@ public class ActivityInstrumentedTest {
     }
 
     @Test
-    public void safeToDeleteExistingActivity() {
+    public void safeToDeleteExistingExercise() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db, "Walk");
-        assertTrue(activity.safeToDelete());
+        Exercise exercise = new Exercise(db, "Walk");
+        assertTrue(exercise.safeToDelete());
     }
 
     @Test
-    public void safeToDeleteNonExistingActivity() {
+    public void safeToDeleteNonExistingExercise() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db);
-        activity.setCurrent("Wulk");
-        activity.setPast("Wulked");
-        activity.setColor(Color.BLACK);
-        assertTrue(activity.safeToDelete());
+        Exercise exercise = new Exercise(db);
+        exercise.setCurrent("Wulk");
+        exercise.setPast("Wulked");
+        exercise.setColor(Color.BLACK);
+        assertTrue(exercise.safeToDelete());
     }
 
     @Test
-    public void notSafeToDeleteExistingActivity() {
+    public void notSafeToDeleteExistingExercise() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
         database.logActivity("2020-01-01 00:00", "Walked", "kilometers", 5);
-        Activity activity = new Activity(db, "Walk");
-        assertFalse(activity.safeToDelete());
+        Exercise exercise = new Exercise(db, "Walk");
+        assertFalse(exercise.safeToDelete());
     }
 
     @Test
-    public void deleteActivity() {
+    public void deleteExercise() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Activity activity = new Activity(db, "Walk");
-        activity.deleteActivity();
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + ";", null);
+        Exercise exercise = new Exercise(db, "Walk");
+        exercise.delete();
+        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE + ";", null);
         assertEquals(4, res.getCount());
         res.moveToFirst();
         assertEquals(2, res.getInt(0));
     }
 
     @Test
-    public void unableToDeleteActivity() {
+    public void unableToDeleteExercise() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
         database.logActivity("2020-01-01 00:00", "Walked", "kilometers", 5);
-        Activity activity = new Activity(db, "Walk");
-        activity.deleteActivity();
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + ";", null);
+        Exercise exercise = new Exercise(db, "Walk");
+        exercise.delete();
+        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE + ";", null);
         assertEquals(5, res.getCount());
         res.moveToFirst();
         assertEquals(1, res.getInt(0));

@@ -1,6 +1,6 @@
 package com.fatmax.beerfit;
 
-public class GoalsModifyActivityAppiumTest {
+public class ExerciseModifyAppiumTest {
     /* TODO
     Menu exists and is accurate
     Edit Activities menu has proper title

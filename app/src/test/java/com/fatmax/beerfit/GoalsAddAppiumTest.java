@@ -56,7 +56,7 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
     @Test
     public void addEmptyGoal() {
         driver.findElement(By.id("submitGoal")).click();
-        assertElementTextEquals("You need to indicate some activity", driver.findElement(By.id("goalSelection")).findElement(By.className("android.widget.TextView")));
+        assertElementTextEquals("You need to indicate some exercise", driver.findElement(By.id("goalSelection")).findElement(By.className("android.widget.TextView")));
         assertElementTextEquals("", By.id("goalDurationInput"));
         assertElementTextEquals("", driver.findElement(By.id("goalDurationUnits")).findElement(By.className("android.widget.TextView")));
     }

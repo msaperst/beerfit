@@ -6,13 +6,13 @@ import android.graphics.Color;
 
 import java.util.Random;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.Database.INSERT_INTO;
 import static com.fatmax.beerfit.utilities.Database.WHERE_ID;
 
-public class Activity {
+public class Exercise {
     private final SQLiteDatabase sqLiteDatabase;
     private Random rnd = new Random();
     private int id = 0;
@@ -20,9 +20,9 @@ public class Activity {
     private String current = null;
     private int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 
-    public Activity(SQLiteDatabase sqLiteDatabase, String current) {
+    public Exercise(SQLiteDatabase sqLiteDatabase, String current) {
         this.sqLiteDatabase = sqLiteDatabase;
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE current = '" + current + "';", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = '" + current + "';", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -35,7 +35,7 @@ public class Activity {
         }
     }
 
-    public Activity(SQLiteDatabase sqLiteDatabase) {
+    public Exercise(SQLiteDatabase sqLiteDatabase) {
         this.sqLiteDatabase = sqLiteDatabase;
     }
 
@@ -67,58 +67,61 @@ public class Activity {
         this.color = color;
     }
 
-    public boolean isActivityUnique() {
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE current = '" + current + "' AND id != " + id + ";", null);
+    public boolean isCurrentUnique() {
+        boolean isUnique = true;
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = '" + current + "' AND id != " + id + ";", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
-                return false;
+                isUnique = false;
             }
             cursor.close();
         }
-        return true;
+        return isUnique;
     }
 
     public boolean isColorUnique() {
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE color = '" + color + "' AND id != " + id + ";", null);
+        boolean isUnique = true;
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE color = '" + color + "' AND id != " + id + ";", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
-                return false;
+                isUnique = false;
             }
             cursor.close();
         }
-        return true;
+        return isUnique;
     }
 
-    public void saveActivity() {
+    public void save() {
         if (id == 0) { // create a new one
-            sqLiteDatabase.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(null,'" + past + "','" + current + "'," + color + ");");
+            sqLiteDatabase.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(null,'" + past + "','" + current + "'," + color + ");");
         } else {
-            sqLiteDatabase.execSQL("UPDATE " + ACTIVITIES_TABLE + " SET past = '" + past + "', current = '" + current + "', color = '" + color + "' WHERE id = " + id + ";");
+            sqLiteDatabase.execSQL("UPDATE " + EXERCISES_TABLE + " SET past = '" + past + "', current = '" + current + "', color = '" + color + "' WHERE id = " + id + ";");
         }
     }
 
     public boolean safeToDelete() {
-        Cursor goalsCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE activity = " + id + ";", null);
+        boolean isSafe = true;
+        Cursor goalsCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = " + id + ";", null);
         if (goalsCheck != null) {
             if (goalsCheck.getCount() > 0) {
-                return false;
+                isSafe = false;
             }
             goalsCheck.close();
         }
-        Cursor activitiesCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE activity = " + id + ";", null);
+        Cursor activitiesCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = " + id + ";", null);
         if (activitiesCheck != null) {
             if (activitiesCheck.getCount() > 0) {
-                return false;
+                isSafe = false;
             }
             activitiesCheck.close();
         }
-        return true;
+        return isSafe;
     }
 
-    public void deleteActivity() {
+    public void delete() {
         if( !safeToDelete()) {
             return;
         }
-        sqLiteDatabase.execSQL("DELETE FROM " + ACTIVITIES_TABLE + WHERE_ID + id + "';");
+        sqLiteDatabase.execSQL("DELETE FROM " + EXERCISES_TABLE + WHERE_ID + id + "';");
     }
 }

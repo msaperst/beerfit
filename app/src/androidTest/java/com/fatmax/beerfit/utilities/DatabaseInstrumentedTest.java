@@ -18,11 +18,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import static com.fatmax.beerfit.AddActivityActivity.DATE_FORMAT;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.CREATE_TABLE_IF_NOT_EXISTS;
+import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 import static org.junit.Assert.assertEquals;
@@ -37,6 +40,27 @@ public class DatabaseInstrumentedTest {
     private static final String DATABASE_NAME = "testDB";
     private static final String DATETIME_FORMAT = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}";
 
+    static void wipeOutDB() {
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
+    }
+
+    static SQLiteDatabase getDB() {
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
+            @Override
+            public void onCreate(SQLiteDatabase db) {
+
+            }
+
+            @Override
+            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+            }
+        };
+        return helper.getWritableDatabase();
+    }
+
     @After
     public void cleanupDB() {
         wipeOutDB();
@@ -48,7 +72,7 @@ public class DatabaseInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         assertFalse(database.isTableMissing(MEASUREMENTS_TABLE));
-        assertFalse(database.isTableMissing(ACTIVITIES_TABLE));
+        assertFalse(database.isTableMissing(EXERCISES_TABLE));
         assertFalse(database.isTableMissing(GOALS_TABLE));
         assertFalse(database.isTableMissing(ACTIVITY_LOG_TABLE));
         wipeOutDB();
@@ -73,11 +97,35 @@ public class DatabaseInstrumentedTest {
     }
 
     @Test
+    public void doesTableHaveColumnTrueTest() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertTrue(database.doesTableHaveColumn(EXERCISES_TABLE, "id"));
+    }
+
+    @Test
+    public void doesTableHaveColumnFalseTest() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertFalse(database.doesTableHaveColumn(EXERCISES_TABLE, "ID"));
+    }
+
+    @Test
+    public void doesTableHaveColumnNoTableTest() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertFalse(database.doesTableHaveColumn("someTable", "ID"));
+    }
+
+    @Test
     public void doesExistTrueTest() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        assertTrue(database.doesDataExist(ACTIVITIES_TABLE, 1));
+        assertTrue(database.doesDataExist(EXERCISES_TABLE, 1));
     }
 
     @Test
@@ -93,7 +141,7 @@ public class DatabaseInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        assertFalse(database.doesDataExist(ACTIVITIES_TABLE, 6));
+        assertFalse(database.doesDataExist(EXERCISES_TABLE, 6));
     }
 
     @Test(expected = SQLiteException.class)
@@ -234,6 +282,63 @@ public class DatabaseInstrumentedTest {
         wipeOutDB();
     }
 
+    @Test
+    public void getColumnsNoTable() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        assertEquals(0, database.getColumns(GOALS_TABLE).size());
+    }
+
+    @Test
+    public void getColumns() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertEquals(4, database.getColumns(EXERCISES_TABLE).size());
+        assertEquals(Arrays.asList("id", "past", "current", "color"), database.getColumns(EXERCISES_TABLE));
+    }
+
+    @Test
+    public void renameColumnNoData() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Map<String, String> newGoalsTable = new LinkedHashMap<>();
+        newGoalsTable.put("id", "INTEGER PRIMARY KEY AUTOINCREMENT");
+        newGoalsTable.put("past", "INTEGER");
+        newGoalsTable.put("currently", "INTEGER");
+        newGoalsTable.put("color", "NUMBER");
+        database.renameColumn(GOALS_TABLE, newGoalsTable);
+        assertEquals(Arrays.asList("id", "past", "currently", "color"), database.getColumns(GOALS_TABLE));
+        assertEquals(0, db.rawQuery("SELECT * FROM " + GOALS_TABLE, null).getCount());
+    }
+
+    @Test
+    public void renameColumnWithData() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Map<String, String> newGoalsTable = new LinkedHashMap<>();
+        newGoalsTable.put("id", "INTEGER PRIMARY KEY AUTOINCREMENT");
+        newGoalsTable.put("past", "VARCHAR");
+        newGoalsTable.put("currently", "VARCHAR");
+        database.renameColumn(MEASUREMENTS_TABLE, newGoalsTable);
+        assertEquals(Arrays.asList("id", "past", "currently"), database.getColumns(MEASUREMENTS_TABLE));
+        assertEquals(2, db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE, null).getCount());
+        Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + ";", null);
+        res.moveToFirst();
+        assertEquals(1, res.getInt(0));
+        assertEquals("time", res.getString(1));
+        assertEquals("minutes", res.getString(2));
+        res.moveToNext();
+        assertEquals(2, res.getInt(0));
+        assertEquals("distance", res.getString(1));
+        assertEquals("kilometers", res.getString(2));
+        res.moveToNext();
+        assertTrue(res.isAfterLast());
+        res.close();
+    }
+
     @Test(expected = SQLiteException.class)
     public void getOrdinalNoTableTest() {
         SQLiteDatabase db = getDB();
@@ -290,12 +395,12 @@ public class DatabaseInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        assertEquals(Color.BLUE, database.getActivityColor("Ran"));
-        assertEquals(Color.BLUE, database.getActivityColor("Ran (kilometers)"));
-        assertEquals(Color.BLUE, database.getActivityColor("Ran (minutes)"));
-        assertEquals(Color.YELLOW, database.getActivityColor("Running"));
-        assertEquals(Color.YELLOW, database.getActivityColor("Drank (beers)"));
-        assertEquals(Color.DKGRAY, database.getActivityColor("Played Soccer (minutes)"));
+        assertEquals(Color.BLUE, database.getExerciseColor("Ran"));
+        assertEquals(Color.BLUE, database.getExerciseColor("Ran (kilometers)"));
+        assertEquals(Color.BLUE, database.getExerciseColor("Ran (minutes)"));
+        assertEquals(Color.YELLOW, database.getExerciseColor("Running"));
+        assertEquals(Color.YELLOW, database.getExerciseColor("Drank (beers)"));
+        assertEquals(Color.DKGRAY, database.getExerciseColor("Played Soccer (minutes)"));
     }
 
     @Test
@@ -626,32 +731,61 @@ public class DatabaseInstrumentedTest {
         wipeOutDB();
     }
 
-    static void wipeOutDB() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteDatabase.deleteDatabase(appContext.getDatabasePath(DATABASE_NAME));
-    }
-
-    static SQLiteDatabase getDB() {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        SQLiteOpenHelper helper = new SQLiteOpenHelper(appContext, DATABASE_NAME, null, 1) {
-            @Override
-            public void onCreate(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-            }
-        };
-        return helper.getWritableDatabase();
-    }
-
     private String getDateTime() {
         Date date = new Date();
         // purposefully adding in seconds, when the app doesn't provide it, as this speeds up testing.
         // otherwise, i'd have to wait a minute for accurate results
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
         return DATE_FORMAT.format(date) + " " + timeFormat.format(date);
+    }
+
+    //////////////////////////////////////////////////////////////
+    /////////////////////// SCHEMA CHANGES ///////////////////////
+    //////////////////////////////////////////////////////////////
+
+    @Test
+    public void oldGoalsTableEmpty() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + GOALS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount NUMBER);");
+        database.setupDatabase();
+        assertTrue(database.doesTableHaveColumn(GOALS_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(GOALS_TABLE, "activity"));
+        assertEquals(0, db.rawQuery("SELECT * FROM " + GOALS_TABLE, null).getCount());
+    }
+
+    @Test
+    public void oldGoalsTableFull() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + GOALS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount NUMBER);");
+        addGoals(db);
+        database.setupDatabase();
+        assertTrue(database.doesTableHaveColumn(GOALS_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(GOALS_TABLE, "activity"));
+        assertEquals(5, db.rawQuery("SELECT * FROM " + GOALS_TABLE, null).getCount());
+    }
+
+    @Test
+    public void oldActivityLogTableEmpty() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITY_LOG_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        database.setupDatabase();
+        assertTrue(database.doesTableHaveColumn(ACTIVITY_LOG_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(ACTIVITY_LOG_TABLE, "activity"));
+        assertEquals(0, db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE, null).getCount());
+    }
+
+    @Test
+    public void oldActivityLogTableFull() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITY_LOG_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        db.execSQL("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(1,'2020-10-10 00:00',2,5,1,1);");
+        database.setupDatabase();
+        assertTrue(database.doesTableHaveColumn(ACTIVITY_LOG_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(ACTIVITY_LOG_TABLE, "activity"));
+        assertEquals(1, db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE, null).getCount());
     }
 }

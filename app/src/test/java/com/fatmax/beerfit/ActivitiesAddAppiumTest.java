@@ -61,7 +61,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
     @Test
     public void addEmptyActivity() {
         driver.findElement(By.id("submitActivity")).click();
-        assertElementTextEquals("You need to indicate some activity", driver.findElement(By.id("activitySelection")).findElement(By.className("android.widget.TextView")));
+        assertElementTextEquals("You need to indicate some exercise", driver.findElement(By.id("activitySelection")).findElement(By.className("android.widget.TextView")));
         assertElementTextEquals("", By.id("activityDurationInput"));
         assertElementTextEquals("", driver.findElement(By.id("activityDurationUnits")).findElement(By.className("android.widget.TextView")));
     }

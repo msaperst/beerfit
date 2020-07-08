@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
@@ -51,7 +51,7 @@ public class AddActivityActivity extends AppCompatActivity {
         database = new Database(sqLiteDatabase);
 
         // setup our two spinners
-        createSpinner(ACTIVITIES_TABLE, "past", R.id.activitySelection);
+        createSpinner(EXERCISES_TABLE, "past", R.id.activitySelection);
         createSpinner(MEASUREMENTS_TABLE, "unit", R.id.activityDurationUnits);
         //setup our object widths
         findViewById(R.id.activityDate).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
@@ -171,7 +171,7 @@ public class AddActivityActivity extends AppCompatActivity {
                 TextView errorText = (TextView) activity.getSelectedView();
                 errorText.setError("");
                 errorText.setTextColor(Color.RED);
-                errorText.setText(R.string.indicate_activity);
+                errorText.setText(R.string.indicate_exercise);
                 isFilledOut = false;
             }
             units = findViewById(R.id.activityDurationUnits);

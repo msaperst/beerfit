@@ -17,7 +17,7 @@ import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 
 import java.util.List;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 
 public class Measures {
 
@@ -25,95 +25,95 @@ public class Measures {
     private final SQLiteDatabase sqLiteDatabase;
     private AlertDialog dialog;
     private String selectedOption;
-    private TextView activityColorView;
+    private TextView exerciseColorView;
 
     public Measures(Context context, SQLiteDatabase database) {
         this.context = context;
         this.sqLiteDatabase = database;
     }
 
-    public void editActivities() {
+    public void editExercises() {
         Database database = new Database(sqLiteDatabase);
-        List<Object> allActivities = database.getFullColumn(ACTIVITIES_TABLE, "current");
-        String[] selectActivity = allActivities.toArray(new String[allActivities.size()]);
+        List<Object> allExercises = database.getFullColumn(EXERCISES_TABLE, "current");
+        String[] selectExercise = allExercises.toArray(new String[allExercises.size()]);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.modify_activity);
-        builder.setSingleChoiceItems(selectActivity, -1, (dialog, which) -> {
-            selectedOption = selectActivity[which];
+        builder.setTitle(R.string.modify_exercise);
+        builder.setSingleChoiceItems(selectExercise, -1, (dialog, which) -> {
+            selectedOption = selectExercise[which];
             this.dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
             this.dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
         });
-        builder.setNeutralButton(context.getString(R.string.add_new), (dialog, which) -> addNewActivity());
-        builder.setNegativeButton(context.getString(R.string.edit), (dialog, which) -> editActivity());
-        builder.setPositiveButton(context.getString(R.string.delete), (dialog, which) -> deleteActivity());
+        builder.setNeutralButton(context.getString(R.string.add_new), (dialog, which) -> addNewExercise());
+        builder.setNegativeButton(context.getString(R.string.edit), (dialog, which) -> editExercise());
+        builder.setPositiveButton(context.getString(R.string.delete), (dialog, which) -> deleteExercise());
         this.dialog = builder.create();
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
 
-    private void addNewActivity() {
-        setupActivityModal(new Activity(sqLiteDatabase));
+    private void addNewExercise() {
+        setupExerciseModal(new Exercise(sqLiteDatabase));
     }
 
-    private void editActivity() {
-        setupActivityModal(new Activity(sqLiteDatabase, selectedOption));
+    private void editExercise() {
+        setupExerciseModal(new Exercise(sqLiteDatabase, selectedOption));
     }
 
-    private void deleteActivity() {
-        Activity activity = new Activity(sqLiteDatabase, selectedOption);
+    private void deleteExercise() {
+        Exercise exercise = new Exercise(sqLiteDatabase, selectedOption);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.delete_activity);
+        builder.setTitle(R.string.delete_exercise);
         builder.setIcon(android.R.drawable.ic_dialog_alert);
-        if( activity.safeToDelete() ) {
-            builder.setMessage(context.getString(R.string.confirm_activity_delete, activity.getCurrent()));
-            builder.setPositiveButton(android.R.string.yes, (dialog, whichButton) -> activity.deleteActivity());
+        if( exercise.safeToDelete() ) {
+            builder.setMessage(context.getString(R.string.confirm_exercise_delete, exercise.getCurrent()));
+            builder.setPositiveButton(android.R.string.yes, (dialog, whichButton) -> exercise.delete());
             builder.setNegativeButton(android.R.string.no, null);
         } else {
-            builder.setMessage(R.string.unable_to_delete_activity);
+            builder.setMessage(R.string.unable_to_delete_exercise);
         }
         builder.show();
     }
 
-    private void setupActivityModal(Activity activity) {
+    private void setupExerciseModal(Exercise exercise) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.edit_activity);
+        builder.setTitle(R.string.edit_exercise);
         LayoutInflater inflater = LayoutInflater.from(context);
-        LinearLayout editActivityModal = (LinearLayout) inflater.inflate(R.layout.modal_edit_activity, null);
-        activityColorView = editActivityModal.findViewById(R.id.editActivityColor);
-        ((EditText) editActivityModal.findViewById(R.id.editActivityName)).setText(activity.getCurrent());
-        ((EditText) editActivityModal.findViewById(R.id.editActivityPastName)).setText(activity.getPast());
-        activityColorView.setBackgroundColor(activity.getColor());
-        activityColorView.setOnClickListener(v -> pickColor(activity));
-        builder.setView(editActivityModal);
+        LinearLayout editExerciseModal = (LinearLayout) inflater.inflate(R.layout.modal_edit_exercise, null);
+        exerciseColorView = editExerciseModal.findViewById(R.id.editExerciseColor);
+        ((EditText) editExerciseModal.findViewById(R.id.editExerciseName)).setText(exercise.getCurrent());
+        ((EditText) editExerciseModal.findViewById(R.id.editExercisePastName)).setText(exercise.getPast());
+        exerciseColorView.setBackgroundColor(exercise.getColor());
+        exerciseColorView.setOnClickListener(v -> pickColor(exercise));
+        builder.setView(editExerciseModal);
         builder.setPositiveButton(R.string.save, null);
         builder.setNegativeButton(R.string.cancel, null);
         this.dialog = builder.create();
         dialog.setOnShowListener(dialog -> {
             Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
             button.setOnClickListener(view -> {
-                // check to ensure activity is filled in
-                EditText activityName = editActivityModal.findViewById(R.id.editActivityName);
-                if (TextUtils.isEmpty(activityName.getText())) {
-                    activityName.setError(context.getString(R.string.activity_required));
+                // check to ensure exercise is filled in
+                EditText exerciseName = editExerciseModal.findViewById(R.id.editExerciseName);
+                if (TextUtils.isEmpty(exerciseName.getText())) {
+                    exerciseName.setError(context.getString(R.string.exercise_required));
                 }
-                activity.setCurrent(activityName.getText().toString());
-                // check to ensure past tense activity is filled in
-                EditText activityPastName = editActivityModal.findViewById(R.id.editActivityPastName);
-                if (TextUtils.isEmpty(activityPastName.getText())) {
-                    activityPastName.setError(context.getString(R.string.past_activity_required));
+                exercise.setCurrent(exerciseName.getText().toString());
+                // check to ensure past tense exercise is filled in
+                EditText exercisePastName = editExerciseModal.findViewById(R.id.editExercisePastName);
+                if (TextUtils.isEmpty(exercisePastName.getText())) {
+                    exercisePastName.setError(context.getString(R.string.past_exercise_required));
                 }
-                activity.setPast(activityPastName.getText().toString());
+                exercise.setPast(exercisePastName.getText().toString());
                 // check for uniqueness
-                if (!activity.isActivityUnique()) {
-                    activityName.setError(context.getString(R.string.duplicate_activity_description));
+                if (!exercise.isCurrentUnique()) {
+                    exerciseName.setError(context.getString(R.string.duplicate_exercise_description));
                 }
-                if (!activity.isColorUnique()) {
-                    activityColorView.setTextColor(Color.RED);
-                    activityColorView.setText(R.string.duplicate_activity_color);
+                if (!exercise.isColorUnique()) {
+                    exerciseColorView.setTextColor(Color.RED);
+                    exerciseColorView.setText(R.string.duplicate_exercise_color);
                 }
-                if (!"".equals(activity.getPast()) && !"".equals(activity.getCurrent()) && activity.isActivityUnique() && activity.isColorUnique()) {
-                    activity.saveActivity();
+                if (!"".equals(exercise.getPast()) && !"".equals(exercise.getCurrent()) && exercise.isCurrentUnique() && exercise.isColorUnique()) {
+                    exercise.save();
                     dialog.dismiss();
                 }
             });
@@ -121,17 +121,17 @@ public class Measures {
         dialog.show();
     }
 
-    public void pickColor(Activity activity) {
+    public void pickColor(Exercise exercise) {
         ColorPickerDialogBuilder
                 .with(context)
                 .setTitle(R.string.choose_color)
-                .initialColor(activity.getColor())
+                .initialColor(exercise.getColor())
                 .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
                 .density(12)
                 .setPositiveButton(R.string.choose, (dialog, selectedColor, allColors) -> {
-                    activity.setColor(selectedColor);
-                    activityColorView.setBackgroundColor(selectedColor);
-                    activityColorView.setText("");
+                    exercise.setColor(selectedColor);
+                    exerciseColorView.setBackgroundColor(selectedColor);
+                    exerciseColorView.setText("");
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .build()
