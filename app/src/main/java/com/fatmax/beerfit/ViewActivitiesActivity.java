@@ -24,8 +24,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class ViewActivitiesActivity extends AppCompatActivity {

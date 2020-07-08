@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
-import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class AddActivityActivity extends AppCompatActivity {
@@ -74,7 +74,7 @@ public class AddActivityActivity extends AppCompatActivity {
             String dateTime = cursor.getString(1);
 
             cal.set(Calendar.YEAR, Integer.parseInt(dateTime.split(" ")[0].split("-")[0]));
-            cal.set(Calendar.MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[1])-1);  //subtracting one as that's how months are counted
+            cal.set(Calendar.MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[1]) - 1);  //subtracting one as that's how months are counted
             cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[2]));
             cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(dateTime.split(" ")[1].split(":")[0]));
             cal.set(Calendar.MINUTE, Integer.parseInt(dateTime.split(" ")[1].split(":")[1]));

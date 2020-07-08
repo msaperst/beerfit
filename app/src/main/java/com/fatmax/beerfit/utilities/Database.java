@@ -5,10 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 
-import com.testpros.fast.reporter.Reporter;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,11 +44,11 @@ public class Database {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + GOALS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise INTEGER, measurement INTEGER, amount NUMBER);");
         } else if (!doesTableHaveColumn(GOALS_TABLE, "exercise") && doesTableHaveColumn(GOALS_TABLE, "activity")) {
             // migration from old schema that had column activity, now renaming it to exercise
-            Map<String,String> newGoalsTable = new LinkedHashMap<>();
-            newGoalsTable.put("id","INTEGER PRIMARY KEY AUTOINCREMENT");
-            newGoalsTable.put("exercise","INTEGER");
-            newGoalsTable.put("measurement","INTEGER");
-            newGoalsTable.put("amount","NUMBER");
+            Map<String, String> newGoalsTable = new LinkedHashMap<>();
+            newGoalsTable.put("id", "INTEGER PRIMARY KEY AUTOINCREMENT");
+            newGoalsTable.put("exercise", "INTEGER");
+            newGoalsTable.put("measurement", "INTEGER");
+            newGoalsTable.put("amount", "NUMBER");
             renameColumn(GOALS_TABLE, newGoalsTable);
 //            database.execSQL("BEGIN TRANSACTION;");
 //            database.execSQL("CREATE TABLE TMP(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise INTEGER, measurement INTEGER, amount NUMBER);");
@@ -65,13 +62,13 @@ public class Database {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITY_LOG_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, exercise INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
         } else if (!doesTableHaveColumn(ACTIVITY_LOG_TABLE, "exercise") && doesTableHaveColumn(ACTIVITY_LOG_TABLE, "activity")) {
             // migration from old schema that had column activity, now renaming it to exercise
-            Map<String,String> newGoalsTable = new LinkedHashMap<>();
-            newGoalsTable.put("id","INTEGER PRIMARY KEY AUTOINCREMENT");
-            newGoalsTable.put("time","TEXT");
-            newGoalsTable.put("exercise","INTEGER");
-            newGoalsTable.put("measurement","INTEGER");
-            newGoalsTable.put("amount","NUMBER");
-            newGoalsTable.put("beers","NUMBER");
+            Map<String, String> newGoalsTable = new LinkedHashMap<>();
+            newGoalsTable.put("id", "INTEGER PRIMARY KEY AUTOINCREMENT");
+            newGoalsTable.put("time", "TEXT");
+            newGoalsTable.put("exercise", "INTEGER");
+            newGoalsTable.put("measurement", "INTEGER");
+            newGoalsTable.put("amount", "NUMBER");
+            newGoalsTable.put("beers", "NUMBER");
             renameColumn(ACTIVITY_LOG_TABLE, newGoalsTable);
         }
     }
@@ -188,7 +185,7 @@ public class Database {
         return columns;
     }
 
-    void renameColumn(String table, Map<String,String> newTableColumns) {
+    void renameColumn(String table, Map<String, String> newTableColumns) {
         StringBuilder tableStructure = new StringBuilder();
         StringBuilder columns = new StringBuilder();
         String prefix = "";

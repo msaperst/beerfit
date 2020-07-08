@@ -65,7 +65,7 @@ public class Measures {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.delete_exercise);
         builder.setIcon(android.R.drawable.ic_dialog_alert);
-        if( exercise.safeToDelete() ) {
+        if (exercise.safeToDelete()) {
             builder.setMessage(context.getString(R.string.confirm_exercise_delete, exercise.getCurrent()));
             builder.setPositiveButton(android.R.string.yes, (dialog, whichButton) -> exercise.delete());
             builder.setNegativeButton(android.R.string.no, null);

@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
      */
     void setBeersRemaining() {
         int beersLeft = database.getBeersRemaining();
-        if ( beersLeft == 1 ) {
+        if (beersLeft == 1) {
             beerCounter.setText(getString(R.string.one_beer_left));
         } else {
             beerCounter.setText(getString(R.string.beers_left, beersLeft));

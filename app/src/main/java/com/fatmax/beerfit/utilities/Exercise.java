@@ -6,8 +6,8 @@ import android.graphics.Color;
 
 import java.util.Random;
 
-import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.Database.INSERT_INTO;
 import static com.fatmax.beerfit.utilities.Database.WHERE_ID;
@@ -119,7 +119,7 @@ public class Exercise {
     }
 
     public void delete() {
-        if( !safeToDelete()) {
+        if (!safeToDelete()) {
             return;
         }
         sqLiteDatabase.execSQL("DELETE FROM " + EXERCISES_TABLE + WHERE_ID + id + "';");
