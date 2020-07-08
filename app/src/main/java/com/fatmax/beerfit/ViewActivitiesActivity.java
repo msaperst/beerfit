@@ -48,7 +48,7 @@ public class ViewActivitiesActivity extends AppCompatActivity {
 
         // dynamically build our table
         TableLayout tableLayout = findViewById(R.id.activityBodyTable);
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT " + ACTIVITY_LOG_TABLE + ".id, " + ACTIVITY_LOG_TABLE + ".time, " + EXERCISES_TABLE + ".past, " + ACTIVITY_LOG_TABLE + ".amount, " + MEASUREMENTS_TABLE + ".unit FROM " + ACTIVITY_LOG_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".activity = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id ORDER BY " + ACTIVITY_LOG_TABLE + ".time DESC", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT " + ACTIVITY_LOG_TABLE + ".id, " + ACTIVITY_LOG_TABLE + ".time, " + EXERCISES_TABLE + ".past, " + ACTIVITY_LOG_TABLE + ".amount, " + MEASUREMENTS_TABLE + ".unit FROM " + ACTIVITY_LOG_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id ORDER BY " + ACTIVITY_LOG_TABLE + ".time DESC", null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             // setup our cells
