@@ -50,12 +50,6 @@ public class Database {
             newGoalsTable.put("measurement", "INTEGER");
             newGoalsTable.put("amount", "NUMBER");
             renameColumn(GOALS_TABLE, newGoalsTable);
-//            database.execSQL("BEGIN TRANSACTION;");
-//            database.execSQL("CREATE TABLE TMP(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise INTEGER, measurement INTEGER, amount NUMBER);");
-//            database.execSQL("INSERT INTO TMP(id,exercise,measurement,amount) SELECT id,activity,measurement,amount FROM " + GOALS_TABLE + ";");
-//            database.execSQL("DROP TABLE " + GOALS_TABLE + ";");
-//            database.execSQL("ALTER TABLE TMP RENAME TO " + GOALS_TABLE + ";");
-//            database.execSQL("COMMIT;");
         }
         if (isTableMissing(ACTIVITY_LOG_TABLE)) {
             //TODO - don't call it an activity, call it an exercise - need to upgrade it properly
