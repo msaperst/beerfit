@@ -149,9 +149,14 @@ public class ImportExportAppiumTest extends AppiumTestBase {
     }
 
     @Test
+    public void verifyImportTitle() {
+        new Navigate(driver).mport();
+        assertElementTextEquals("Select Table to Import", By.id("android:id/alertTitle"));
+    }
+
+    @Test
     public void verifyNothingToImportTest() {
         new Navigate(driver).mport();
-        assertElementDisplayed(By.id("android:id/alertTitle"));
         List<WebElement> imports = driver.findElements(By.id("android:id/text1"));
         assertEquals(imports.size(), 0, "Expected to find '0' import options", "Actually found '" + imports.size() + "'");
     }

@@ -18,6 +18,8 @@ import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -52,6 +54,26 @@ public class DatabaseUnitTest {
     }
 
     @Test
+    public void doesExistBadQueryTest() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedSQLiteDatabase.rawQuery("SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name = '" + ACTIVITIES_TABLE + "'", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(null);
+
+        Database database = new Database(mockedSQLiteDatabase);
+        assertFalse(database.doesDataExist(ACTIVITIES_TABLE, 1));
+    }
+
+    @Test
+    public void doesExistNoCountTest() {
+        when(mockedCursor.getCount()).thenReturn(1).thenReturn(0);
+        when(mockedSQLiteDatabase.rawQuery("SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name = '" + ACTIVITIES_TABLE + "'", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+
+        Database database = new Database(mockedSQLiteDatabase);
+        assertFalse(database.doesDataExist(ACTIVITIES_TABLE, 1));
+    }
+
+    @Test
     public void doesExistFalseTest() {
         when(mockedCursor.getCount()).thenReturn(0);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
@@ -77,6 +99,16 @@ public class DatabaseUnitTest {
 
         Database database = new Database(mockedSQLiteDatabase);
         assertTrue(database.doesDataExist(ACTIVITIES_TABLE, 1));
+    }
+
+    @Test
+    public void getColumnTypeNoPragmaTest() {
+        when(mockedCursor.getCount()).thenReturn(0);
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
+
+        Database database = new Database(mockedSQLiteDatabase);
+        SQLiteException exception = assertThrows(SQLiteException.class, () -> database.getColumnType(MEASUREMENTS_TABLE, "time"));
+        assertNull(exception.getMessage());
     }
 
     @Test

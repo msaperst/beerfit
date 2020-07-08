@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 public class CSVReaderUnitTest {
@@ -188,12 +189,13 @@ public class CSVReaderUnitTest {
         assertTrue(csvReader.isNextCharAlsoQuote("hello `world", true, 5));
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void closeTest() throws IOException {
         CSVReader csvReader = new CSVReader(new StringReader("hello world"));
         assertEquals(new String[]{"hello world"}, csvReader.readNext());
         csvReader.close();
-        csvReader.readNext();
+        IOException exception = assertThrows(IOException.class, () -> csvReader.readNext());
+        assertEquals("Stream closed", exception.getMessage());
     }
 
 
