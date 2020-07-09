@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import static com.fatmax.beerfit.AddActivityActivity.DATE_FORMAT;
 import static com.fatmax.beerfit.AddActivityActivity.TIME_FORMAT;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 
 public class Activity {
 
@@ -26,7 +26,7 @@ public class Activity {
 
     public Activity(SQLiteDatabase sqLiteDatabase, int id) {
         this.sqLiteDatabase = sqLiteDatabase;
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = " + id, null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = " + id, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();

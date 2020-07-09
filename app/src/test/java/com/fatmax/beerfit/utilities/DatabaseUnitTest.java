@@ -11,8 +11,9 @@ import org.mockito.Mock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
@@ -279,6 +280,34 @@ public class DatabaseUnitTest {
     }
 
     @Test
+    public void getColumnsNullTest() {
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(null);
+        Database database = new Database(mockedSQLiteDatabase);
+        assertEquals(0, database.getColumns(MEASUREMENTS_TABLE).size());
+    }
+
+    @Test
+    public void getColumnsEmptyTest() {
+        when(mockedCursor.getCount()).thenReturn(0);
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
+        Database database = new Database(mockedSQLiteDatabase);
+        assertEquals(0, database.getColumns(MEASUREMENTS_TABLE).size());
+    }
+
+    @Test
+    public void getColumnsFullTest() {
+        when(mockedCursor.getCount()).thenReturn(2);
+        when(mockedCursor.isAfterLast()).thenReturn(false, false, true);
+        when(mockedCursor.getString(1)).thenReturn("hello", "world");
+        when(mockedSQLiteDatabase.rawQuery("PRAGMA table_info(" + MEASUREMENTS_TABLE + ")", null)).thenReturn(mockedCursor);
+        Database database = new Database(mockedSQLiteDatabase);
+        List<String> columns = database.getColumns(MEASUREMENTS_TABLE);
+        assertEquals(2, columns.size());
+        assertEquals("hello", columns.get(0));
+        assertEquals("world", columns.get(1));
+    }
+
+    @Test
     public void getOrdinalNullTest() {
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(-1, database.getOrdinal(MEASUREMENTS_TABLE, "unit", "hours"));
@@ -341,7 +370,7 @@ public class DatabaseUnitTest {
     @Test
     public void getActivityTimeNoMatchTest() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT time FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '1';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT time FROM " + ACTIVITIES_TABLE + " WHERE id = '1';", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals("Unknown", database.getActivityTime(1));
@@ -351,7 +380,7 @@ public class DatabaseUnitTest {
     public void getActivityTimeMatchTest() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getString(0)).thenReturn("2020-03-02 00:00");
-        when(mockedSQLiteDatabase.rawQuery("SELECT time FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '1';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT time FROM " + ACTIVITIES_TABLE + " WHERE id = '1';", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals("2020-03-02 00:00", database.getActivityTime(1));
@@ -366,7 +395,7 @@ public class DatabaseUnitTest {
     @Test
     public void getBeersDrankNoMatchTest() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount) FROM " + ACTIVITIES_TABLE + " WHERE exercise = 0;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(0, database.getBeersDrank());
@@ -376,7 +405,7 @@ public class DatabaseUnitTest {
     public void getBeersDrankMatchTest() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getInt(0)).thenReturn(10);
-        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount) FROM " + ACTIVITIES_TABLE + " WHERE exercise = 0;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(10, database.getBeersDrank());
@@ -416,7 +445,7 @@ public class DatabaseUnitTest {
     @Test
     public void getTotalBeersEarnedNoMatchTest() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise != 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITIES_TABLE + " WHERE exercise != 0;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(0.0, database.getTotalBeersEarned(), 0);
@@ -426,7 +455,7 @@ public class DatabaseUnitTest {
     public void getTotalBeersEarnedMatchTest() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getDouble(0)).thenReturn(10.0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise != 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITIES_TABLE + " WHERE exercise != 0;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(10.0, database.getTotalBeersEarned(), 0);
@@ -437,8 +466,8 @@ public class DatabaseUnitTest {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getDouble(0)).thenReturn(10.0);
         when(mockedCursor.getInt(0)).thenReturn(10);
-        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise != 0;", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITIES_TABLE + " WHERE exercise != 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount) FROM " + ACTIVITIES_TABLE + " WHERE exercise = 0;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(0, database.getBeersRemaining());
@@ -449,8 +478,8 @@ public class DatabaseUnitTest {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getDouble(0)).thenReturn(5.0);
         when(mockedCursor.getInt(0)).thenReturn(10);
-        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise != 0;", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITIES_TABLE + " WHERE exercise != 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount) FROM " + ACTIVITIES_TABLE + " WHERE exercise = 0;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(-5, database.getBeersRemaining());
@@ -461,8 +490,8 @@ public class DatabaseUnitTest {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getDouble(0)).thenReturn(11.2);
         when(mockedCursor.getInt(0)).thenReturn(10);
-        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise != 0;", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(beers) FROM " + ACTIVITIES_TABLE + " WHERE exercise != 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount) FROM " + ACTIVITIES_TABLE + " WHERE exercise = 0;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(1, database.getBeersRemaining());

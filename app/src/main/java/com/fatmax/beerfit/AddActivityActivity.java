@@ -50,7 +50,7 @@ public class AddActivityActivity extends AppCompatActivity {
         database = new Database(sqLiteDatabase);
 
         // setup our two spinners
-        createSpinner(EXERCISES_TABLE, "past", R.id.exerciseSelection);
+        createSpinner(EXERCISES_TABLE, "past", R.id.activityExercise);
         createSpinner(MEASUREMENTS_TABLE, "unit", R.id.activityDurationUnits);
         //setup our object widths
         findViewById(R.id.activityDate).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
@@ -71,7 +71,7 @@ public class AddActivityActivity extends AppCompatActivity {
 
             Activity activity = new Activity(sqLiteDatabase, activityId);
             cal.setTime(activity.getDateTime());
-            ((Spinner) findViewById(R.id.exerciseSelection)).setSelection(activity.getExercise().getId());
+            ((Spinner) findViewById(R.id.activityExercise)).setSelection(activity.getExercise().getId());
             ((TextView) findViewById(R.id.activityDate)).setText(activity.getDate());
             ((TextView) findViewById(R.id.activityTime)).setText(activity.getTime());
             ((TextView) findViewById(R.id.activityDurationInput)).setText(String.valueOf(activity.getAmount()));
@@ -80,11 +80,11 @@ public class AddActivityActivity extends AppCompatActivity {
 
             //if beer activity
             if (activity.getExercise().getId() == 0) {
-                ((TextView) findViewById(R.id.activitySelectionHeader)).setText(R.string.activity);
+                ((TextView) findViewById(R.id.activityExerciseHeader)).setText(R.string.activity);
                 ((TextView) findViewById(R.id.activityDurationHeader)).setText(R.string.enter_amount);
                 ((EditText) findViewById(R.id.activityDurationInput)).setInputType(InputType.TYPE_CLASS_NUMBER);
                 //fix our activity
-                Spinner activitySpinner = findViewById(R.id.exerciseSelection);
+                Spinner activitySpinner = findViewById(R.id.activityExercise);
                 ViewGroup.LayoutParams activityLayoutParams = activitySpinner.getLayoutParams();
                 TextView exercise = new TextView(this);
                 exercise.setId(activitySpinner.getId());
@@ -92,7 +92,7 @@ public class AddActivityActivity extends AppCompatActivity {
                 exercise.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 exercise.setLayoutParams(activityLayoutParams);
                 ViewGroup rootLayout = (ViewGroup) activitySpinner.getParent();
-                rootLayout.removeView(findViewById(R.id.exerciseSelection));
+                rootLayout.removeView(findViewById(R.id.activityExercise));
                 rootLayout.addView(exercise);
                 //fix our units
                 Spinner unitSpinner = findViewById(R.id.activityDurationUnits);
@@ -156,7 +156,7 @@ public class AddActivityActivity extends AppCompatActivity {
         Spinner units = null;
         EditText duration = findViewById(R.id.activityDurationInput);
         if (!isBeerActivity()) {
-            exercise = findViewById(R.id.exerciseSelection);
+            exercise = findViewById(R.id.activityExercise);
             if ("".equals(exercise.getSelectedItem().toString())) {
                 TextView errorText = (TextView) exercise.getSelectedView();
                 errorText.setError("");
@@ -196,6 +196,6 @@ public class AddActivityActivity extends AppCompatActivity {
     }
 
     private boolean isBeerActivity() {
-        return "Activity".contentEquals(((TextView) findViewById(R.id.activitySelectionHeader)).getText());
+        return "Activity".contentEquals(((TextView) findViewById(R.id.activityExerciseHeader)).getText());
     }
 }

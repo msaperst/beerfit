@@ -6,14 +6,14 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 
 public class Elements {
 
     public static List<Activity> getAllActivities(SQLiteDatabase sqLiteDatabase) {
         List<Activity> activities = new ArrayList<>();
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT id FROM " + ACTIVITY_LOG_TABLE + " ORDER BY time DESC", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT id FROM " + ACTIVITIES_TABLE + " ORDER BY time DESC", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();

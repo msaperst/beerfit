@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import java.text.ParseException;
 
 import static com.fatmax.beerfit.utilities.Activity.DATE_TIME_FORMAT;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
@@ -24,7 +24,7 @@ public class ActivityUnitTest {
 
     @Test
     public void activityByIdNotFoundTest() {
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = 1", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(null);
 
         Activity activity = new Activity(mockedSQLiteDatabase, 1);
         assertEquals(0, activity.getId());
@@ -46,7 +46,7 @@ public class ActivityUnitTest {
         when(mockedCursor.getInt(3)).thenReturn(2);
         when(mockedCursor.getDouble(4)).thenReturn(5.0);
         when(mockedCursor.getDouble(5)).thenReturn(0.0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Activity activity = new Activity(mockedSQLiteDatabase, 1);
         assertEquals(1, activity.getId());
@@ -68,7 +68,7 @@ public class ActivityUnitTest {
         when(mockedCursor.getInt(3)).thenReturn(2);
         when(mockedCursor.getDouble(4)).thenReturn(5.0);
         when(mockedCursor.getDouble(5)).thenReturn(0.0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Activity activity = new Activity(mockedSQLiteDatabase, 1);
         assertEquals(1, activity.getId());
@@ -90,7 +90,7 @@ public class ActivityUnitTest {
         when(mockedCursor.getInt(3)).thenReturn(2);
         when(mockedCursor.getDouble(4)).thenReturn(5.0);
         when(mockedCursor.getDouble(5)).thenReturn(0.0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Activity activity = new Activity(mockedSQLiteDatabase, 1);
         assertEquals(1, activity.getId());
@@ -106,7 +106,7 @@ public class ActivityUnitTest {
     @Test
     public void activityByIdNotExistsTest() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Activity activity = new Activity(mockedSQLiteDatabase, 1);
         assertEquals(0, activity.getId());

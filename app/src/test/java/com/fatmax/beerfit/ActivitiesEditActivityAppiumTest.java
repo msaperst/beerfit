@@ -12,13 +12,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 
 public class ActivitiesEditActivityAppiumTest extends AppiumTestBase {
 
     @Before
     public void seedAndNavigateToActivities() {
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(15,\"2020-02-15 23:59\",2,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(15,\"2020-02-15 23:59\",2,2,5,1);");
         new Navigate(driver).toActivities();
         driver.findElement(By.AccessibilityId("Edit Activity")).click();
     }
@@ -27,9 +27,9 @@ public class ActivitiesEditActivityAppiumTest extends AppiumTestBase {
     public void editActivityGoBack() throws SQLException, IOException, ClassNotFoundException {
         new Navigate(driver).goBack();
         //verify the activity is not changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '15';");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '15';");
         resultSet.next();
-        assertActivityLog(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 1);
+        assertActivities(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 1);
     }
 
     @Test
@@ -49,10 +49,10 @@ public class ActivitiesEditActivityAppiumTest extends AppiumTestBase {
 
     @Test
     public void editActivityAllData() {
-        assertElementTextEquals("Ran", driver.findElement(By.id("activitySelection")).findElement(By.className("android.widget.TextView")));
+        assertElementTextEquals("Ran", driver.findElement(By.id("activityExercise")).findElement(By.className("android.widget.TextView")));
         assertElementTextEquals("2020-02-15", By.id("activityDate"));
         assertElementTextEquals("23:59", By.id("activityTime"));
-        assertElementTextEquals("5", By.id("activityDurationInput"));
+        assertElementTextEquals("5.0", By.id("activityDurationInput"));
         assertElementTextEquals("kilometers", driver.findElement(By.id("activityDurationUnits")).findElement(By.className("android.widget.TextView")));
     }
 
@@ -85,15 +85,15 @@ public class ActivitiesEditActivityAppiumTest extends AppiumTestBase {
     public void editActivityNoChanges() throws SQLException, IOException, ClassNotFoundException {
         driver.findElement(By.id("submitActivity")).click();
         //verify the activity is not changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '15';");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '15';");
         resultSet.next();
         // beer changes to none, as no activities are set
-        assertActivityLog(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 0);
+        assertActivities(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 0);
     }
 
     @Test
     public void editActivityChange() throws SQLException, IOException, ClassNotFoundException {
-        driver.findElement(By.id("activitySelection")).click();
+        driver.findElement(By.id("activityExercise")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(4).click();
         driver.findElement(By.id("activityDurationInput")).clear();
@@ -114,9 +114,9 @@ public class ActivitiesEditActivityAppiumTest extends AppiumTestBase {
         // submit it
         driver.findElement(By.id("submitActivity")).click();
         //verify the activity is changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '15';");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '15';");
         resultSet.next();
         // beer changes to none, as no activities are set
-        assertActivityLog(resultSet, 15, "2020-02-16 13:30", 4, 1, 30, 0);
+        assertActivities(resultSet, 15, "2020-02-16 13:30", 4, 1, 30, 0);
     }
 }

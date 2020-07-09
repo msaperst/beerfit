@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.fatmax.beerfit.AddActivityActivity.DATE_FORMAT;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.CREATE_TABLE_IF_NOT_EXISTS;
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
@@ -74,7 +74,7 @@ public class DatabaseInstrumentedTest {
         assertFalse(database.isTableMissing(MEASUREMENTS_TABLE));
         assertFalse(database.isTableMissing(EXERCISES_TABLE));
         assertFalse(database.isTableMissing(GOALS_TABLE));
-        assertFalse(database.isTableMissing(ACTIVITY_LOG_TABLE));
+        assertFalse(database.isTableMissing(ACTIVITIES_TABLE));
         wipeOutDB();
     }
 
@@ -386,7 +386,7 @@ public class DatabaseInstrumentedTest {
         assertEquals(6, database.getOrdinal(MEASUREMENTS_TABLE, "unit", "seconds"));
         // new data lookup
         database.logBeer();
-        assertEquals(1, database.getOrdinal(ACTIVITY_LOG_TABLE, "amount", "1"));
+        assertEquals(1, database.getOrdinal(ACTIVITIES_TABLE, "amount", "1"));
         wipeOutDB();
     }
 
@@ -410,7 +410,7 @@ public class DatabaseInstrumentedTest {
         database.setupDatabase();
         database.logActivity("2000-01-01 10:10", "Running", "seconds", 12.2);
         database.logActivity("2000-01-01 10:10", "Ran", "minutes", 30);
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + ";", null);
         res.moveToFirst();
         assertEquals(1, res.getInt(0));
         assertEquals("2000-01-01 10:10", res.getString(1));
@@ -436,7 +436,7 @@ public class DatabaseInstrumentedTest {
         database.setupDatabase();
         database.logActivity("3", "2000-01-01 10:10", "Running", "seconds", 12.2);
         database.logActivity("2000-01-01 10:10", "Ran", "minutes", 30);
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + ";", null);
         res.moveToFirst();
         assertEquals(3, res.getInt(0));
         assertEquals("2000-01-01 10:10", res.getString(1));
@@ -461,7 +461,7 @@ public class DatabaseInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         database.logBeer();
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + ";", null);
         res.moveToFirst();
         assertEquals(1, res.getInt(0));
         assertTrue(res.getString(1).matches(DATETIME_FORMAT + ":\\d{2}"));
@@ -480,7 +480,7 @@ public class DatabaseInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         database.logBeer("1", "'2000-01-01 10:10'", 2);
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + ";", null);
         res.moveToFirst();
         assertEquals(1, res.getInt(0));
         assertEquals("2000-01-01 10:10", res.getString(1));
@@ -600,15 +600,15 @@ public class DatabaseInstrumentedTest {
         database.logActivity(getDateTime(), "Running", "seconds", 12.2);
         database.logActivity(getDateTime(), "Ran", "minutes", 30);
         database.removeActivity(1);
-        Cursor cursor = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null);
         assertEquals(1, cursor.getCount());
         cursor.close();
         database.removeActivity(1);
-        cursor = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE, null);
+        cursor = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null);
         assertEquals(1, cursor.getCount());
         cursor.close();
         database.removeActivity(2);
-        cursor = db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE, null);
+        cursor = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null);
         assertEquals(0, cursor.getCount());
         cursor.close();
         wipeOutDB();
@@ -767,25 +767,94 @@ public class DatabaseInstrumentedTest {
     }
 
     @Test
-    public void oldActivityLogTableEmpty() {
+    public void oldActivitiesTableEmpty() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
-        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITY_LOG_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + "ActivityLog(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
         database.setupDatabase();
-        assertTrue(database.doesTableHaveColumn(ACTIVITY_LOG_TABLE, "exercise"));
-        assertFalse(database.doesTableHaveColumn(ACTIVITY_LOG_TABLE, "activity"));
-        assertEquals(0, db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE, null).getCount());
+        assertTrue(database.doesTableHaveColumn(ACTIVITIES_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(ACTIVITIES_TABLE, "activity"));
+        assertEquals(0, db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null).getCount());
     }
 
     @Test
-    public void oldActivityLogTableFull() {
+    public void oldActivitiesTableFull() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
-        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITY_LOG_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
-        db.execSQL("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(1,'2020-10-10 00:00',2,5,1,1);");
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + "ActivityLog(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        db.execSQL("INSERT INTO ActivityLog VALUES(1,'2020-10-10 00:00',2,5,1,1);");
         database.setupDatabase();
-        assertTrue(database.doesTableHaveColumn(ACTIVITY_LOG_TABLE, "exercise"));
-        assertFalse(database.doesTableHaveColumn(ACTIVITY_LOG_TABLE, "activity"));
-        assertEquals(1, db.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE, null).getCount());
+        assertTrue(database.doesTableHaveColumn(ACTIVITIES_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(ACTIVITIES_TABLE, "activity"));
+        assertEquals(1, db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null).getCount());
+    }
+
+    @Test
+    public void newActivitiesTableOldColumn() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITIES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        database.setupDatabase();
+        assertTrue(database.doesTableHaveColumn(ACTIVITIES_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(ACTIVITIES_TABLE, "activity"));
+        assertEquals(0, db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null).getCount());
+    }
+
+    @Test
+    public void newActivitiesTableFullOldColumn() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITIES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        db.execSQL("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,'2020-10-10 00:00',2,5,1,1);");
+        database.setupDatabase();
+        assertTrue(database.doesTableHaveColumn(ACTIVITIES_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(ACTIVITIES_TABLE, "activity"));
+        assertEquals(1, db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null).getCount());
+    }
+
+    @Test
+    public void oldActivitiesTableNewColumn() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + "ActivityLog(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, exercise INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        database.setupDatabase();
+        assertTrue(database.doesTableHaveColumn(ACTIVITIES_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(ACTIVITIES_TABLE, "activity"));
+        assertEquals(0, db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null).getCount());
+    }
+
+    @Test
+    public void oldActivitiesTableFullNewColumn() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + "ActivityLog(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, exercise INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        db.execSQL("INSERT INTO ActivityLog VALUES(1,'2020-10-10 00:00',2,5,1,1);");
+        database.setupDatabase();
+        assertTrue(database.doesTableHaveColumn(ACTIVITIES_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(ACTIVITIES_TABLE, "activity"));
+        assertEquals(1, db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null).getCount());
+    }
+
+    @Test
+    public void newActivitiesTableNewColumn() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITIES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, exercise INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        database.setupDatabase();
+        assertTrue(database.doesTableHaveColumn(ACTIVITIES_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(ACTIVITIES_TABLE, "activity"));
+        assertEquals(0, db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null).getCount());
+    }
+
+    @Test
+    public void newActivitiesTableFullNewColumn() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        db.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITIES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, exercise INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        db.execSQL("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,'2020-10-10 00:00',2,5,1,1);");
+        database.setupDatabase();
+        assertTrue(database.doesTableHaveColumn(ACTIVITIES_TABLE, "exercise"));
+        assertFalse(database.doesTableHaveColumn(ACTIVITIES_TABLE, "activity"));
+        assertEquals(1, db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null).getCount());
     }
 }

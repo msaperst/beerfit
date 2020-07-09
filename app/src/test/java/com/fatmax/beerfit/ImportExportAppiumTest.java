@@ -19,7 +19,7 @@ import java.util.Map;
 
 import io.appium.java_client.android.AndroidDriver;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 
 public class ImportExportAppiumTest extends AppiumTestBase {
@@ -89,17 +89,17 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         args.clear();
         args.put("command", "ls sdcard/BeerFit");
         String files = ((AndroidDriver) driver.getDriver()).executeScript("mobile: shell", args).toString();
-        assertEquals(files, "Activities.csv\n" +
-                        "ActivityLog.csv\n" +
+        assertEquals(files, "Exercises.csv\n" +
+                        "Activities.csv\n" +
                         "Goals.csv\n" +
                         "Measurements.csv\n", "Expected 4 database files to be present",
                 "Files are: <br/>\n" + files);
     }
 
     @Test
-    public void verifyDefaultActivitiesExportTest() {
+    public void verifyDefaultExercisesExportTest() {
         new Navigate(driver).export();
-        byte[] activities = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/Activities.csv");
+        byte[] activities = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/Exercises.csv");
         assertEquals(new String(activities), "\"id\",\"past\",\"current\",\"color\"\n" +
                         "\"1\",\"Walked\",\"Walk\",\"-16711936\"\n" +
                         "\"2\",\"Ran\",\"Run\",\"-16776961\"\n" +
@@ -110,18 +110,18 @@ public class ImportExportAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void verifyDefaultActivityLogExportTest() {
+    public void verifyDefaultActivitiesExportTest() {
         new Navigate(driver).export();
-        byte[] activityLog = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/ActivityLog.csv");
-        assertEquals(new String(activityLog), "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n",
-                "Expected Base ActivityLog Table", "Got: <br/>\n" + new String(activityLog));
+        byte[] activityLog = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/Activities.csv");
+        assertEquals(new String(activityLog), "\"id\",\"time\",\"exercise\",\"measurement\",\"amount\",\"beers\"\n",
+                "Expected Base Activities Table", "Got: <br/>\n" + new String(activityLog));
     }
 
     @Test
     public void verifyDefaultGoalsExportTest() throws IOException {
         new Navigate(driver).export();
         byte[] goals = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/Goals.csv");
-        assertEquals(new String(goals), "\"id\",\"activity\",\"measurement\",\"amount\"\n",
+        assertEquals(new String(goals), "\"id\",\"exercise\",\"measurement\",\"amount\"\n",
                 "Expected Base Goals Table", "Got: <br/>\n" + new String(goals));
     }
 
@@ -136,15 +136,15 @@ public class ImportExportAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void verifyAddedBeerActivityLogExportTest() {
+    public void verifyAddedBeerActivitiesExportTest() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = format.format(new Date());
         driver.findElement(By.id("drankABeer")).click();
         new Navigate(driver).export();
-        byte[] activityLog = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/ActivityLog.csv");
-        assertEquals(new String(activityLog), "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n" +
-                "\"1\",\"" + date + "\",\"0\",\"0\",\"1\",\"-1\"\n", "Expected Base ActivityLog Table: <br/>\n" +
-                "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n" +
+        byte[] activityLog = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/Activities.csv");
+        assertEquals(new String(activityLog), "\"id\",\"time\",\"exercise\",\"measurement\",\"amount\",\"beers\"\n" +
+                "\"1\",\"" + date + "\",\"0\",\"0\",\"1\",\"-1\"\n", "Expected Base Activities Table: <br/>\n" +
+                "\"id\",\"time\",\"exercise\",\"measurement\",\"amount\",\"beers\"\n" +
                 "\"1\",\"" + date + "\",\"0\",\"0\",\"1\",\"-1\"\n", "Got: <br/>\n" + new String(activityLog));
     }
 
@@ -161,10 +161,10 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         // write out some import files
         String goals = "\"id\",\"activity\",\"measurement\",\"amount\"";
         ((AndroidDriver) driver.getDriver()).pushFile("/sdcard/BeerFit/Goals.csv", Base64.encodeBase64(goals.getBytes()));
-        String activities = "\"id\",\"past\",\"current\",\"color\"";
+        String exercises = "\"id\",\"past\",\"current\",\"color\"";
+        ((AndroidDriver) driver.getDriver()).pushFile("/sdcard/BeerFit/Exercises.csv", Base64.encodeBase64(exercises.getBytes()));
+        String activities = "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"";
         ((AndroidDriver) driver.getDriver()).pushFile("/sdcard/BeerFit/Activities.csv", Base64.encodeBase64(activities.getBytes()));
-        String activityLog = "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"";
-        ((AndroidDriver) driver.getDriver()).pushFile("/sdcard/BeerFit/ActivityLog.csv", Base64.encodeBase64(activityLog.getBytes()));
         String measurements = "\"id\",\"type\",\"unit\"";
         ((AndroidDriver) driver.getDriver()).pushFile("/sdcard/BeerFit/Measurements.csv", Base64.encodeBase64(measurements.getBytes()));
         // check the ability to import
@@ -203,18 +203,18 @@ public class ImportExportAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void verifyImportActivityLogTest() throws SQLException, IOException, ClassNotFoundException {
+    public void verifyImportActivitiesTest() throws SQLException, IOException, ClassNotFoundException {
         // write out some import files
         String activityLog = "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n" +
                 "\"1\",\"2020-04-10 12:46:00\",\"2\",\"2\",\"10\",\"2\"";
-        ((AndroidDriver) driver.getDriver()).pushFile("/sdcard/BeerFit/ActivityLog.csv", Base64.encodeBase64(activityLog.getBytes()));
+        ((AndroidDriver) driver.getDriver()).pushFile("/sdcard/BeerFit/Activities.csv", Base64.encodeBase64(activityLog.getBytes()));
         // check the ability to import
         Navigate nav = new Navigate(driver);
         nav.mport(0);
         // verify data was imported
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
         resultSet.next();
-        assertActivityLog(resultSet, 1, "2020-04-10 12:46:00", 2, 2, 10, 2);
+        assertActivities(resultSet, 1, "2020-04-10 12:46:00", 2, 2, 10, 2);
         assertElementTextEquals("2 Beers Left", By.id("beersLeft"));
     }
 }

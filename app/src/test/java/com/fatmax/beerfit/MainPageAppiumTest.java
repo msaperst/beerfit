@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 
 public class MainPageAppiumTest extends AppiumTestBase {
 
@@ -43,7 +43,7 @@ public class MainPageAppiumTest extends AppiumTestBase {
     @Test
     public void oneBeerIsSingular() {
         //kludge to have it redraw
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,2);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,2);");
         driver.findElement(drankABeer).click();
         assertElementTextEquals("1 Beer Left", beersLeft);
     }
@@ -51,7 +51,7 @@ public class MainPageAppiumTest extends AppiumTestBase {
     @Test
     public void twoBeersArePlural() {
         //kludge to have it redraw
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,3);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,3);");
         driver.findElement(drankABeer).click();
         assertElementTextEquals("2 Beers Left", beersLeft);
     }

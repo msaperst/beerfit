@@ -15,7 +15,7 @@ public class Database {
     public static final String MEASUREMENTS_TABLE = "Measurements";
     public static final String EXERCISES_TABLE = "Exercises";
     public static final String GOALS_TABLE = "Goals";
-    public static final String ACTIVITY_LOG_TABLE = "ActivityLog";      //TODO - rename to Activities and do migration/upgrade if needed
+    public static final String ACTIVITIES_TABLE = "Activities";      //TODO - rename to Activities and do migration/upgrade if needed
     static final String INSERT_INTO = "INSERT INTO ";
     static final String WHERE_ID = " WHERE id = '";
     static final String CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ";
@@ -51,9 +51,13 @@ public class Database {
             newGoalsTable.put("amount", "NUMBER");
             renameColumn(GOALS_TABLE, newGoalsTable);
         }
-        if (isTableMissing(ACTIVITY_LOG_TABLE)) {
-            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITY_LOG_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, exercise INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
-        } else if (!doesTableHaveColumn(ACTIVITY_LOG_TABLE, "exercise") && doesTableHaveColumn(ACTIVITY_LOG_TABLE, "activity")) {
+        // migration from old table name to new one
+        if (isTableMissing(ACTIVITIES_TABLE) && !isTableMissing("ActivityLog")) {
+            database.execSQL("ALTER TABLE ActivityLog RENAME TO " + ACTIVITIES_TABLE);
+        }
+        if (isTableMissing(ACTIVITIES_TABLE)) {
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITIES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, exercise INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        } else if (!doesTableHaveColumn(ACTIVITIES_TABLE, "exercise") && doesTableHaveColumn(ACTIVITIES_TABLE, "activity")) {
             // migration from old schema that had column activity, now renaming it to exercise
             Map<String, String> newGoalsTable = new LinkedHashMap<>();
             newGoalsTable.put("id", "INTEGER PRIMARY KEY AUTOINCREMENT");
@@ -62,7 +66,7 @@ public class Database {
             newGoalsTable.put("measurement", "INTEGER");
             newGoalsTable.put("amount", "NUMBER");
             newGoalsTable.put("beers", "NUMBER");
-            renameColumn(ACTIVITY_LOG_TABLE, newGoalsTable);
+            renameColumn(ACTIVITIES_TABLE, newGoalsTable);
         }
     }
 
@@ -229,7 +233,7 @@ public class Database {
     public void logActivity(String id, String time, String exercise, String units, double duration) {
         int exerciseId = getOrdinal(EXERCISES_TABLE, "past", exercise);
         int measurementsId = getOrdinal(MEASUREMENTS_TABLE, "unit", units);
-        database.execSQL(INSERT_INTO + ACTIVITY_LOG_TABLE + VALUES + id + ", '" + time + "', " +
+        database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + VALUES + id + ", '" + time + "', " +
                 exerciseId + ", " + measurementsId + ", " + duration + ", " + getBeersEarned(exercise, units, duration) + ");");
     }
 
@@ -238,16 +242,16 @@ public class Database {
     }
 
     public void logBeer(String id, String time, int beers) {
-        database.execSQL(INSERT_INTO + ACTIVITY_LOG_TABLE + VALUES + id + ", " + time + ", 0, 0, " + beers + ", -" + beers + ");");
+        database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + VALUES + id + ", " + time + ", 0, 0, " + beers + ", -" + beers + ");");
     }
 
     public void removeActivity(int id) {
-        database.execSQL("DELETE FROM " + ACTIVITY_LOG_TABLE + WHERE_ID + id + "';");
+        database.execSQL("DELETE FROM " + ACTIVITIES_TABLE + WHERE_ID + id + "';");
     }
 
     public String getActivityTime(int id) {
         String time = "Unknown";
-        Cursor cursor = database.rawQuery("SELECT time FROM " + ACTIVITY_LOG_TABLE + WHERE_ID + id + "';", null);
+        Cursor cursor = database.rawQuery("SELECT time FROM " + ACTIVITIES_TABLE + WHERE_ID + id + "';", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -260,7 +264,7 @@ public class Database {
 
     int getBeersDrank() {
         int beersDrank = 0;
-        Cursor cursor = database.rawQuery("SELECT SUM(amount) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = 0;", null);
+        Cursor cursor = database.rawQuery("SELECT SUM(amount) FROM " + ACTIVITIES_TABLE + " WHERE exercise = 0;", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -291,7 +295,7 @@ public class Database {
 
     double getTotalBeersEarned() {
         double beersEarned = 0;
-        Cursor cursor = database.rawQuery("SELECT SUM(beers) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise != 0;", null);
+        Cursor cursor = database.rawQuery("SELECT SUM(beers) FROM " + ACTIVITIES_TABLE + " WHERE exercise != 0;", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();

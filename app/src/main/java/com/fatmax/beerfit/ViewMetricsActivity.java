@@ -21,12 +21,11 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
@@ -80,7 +79,8 @@ public class ViewMetricsActivity extends AppCompatActivity {
         // setup our table
         TableLayout metricsView = findViewById(R.id.metricsBodyTable);
         metricsView.removeAllViews();
-        Cursor timeCursor = sqLiteDatabase.rawQuery("SELECT DISTINCT strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " ORDER BY date DESC", null);
+        //TODO - move to utilities class
+        Cursor timeCursor = sqLiteDatabase.rawQuery("SELECT DISTINCT strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " ORDER BY date DESC", null);
         if (timeCursor != null) {
             if (timeCursor.getCount() > 0) {
                 timeCursor.moveToFirst();
@@ -104,7 +104,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
         int beersDrank = 0;
         int beersEarned = 0;
         //TODO - move to utilities class
-        Cursor beersCursor = sqLiteDatabase.rawQuery("SELECT SUM(amount), strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " WHERE date = '" + dateMetric + "' AND " + ACTIVITY_LOG_TABLE + ".exercise = 0 GROUP BY date", null);
+        Cursor beersCursor = sqLiteDatabase.rawQuery("SELECT SUM(amount), strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " WHERE date = '" + dateMetric + "' AND " + ACTIVITIES_TABLE + ".exercise = 0 GROUP BY date", null);
         if (beersCursor != null) {
             if (beersCursor.getCount() > 0) {
                 beersCursor.moveToFirst();
@@ -118,7 +118,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
         }
         //for each activity in the date metric, tally them all
         //TODO - move to utilities class
-        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, SUM(beers), strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".activity = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' AND " + ACTIVITY_LOG_TABLE + ".exercise != 0 GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
+        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, SUM(beers), strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' AND " + ACTIVITIES_TABLE + ".exercise != 0 GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
         if (activityCursor != null) {
             if (activityCursor.getCount() > 0) {
                 activityCursor.moveToFirst();
@@ -157,7 +157,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
         GraphView graph = findViewById(R.id.metricsGraph);
         graph.removeAllSeries();
         Data data = new Data(database);
-        Cursor timeCursor = sqLiteDatabase.rawQuery("SELECT DISTINCT strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " ORDER BY date ASC", null);
+        Cursor timeCursor = sqLiteDatabase.rawQuery("SELECT DISTINCT strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " ORDER BY date ASC", null);
         if (timeCursor != null) {
             if (timeCursor.getCount() > 0) {
                 timeCursor.moveToFirst();
@@ -181,7 +181,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
         String dateMetric = timeCursor.getString(0);
         //for each activity in the date metric, tally them all
         //TODO - move to utilities class
-        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITY_LOG_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
+        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
         if (activityCursor != null) {
             if (activityCursor.getCount() > 0) {
                 activityCursor.moveToFirst();

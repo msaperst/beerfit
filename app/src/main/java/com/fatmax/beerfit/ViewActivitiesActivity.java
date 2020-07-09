@@ -49,7 +49,7 @@ public class ViewActivitiesActivity extends AppCompatActivity {
             // setup our activity cell
             TextView activityView;
             if (activity.getExercise().getId() == 0 && activity.getMeasurement().getId() == 0) {    // if it's beer
-                activityView = tableBuilder.createTextView("Drank " + activity.getAmount() + " beer");
+                activityView = tableBuilder.createTextView("Drank " + (int) activity.getAmount() + " beer");
                 if (activity.getAmount() > 1) {
                     activityView.setText(getString(R.string.plural, activityView.getText()));
                 }
