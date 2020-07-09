@@ -23,7 +23,7 @@ public class ExerciseUnitTest {
 
     @Test
     public void exerciseByIdNotFoundTest() {
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1;", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1", null)).thenReturn(null);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase, 1);
         assertEquals(0, exercise.getId());
@@ -39,7 +39,7 @@ public class ExerciseUnitTest {
         when(mockedCursor.getString(1)).thenReturn("Walked");
         when(mockedCursor.getString(2)).thenReturn("Walk");
         when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase, 1);
         assertEquals(1, exercise.getId());
@@ -51,7 +51,7 @@ public class ExerciseUnitTest {
     @Test
     public void exerciseByIdNotExistsTest() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 0", null)).thenReturn(mockedCursor);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase, 0);
         assertEquals(0, exercise.getId());

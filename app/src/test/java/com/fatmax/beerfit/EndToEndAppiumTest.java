@@ -38,7 +38,7 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         assertElementTextEquals("0 Beers Left", BEERS_LEFT);
         Calendar cal = Calendar.getInstance();
         driver.findElement(By.id("earnedABeer")).click();
-        driver.findElement(By.id("activitySelection")).click();
+        driver.findElement(By.id("exerciseSelection")).click();
         Calendar calendar = Calendar.getInstance();
         activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(2).click();

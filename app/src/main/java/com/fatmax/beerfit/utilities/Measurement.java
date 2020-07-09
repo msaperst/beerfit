@@ -14,7 +14,7 @@ public class Measurement {
 
     public Measurement(SQLiteDatabase sqLiteDatabase, int id) {
         this.sqLiteDatabase = sqLiteDatabase;
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE id = '" + id + "';", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE id = " + id, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
