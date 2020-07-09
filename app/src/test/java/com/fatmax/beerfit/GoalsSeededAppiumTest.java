@@ -27,7 +27,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
     public void addedGoalsDisplayed() {
         List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
         assertEquals(tableRows.size(), 1, "Expected to find '1' goals", "Actually found '" + tableRows.size() + "'");
-        assertElementTextEquals("Walk for 5 kilometers", tableRows.get(0).findElement(By.className("android.widget.TextView")));
+        assertElementTextEquals("Walk for 5.0 kilometers", tableRows.get(0).findElement(By.className("android.widget.TextView")));
         assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Edit Activity")));
         assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Delete Activity")));
     }
@@ -85,7 +85,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
     public void editGoalAllData() {
         driver.findElement(By.AccessibilityId("Edit Activity")).click();
         assertElementTextEquals("Walk", driver.findElement(By.id("goalSelection")).findElement(By.className("android.widget.TextView")));
-        assertElementTextEquals("5", By.id("goalDurationInput"));
+        assertElementTextEquals("5.0", By.id("goalDurationInput"));
         assertElementTextEquals("kilometers", driver.findElement(By.id("goalDurationUnits")).findElement(By.className("android.widget.TextView")));
     }
 

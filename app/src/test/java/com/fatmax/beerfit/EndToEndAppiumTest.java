@@ -32,13 +32,13 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         //verify the goal is displayed there
         List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
         assertEquals(tableRows.size(), 1, "Expected to find '1' goals", "Actually found '" + tableRows.size() + "'");
-        assertElementTextEquals("Run for 5 kilometers", tableRows.get(0).findElement(By.className("android.widget.TextView")));
+        assertElementTextEquals("Run for 5.0 kilometers", tableRows.get(0).findElement(By.className("android.widget.TextView")));
         // log our activity
         navigate.goBack();
         assertElementTextEquals("0 Beers Left", BEERS_LEFT);
         Calendar cal = Calendar.getInstance();
         driver.findElement(By.id("earnedABeer")).click();
-        driver.findElement(By.id("activitySelection")).click();
+        driver.findElement(By.id("activityExercise")).click();
         Calendar calendar = Calendar.getInstance();
         activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(2).click();

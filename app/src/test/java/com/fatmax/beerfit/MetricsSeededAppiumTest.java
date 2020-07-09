@@ -13,7 +13,7 @@ import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.touch.offset.PointOption;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 
 public class MetricsSeededAppiumTest extends AppiumTestBase {
 
@@ -28,21 +28,21 @@ public class MetricsSeededAppiumTest extends AppiumTestBase {
 
     @Before
     public void navigateToAddActivity() {
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(2,\"2020-01-02 00:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(3,\"2020-01-03 00:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(4,\"2020-01-04 00:00\",2,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(5,\"2020-01-05 00:00\",2,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(6,\"2020-01-06 00:00\",2,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(7,\"2020-01-07 00:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(8,\"2020-01-08 00:00\",3,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(9,\"2020-01-09 00:00\",0,0,1,-1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(10,\"2020-01-10 00:00\",0,0,1,-1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(11,\"2020-02-11 00:00\",4,1,30,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(12,\"2020-02-12 00:00\",5,1,30,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(13,\"2020-02-13 00:00\",0,0,2,-2);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(14,\"2020-02-14 00:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(15,\"2020-02-15 00:00\",2,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(2,\"2020-01-02 00:00\",1,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(3,\"2020-01-03 00:00\",1,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(4,\"2020-01-04 00:00\",2,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(5,\"2020-01-05 00:00\",2,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(6,\"2020-01-06 00:00\",2,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(7,\"2020-01-07 00:00\",1,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(8,\"2020-01-08 00:00\",3,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(9,\"2020-01-09 00:00\",0,0,1,-1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(10,\"2020-01-10 00:00\",0,0,1,-1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(11,\"2020-02-11 00:00\",4,1,30,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(12,\"2020-02-12 00:00\",5,1,30,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(13,\"2020-02-13 00:00\",0,0,2,-2);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(14,\"2020-02-14 00:00\",1,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(15,\"2020-02-15 00:00\",2,2,5,1);");
         new Navigate(driver).toMetrics();
     }
 

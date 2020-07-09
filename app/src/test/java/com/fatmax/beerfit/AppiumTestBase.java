@@ -145,11 +145,11 @@ public class AppiumTestBase {
                 "Actually found amount of '" + resultSet.getInt("amount") + "'");
     }
 
-    void assertActivityLog(ResultSet resultSet, int id, String dateTime, int exercise, int measurement, int amount, int beers) throws SQLException {
+    void assertActivities(ResultSet resultSet, int id, String dateTime, int exercise, int measurement, int amount, int beers) throws SQLException {
         assertEquals(resultSet.getInt("id"), id, "Expected to find id of '" + id + "' for activity in DB",
                 "Actually found id of '" + resultSet.getInt("id") + "'");
         assertEquals(resultSet.getString("time"), dateTime, "Expected to find time of '" +
-                dateTime + "' for activity in DB", "Actually found id of '" + resultSet.getString("time") + "'");
+                dateTime + "' for activity in DB", "Actually found time of '" + resultSet.getString("time") + "'");
         assertEquals(resultSet.getInt("exercise"), exercise, "Expected to find exercise of '" + exercise + "' for activity in DB",
                 "Actually found exercise of '" + resultSet.getInt("exercise") + "'");
         assertEquals(resultSet.getInt("measurement"), measurement, "Expected to find measurement of '" + measurement + "' for activity in DB",

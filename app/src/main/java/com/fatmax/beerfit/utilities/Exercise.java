@@ -6,7 +6,7 @@ import android.graphics.Color;
 
 import java.util.Random;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.Database.INSERT_INTO;
@@ -37,7 +37,7 @@ public class Exercise {
 
     public Exercise(SQLiteDatabase sqLiteDatabase, int id) {
         this.sqLiteDatabase = sqLiteDatabase;
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = " + id + ";", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = " + id, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -123,7 +123,7 @@ public class Exercise {
             }
             goalsCheck.close();
         }
-        Cursor activitiesCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = " + id + ";", null);
+        Cursor activitiesCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = " + id + ";", null);
         if (activitiesCheck != null) {
             if (activitiesCheck.getCount() > 0) {
                 isSafe = false;

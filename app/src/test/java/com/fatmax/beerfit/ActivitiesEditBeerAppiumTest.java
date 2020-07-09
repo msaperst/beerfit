@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 
 public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
 
     @Before
     public void seedAndNavigateToActivities() {
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(9,\"2020-01-09 08:00\",0,0,1,-1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(9,\"2020-01-09 08:00\",0,0,1,-1);");
         new Navigate(driver).toActivities();
         driver.findElement(By.AccessibilityId("Edit Activity")).click();
     }
@@ -25,9 +25,9 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
     public void editBeerGoBack() throws SQLException, IOException, ClassNotFoundException {
         new Navigate(driver).goBack();
         //verify the activity is not changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '9';");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '9';");
         resultSet.next();
-        assertActivityLog(resultSet, 9, "2020-01-09 08:00", 0, 0, 1, -1);
+        assertActivities(resultSet, 9, "2020-01-09 08:00", 0, 0, 1, -1);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
 
     @Test
     public void editBeerActivityHeader() {
-        assertElementTextEquals("Activity", By.id("activitySelectionHeader"));
+        assertElementTextEquals("Activity", By.id("activityExerciseHeader"));
     }
 
     @Test
@@ -52,10 +52,10 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
 
     @Test
     public void editBeerAllData() {
-        assertElementTextEquals("Drank Beer", driver.findElement(By.id("activitySelection")));
+        assertElementTextEquals("Drank Beer", driver.findElement(By.id("activityExercise")));
         assertElementTextEquals("2020-01-09", By.id("activityDate"));
         assertElementTextEquals("08:00", By.id("activityTime"));
-        assertElementTextEquals("1", By.id("activityDurationInput"));
+        assertElementTextEquals("1.0", By.id("activityDurationInput"));
         assertElementTextEquals("beers", driver.findElement(By.id("activityDurationUnits")));
     }
 
@@ -81,9 +81,9 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
     public void editBeerNoChanges() throws SQLException, IOException, ClassNotFoundException {
         driver.findElement(By.id("submitActivity")).click();
         //verify the activity is not changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '9';");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '9';");
         resultSet.next();
-        assertActivityLog(resultSet, 9, "2020-01-09 08:00", 0, 0, 1, -1);
+        assertActivities(resultSet, 9, "2020-01-09 08:00", 0, 0, 1, -1);
     }
 
     @Test
@@ -103,9 +103,9 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
         // submit it
         driver.findElement(By.id("submitActivity")).click();
         //verify the activity is changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '9';");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '9';");
         resultSet.next();
         // beer changes to none, as no activities are set
-        assertActivityLog(resultSet, 9, "2020-01-16 13:30", 0, 0, 2, -2);
+        assertActivities(resultSet, 9, "2020-01-16 13:30", 0, 0, 2, -2);
     }
 }

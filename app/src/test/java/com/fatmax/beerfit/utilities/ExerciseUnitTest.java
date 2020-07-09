@@ -7,7 +7,7 @@ import android.graphics.Color;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static org.junit.Assert.assertEquals;
@@ -66,7 +66,7 @@ public class ExerciseUnitTest {
 
     @Test
     public void exerciseByIdNotFoundTest() {
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1;", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1", null)).thenReturn(null);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase, 1);
         assertEquals(0, exercise.getId());
@@ -82,7 +82,7 @@ public class ExerciseUnitTest {
         when(mockedCursor.getString(1)).thenReturn("Walked");
         when(mockedCursor.getString(2)).thenReturn("Walk");
         when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase, 1);
         assertEquals(1, exercise.getId());
@@ -94,7 +94,7 @@ public class ExerciseUnitTest {
     @Test
     public void exerciseByIdNotExistsTest() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 0", null)).thenReturn(mockedCursor);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase, 0);
         assertEquals(0, exercise.getId());
@@ -206,7 +206,7 @@ public class ExerciseUnitTest {
     @Test
     public void safeToDeleteNull() {
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = 0;", null)).thenReturn(null);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = 0;", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = 0;", null)).thenReturn(null);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase);
         assertTrue(exercise.safeToDelete());
@@ -221,7 +221,7 @@ public class ExerciseUnitTest {
         when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk';", null)).thenReturn(mockedCursor);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = 1;", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = 1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = 1;", null)).thenReturn(mockedCursor);
         Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
         assertTrue(exercise.safeToDelete());
     }
@@ -235,7 +235,7 @@ public class ExerciseUnitTest {
         when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk';", null)).thenReturn(mockedCursor);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = 1;", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = 1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = 1;", null)).thenReturn(mockedCursor);
         Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
         assertFalse(exercise.safeToDelete());
     }

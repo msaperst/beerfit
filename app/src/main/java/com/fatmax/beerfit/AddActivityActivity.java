@@ -49,7 +49,7 @@ public class AddActivityActivity extends AppCompatActivity {
         database = new Database(sqLiteDatabase);
 
         // setup our two spinners
-        createSpinner(EXERCISES_TABLE, "past", R.id.activitySelection);
+        createSpinner(EXERCISES_TABLE, "past", R.id.activityExercise);
         createSpinner(MEASUREMENTS_TABLE, "unit", R.id.activityDurationUnits);
         //setup our object widths
         findViewById(R.id.activityDate).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
@@ -69,22 +69,20 @@ public class AddActivityActivity extends AppCompatActivity {
 
             Activity activity = new Activity(sqLiteDatabase, activityId);
             cal.setTime(activity.getDateTime());
-
-            ((Spinner) findViewById(R.id.activitySelection)).setSelection(activity.getExercise().getId());
+            ((Spinner) findViewById(R.id.activityExercise)).setSelection(activity.getExercise().getId());
             ((TextView) findViewById(R.id.activityDate)).setText(activity.getDate());
             ((TextView) findViewById(R.id.activityTime)).setText(activity.getTime());
             ((TextView) findViewById(R.id.activityDurationInput)).setText(String.valueOf(activity.getAmount()));
             ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(activity.getMeasurement().getId());
-
             ((TextView) findViewById(R.id.activityDateTimeHeader)).setText(R.string.update_time);
 
             //if beer activity
             if (activity.getExercise().getId() == 0) {
-                ((TextView) findViewById(R.id.activitySelectionHeader)).setText(R.string.activity);
+                ((TextView) findViewById(R.id.activityExerciseHeader)).setText(R.string.activity);
                 ((TextView) findViewById(R.id.activityDurationHeader)).setText(R.string.enter_amount);
                 ((EditText) findViewById(R.id.activityDurationInput)).setInputType(InputType.TYPE_CLASS_NUMBER);
                 //fix our activity
-                Spinner activitySpinner = findViewById(R.id.activitySelection);
+                Spinner activitySpinner = findViewById(R.id.activityExercise);
                 ViewGroup.LayoutParams activityLayoutParams = activitySpinner.getLayoutParams();
                 TextView exercise = new TextView(this);
                 exercise.setId(activitySpinner.getId());
@@ -92,7 +90,7 @@ public class AddActivityActivity extends AppCompatActivity {
                 exercise.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 exercise.setLayoutParams(activityLayoutParams);
                 ViewGroup rootLayout = (ViewGroup) activitySpinner.getParent();
-                rootLayout.removeView(findViewById(R.id.activitySelection));
+                rootLayout.removeView(findViewById(R.id.activityExercise));
                 rootLayout.addView(exercise);
                 //fix our units
                 Spinner unitSpinner = findViewById(R.id.activityDurationUnits);
@@ -150,15 +148,15 @@ public class AddActivityActivity extends AppCompatActivity {
 
     public void addActivity(View view) {
         boolean isFilledOut = true;
-        Spinner activity = null;
+        Spinner exercise = null;
         TextView date = findViewById(R.id.activityDate);
         TextView time = findViewById(R.id.activityTime);
         Spinner units = null;
         EditText duration = findViewById(R.id.activityDurationInput);
         if (!isBeerActivity()) {
-            activity = findViewById(R.id.activitySelection);
-            if ("".equals(activity.getSelectedItem().toString())) {
-                TextView errorText = (TextView) activity.getSelectedView();
+            exercise = findViewById(R.id.activityExercise);
+            if ("".equals(exercise.getSelectedItem().toString())) {
+                TextView errorText = (TextView) exercise.getSelectedView();
                 errorText.setError("");
                 errorText.setTextColor(Color.RED);
                 errorText.setText(R.string.indicate_exercise);
@@ -184,18 +182,18 @@ public class AddActivityActivity extends AppCompatActivity {
             int activityId = (int) submit.getTag();
             database.removeActivity(activityId);
             if (isBeerActivity()) {
-                database.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", Integer.parseInt(duration.getText().toString()));
+                database.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", (int) Double.parseDouble(duration.getText().toString()));
             } else {
-                database.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
+                database.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), exercise.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
             }
         } else {
-            database.logActivity(date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
+            database.logActivity(date.getText() + " " + time.getText(), exercise.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
         }
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
     private boolean isBeerActivity() {
-        return "Activity".contentEquals(((TextView) findViewById(R.id.activitySelectionHeader)).getText());
+        return "Activity".contentEquals(((TextView) findViewById(R.id.activityExerciseHeader)).getText());
     }
 }

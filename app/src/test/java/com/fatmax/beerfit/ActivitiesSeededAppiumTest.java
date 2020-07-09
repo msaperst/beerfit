@@ -21,27 +21,27 @@ import static com.fatmax.beerfit.MetricsSeededAppiumTest.LIFTED_FOR_30_MINUTES;
 import static com.fatmax.beerfit.MetricsSeededAppiumTest.PLAYED_SOCCER_FOR_30_MINUTES;
 import static com.fatmax.beerfit.MetricsSeededAppiumTest.RAN_FOR_5_KILOMETERS;
 import static com.fatmax.beerfit.MetricsSeededAppiumTest.WALKED_FOR_5_KILOMETERS;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 
 public class ActivitiesSeededAppiumTest extends AppiumTestBase {
 
     @Before
     public void seedAndNavigateToActivities() {
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(2,\"2020-01-02 01:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(3,\"2020-01-03 02:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(4,\"2020-01-04 03:00\",2,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(5,\"2020-01-05 04:00\",2,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(6,\"2020-01-06 05:00\",2,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(7,\"2020-01-07 06:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(8,\"2020-01-08 07:00\",3,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(9,\"2020-01-09 08:00\",0,0,1,-1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(10,\"2020-01-10 09:00\",0,0,1,-1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(11,\"2020-02-11 10:00\",4,1,30,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(12,\"2020-02-12 11:00\",5,1,30,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(13,\"2020-02-13 12:00\",0,0,2,-2);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(14,\"2020-02-14 13:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITY_LOG_TABLE + " VALUES(15,\"2020-02-15 23:59\",2,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(2,\"2020-01-02 01:00\",1,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(3,\"2020-01-03 02:00\",1,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(4,\"2020-01-04 03:00\",2,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(5,\"2020-01-05 04:00\",2,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(6,\"2020-01-06 05:00\",2,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(7,\"2020-01-07 06:00\",1,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(8,\"2020-01-08 07:00\",3,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(9,\"2020-01-09 08:00\",0,0,1,-1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(10,\"2020-01-10 09:00\",0,0,1,-1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(11,\"2020-02-11 10:00\",4,1,30,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(12,\"2020-02-12 11:00\",5,1,30,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(13,\"2020-02-13 12:00\",0,0,2,-2);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(14,\"2020-02-14 13:00\",1,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(15,\"2020-02-15 23:59\",2,2,5,1);");
         new Navigate(driver).toActivities();
     }
 
@@ -117,9 +117,9 @@ public class ActivitiesSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.AccessibilityId("Delete Activity")).click();
         driver.findElement(By.id("android:id/button2")).click();
         //verify the activity is still there
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '15';");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '15';");
         resultSet.next();
-        assertActivityLog(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 1);
+        assertActivities(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 1);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class ActivitiesSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.AccessibilityId("Delete Activity")).click();
         driver.findElement(By.id("android:id/button1")).click();
         //verify the activity is gone
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '15';");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '15';");
         assertEquals(false, resultSet.next(), "Expected no results", "");
     }
 }

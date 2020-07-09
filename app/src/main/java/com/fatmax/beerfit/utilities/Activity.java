@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import static com.fatmax.beerfit.AddActivityActivity.DATE_FORMAT;
 import static com.fatmax.beerfit.AddActivityActivity.TIME_FORMAT;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 
 public class Activity {
 
@@ -26,7 +26,7 @@ public class Activity {
 
     public Activity(SQLiteDatabase sqLiteDatabase, int id) {
         this.sqLiteDatabase = sqLiteDatabase;
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = '" + id + "';", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = " + id, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -34,7 +34,7 @@ public class Activity {
                 try {
                     this.time = DATE_TIME_FORMAT.parse(cursor.getString(1));
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    this.time = null;
                 }
 
                 this.exercise = new Exercise(sqLiteDatabase, cursor.getInt(2));
@@ -55,11 +55,19 @@ public class Activity {
     }
 
     public String getDate() {
-        return DATE_FORMAT.format(time);
+        if (time == null) {
+            return null;
+        } else {
+            return DATE_FORMAT.format(time);
+        }
     }
 
     public String getTime() {
-        return TIME_FORMAT.format(time);
+        if (time == null) {
+            return null;
+        } else {
+            return TIME_FORMAT.format(time);
+        }
     }
 
     public Exercise getExercise() {
