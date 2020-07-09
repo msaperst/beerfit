@@ -14,10 +14,14 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fatmax.beerfit.utilities.Activity;
 import com.fatmax.beerfit.utilities.Database;
+import com.fatmax.beerfit.utilities.Elements;
+import com.fatmax.beerfit.utilities.Goal;
 import com.fatmax.beerfit.utilities.TableBuilder;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
@@ -41,13 +45,11 @@ public class ViewGoalsActivity extends AppCompatActivity {
 
         // dynamically build our table
         TableLayout tableLayout = findViewById(R.id.goalsTable);
-        //TODO - move to utilities class
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT " + GOALS_TABLE + ".id, " + EXERCISES_TABLE + ".current, " + GOALS_TABLE + ".amount, " + MEASUREMENTS_TABLE + ".unit FROM " + GOALS_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + GOALS_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + GOALS_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id", null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
+        List<Goal> goals = Elements.getAllGoals(sqLiteDatabase);
+        for (Goal goal : goals) {
             // setup our cells
-            TextView activity = tableBuilder.createTextView(cursor.getString(1) + " for " + cursor.getString(2) + " " + cursor.getString(3), "goal");
-            activity.setTextSize(20);
+            TextView goalView = tableBuilder.createTextView(goal.getExercise().getCurrent() + " for " + goal.getAmount() + " " + goal.getMeasurement().getUnit(), "goal");
+            goalView.setTextSize(20);
             // create and setup our edit button
             ImageButton editButton = tableBuilder.createEditButton();
             editButton.setOnClickListener(this::editGoal);
@@ -56,11 +58,9 @@ public class ViewGoalsActivity extends AppCompatActivity {
             deleteButton.setOnClickListener(this::deleteGoal);
 
             // build our row
-            tableLayout.addView(tableBuilder.createTableRow(cursor.getString(0),
-                    Arrays.asList(activity, editButton, deleteButton)));
-            cursor.moveToNext();
+            tableLayout.addView(tableBuilder.createTableRow(String.valueOf(goal.getId()),
+                    Arrays.asList(goalView, editButton, deleteButton)));
         }
-        cursor.close();
     }
 
     public void addGoal(View view) {

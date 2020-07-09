@@ -82,7 +82,7 @@ public class ActivityUnitTest {
     }
 
     @Test
-    public void activityByIdExistsBadTimeTest() throws ParseException {
+    public void activityByIdExistsBadTimeTest() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getInt(0)).thenReturn(1);
         when(mockedCursor.getString(1)).thenReturn("poop");
