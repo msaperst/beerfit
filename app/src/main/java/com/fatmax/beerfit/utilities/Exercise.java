@@ -35,6 +35,21 @@ public class Exercise {
         }
     }
 
+    public Exercise(SQLiteDatabase sqLiteDatabase, int id) {
+        this.sqLiteDatabase = sqLiteDatabase;
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = " + id + ";", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                this.id = cursor.getInt(0);
+                this.past = cursor.getString(1);
+                this.current = cursor.getString(2);
+                this.color = cursor.getInt(3);
+            }
+            cursor.close();
+        }
+    }
+
     public Exercise(SQLiteDatabase sqLiteDatabase) {
         this.sqLiteDatabase = sqLiteDatabase;
     }

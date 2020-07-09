@@ -46,6 +46,7 @@ public class ViewGoalsActivity extends AppCompatActivity {
 
         // dynamically build our table
         TableLayout tableLayout = findViewById(R.id.goalsTable);
+        //TODO move this to utility call
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT " + GOALS_TABLE + ".id, " + EXERCISES_TABLE + ".current, " + GOALS_TABLE + ".amount, " + MEASUREMENTS_TABLE + ".unit FROM " + GOALS_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + GOALS_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + GOALS_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id", null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {

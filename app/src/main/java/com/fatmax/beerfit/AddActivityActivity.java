@@ -3,7 +3,6 @@ package com.fatmax.beerfit;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +19,7 @@ import android.widget.TimePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fatmax.beerfit.utilities.Activity;
 import com.fatmax.beerfit.utilities.Database;
 
 import java.text.SimpleDateFormat;
@@ -28,18 +28,16 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class AddActivityActivity extends AppCompatActivity {
 
-    SQLiteDatabase sqLiteDatabase;
-    Database database;
-
-    Calendar cal;
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm", Locale.US);
+    SQLiteDatabase sqLiteDatabase;
+    Database database;
+    Calendar cal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,40 +67,33 @@ public class AddActivityActivity extends AppCompatActivity {
             submit.setTag(activityId);
             submit.setText(getString(R.string.update_activity));
 
-            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = " + activityId, null);
-            cursor.moveToFirst();
-            String dateTime = cursor.getString(1);
+            Activity activity = new Activity(sqLiteDatabase, activityId);
+            cal.setTime(activity.getDateTime());
 
-            cal.set(Calendar.YEAR, Integer.parseInt(dateTime.split(" ")[0].split("-")[0]));
-            cal.set(Calendar.MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[1]) - 1);  //subtracting one as that's how months are counted
-            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[2]));
-            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(dateTime.split(" ")[1].split(":")[0]));
-            cal.set(Calendar.MINUTE, Integer.parseInt(dateTime.split(" ")[1].split(":")[1]));
-
-            ((Spinner) findViewById(R.id.activitySelection)).setSelection(cursor.getInt(2));
-            ((TextView) findViewById(R.id.activityDate)).setText(dateTime.split(" ")[0]);
-            ((TextView) findViewById(R.id.activityTime)).setText(dateTime.split(" ")[1]);
-            ((TextView) findViewById(R.id.activityDurationInput)).setText(cursor.getString(4));
-            ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(cursor.getInt(3));
+            ((Spinner) findViewById(R.id.activitySelection)).setSelection(activity.getExercise().getId());
+            ((TextView) findViewById(R.id.activityDate)).setText(activity.getDate());
+            ((TextView) findViewById(R.id.activityTime)).setText(activity.getTime());
+            ((TextView) findViewById(R.id.activityDurationInput)).setText(String.valueOf(activity.getAmount()));
+            ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(activity.getMeasurement().getId());
 
             ((TextView) findViewById(R.id.activityDateTimeHeader)).setText(R.string.update_time);
 
             //if beer activity
-            if (cursor.getInt(2) == 0) {
+            if (activity.getExercise().getId() == 0) {
                 ((TextView) findViewById(R.id.activitySelectionHeader)).setText(R.string.activity);
                 ((TextView) findViewById(R.id.activityDurationHeader)).setText(R.string.enter_amount);
                 ((EditText) findViewById(R.id.activityDurationInput)).setInputType(InputType.TYPE_CLASS_NUMBER);
                 //fix our activity
                 Spinner activitySpinner = findViewById(R.id.activitySelection);
                 ViewGroup.LayoutParams activityLayoutParams = activitySpinner.getLayoutParams();
-                TextView activity = new TextView(this);
-                activity.setId(activitySpinner.getId());
-                activity.setText(R.string.drank_beer);
-                activity.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                activity.setLayoutParams(activityLayoutParams);
+                TextView exercise = new TextView(this);
+                exercise.setId(activitySpinner.getId());
+                exercise.setText(R.string.drank_beer);
+                exercise.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                exercise.setLayoutParams(activityLayoutParams);
                 ViewGroup rootLayout = (ViewGroup) activitySpinner.getParent();
                 rootLayout.removeView(findViewById(R.id.activitySelection));
-                rootLayout.addView(activity);
+                rootLayout.addView(exercise);
                 //fix our units
                 Spinner unitSpinner = findViewById(R.id.activityDurationUnits);
                 ViewGroup.LayoutParams unitLayoutParams = unitSpinner.getLayoutParams();
@@ -113,7 +104,6 @@ public class AddActivityActivity extends AppCompatActivity {
                 rootLayout.removeView(findViewById(R.id.activityDurationUnits));
                 rootLayout.addView(unit);
             }
-            cursor.close();
         } else {
             // otherwise initialize date time
             cal = Calendar.getInstance();

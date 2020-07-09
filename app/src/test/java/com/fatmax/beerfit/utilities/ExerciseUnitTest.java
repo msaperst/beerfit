@@ -31,8 +31,8 @@ public class ExerciseUnitTest {
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
         assertEquals(0, exercise.getId());
-        assertNull("Walk", exercise.getCurrent());
-        assertNull("Walked", exercise.getPast());
+        assertNull(exercise.getCurrent());
+        assertNull(exercise.getPast());
         // not checking color, as it's random
     }
 
@@ -65,6 +65,45 @@ public class ExerciseUnitTest {
     }
 
     @Test
+    public void exerciseByIdNotFoundTest() {
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1;", null)).thenReturn(null);
+
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, 1);
+        assertEquals(0, exercise.getId());
+        assertNull(exercise.getCurrent());
+        assertNull(exercise.getPast());
+        // not checking color, as it's random
+    }
+
+    @Test
+    public void exerciseByIdExistsTest() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("Walked");
+        when(mockedCursor.getString(2)).thenReturn("Walk");
+        when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1;", null)).thenReturn(mockedCursor);
+
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, 1);
+        assertEquals(1, exercise.getId());
+        assertEquals("Walk", exercise.getCurrent());
+        assertEquals("Walked", exercise.getPast());
+        assertEquals(Color.GREEN, exercise.getColor());
+    }
+
+    @Test
+    public void exerciseByIdNotExistsTest() {
+        when(mockedCursor.getCount()).thenReturn(0);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 0;", null)).thenReturn(mockedCursor);
+
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, 0);
+        assertEquals(0, exercise.getId());
+        assertNull(exercise.getCurrent());
+        assertNull(exercise.getPast());
+        // not checking color, as it's random
+    }
+
+    @Test
     public void exerciseNotExistsSetPastTest() {
         when(mockedCursor.getCount()).thenReturn(0);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk';", null)).thenReturn(mockedCursor);
@@ -75,7 +114,7 @@ public class ExerciseUnitTest {
     }
 
     @Test
-    public void existingActivityUnique() {
+    public void existingExerciseUnique() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getInt(0)).thenReturn(1);
         when(mockedCursor.getString(1)).thenReturn("Walked");
@@ -88,7 +127,7 @@ public class ExerciseUnitTest {
     }
 
     @Test
-    public void newActivityBadUnique() {
+    public void newExerciseBadUnique() {
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Wulk' AND id != 0;", null)).thenReturn(null);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase);
@@ -97,7 +136,7 @@ public class ExerciseUnitTest {
     }
 
     @Test
-    public void newActivityUnique() {
+    public void newExerciseUnique() {
         when(mockedCursor.getCount()).thenReturn(0);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Wulk' AND id != 0;", null)).thenReturn(mockedCursor);
 
@@ -107,7 +146,7 @@ public class ExerciseUnitTest {
     }
 
     @Test
-    public void newActivityNotUnique() {
+    public void newExerciseNotUnique() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' AND id != 0;", null)).thenReturn(mockedCursor);
 
@@ -174,7 +213,7 @@ public class ExerciseUnitTest {
     }
 
     @Test
-    public void safeToDeleteExistingActivityNotInEither() {
+    public void safeToDeleteExistingExerciseNotInEither() {
         when(mockedCursor.getCount()).thenReturn(1, 0);
         when(mockedCursor.getInt(0)).thenReturn(1);
         when(mockedCursor.getString(1)).thenReturn("Walked");
@@ -188,7 +227,7 @@ public class ExerciseUnitTest {
     }
 
     @Test
-    public void safeToDeleteExistingActivityNotInGoalsInActivity() {
+    public void safeToDeleteExistingExerciseNotInGoalsInActivity() {
         when(mockedCursor.getCount()).thenReturn(1, 0, 1);
         when(mockedCursor.getInt(0)).thenReturn(1);
         when(mockedCursor.getString(1)).thenReturn("Walked");
@@ -202,7 +241,7 @@ public class ExerciseUnitTest {
     }
 
     @Test
-    public void notSafeToDeleteExistingActivityInGoals() {
+    public void notSafeToDeleteExistingExerciseInGoals() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getInt(0)).thenReturn(1);
         when(mockedCursor.getString(1)).thenReturn("Walked");

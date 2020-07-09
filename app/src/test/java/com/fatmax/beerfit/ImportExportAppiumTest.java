@@ -89,7 +89,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         args.clear();
         args.put("command", "ls sdcard/BeerFit");
         String files = ((AndroidDriver) driver.getDriver()).executeScript("mobile: shell", args).toString();
-        assertEquals(files, "Activities.csv\n" +
+        assertEquals(files, "Exercises.csv\n" +
                         "ActivityLog.csv\n" +
                         "Goals.csv\n" +
                         "Measurements.csv\n", "Expected 4 database files to be present",
@@ -113,7 +113,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
     public void verifyDefaultActivityLogExportTest() {
         new Navigate(driver).export();
         byte[] activityLog = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/ActivityLog.csv");
-        assertEquals(new String(activityLog), "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n",
+        assertEquals(new String(activityLog), "\"id\",\"time\",\"exercise\",\"measurement\",\"amount\",\"beers\"\n",
                 "Expected Base ActivityLog Table", "Got: <br/>\n" + new String(activityLog));
     }
 
@@ -121,7 +121,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
     public void verifyDefaultGoalsExportTest() throws IOException {
         new Navigate(driver).export();
         byte[] goals = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/Goals.csv");
-        assertEquals(new String(goals), "\"id\",\"activity\",\"measurement\",\"amount\"\n",
+        assertEquals(new String(goals), "\"id\",\"exercise\",\"measurement\",\"amount\"\n",
                 "Expected Base Goals Table", "Got: <br/>\n" + new String(goals));
     }
 
@@ -142,7 +142,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("drankABeer")).click();
         new Navigate(driver).export();
         byte[] activityLog = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/ActivityLog.csv");
-        assertEquals(new String(activityLog), "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n" +
+        assertEquals(new String(activityLog), "\"id\",\"time\",\"exercise\",\"measurement\",\"amount\",\"beers\"\n" +
                 "\"1\",\"" + date + "\",\"0\",\"0\",\"1\",\"-1\"\n", "Expected Base ActivityLog Table: <br/>\n" +
                 "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n" +
                 "\"1\",\"" + date + "\",\"0\",\"0\",\"1\",\"-1\"\n", "Got: <br/>\n" + new String(activityLog));
@@ -164,7 +164,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
     @Test
     public void verifyFullImportTest() {
         // write out some import files
-        String goals = "\"id\",\"activity\",\"measurement\",\"amount\"";
+        String goals = "\"id\",\"exercise\",\"measurement\",\"amount\"";
         ((AndroidDriver) driver.getDriver()).pushFile("/sdcard/BeerFit/Goals.csv", Base64.encodeBase64(goals.getBytes()));
         String activities = "\"id\",\"past\",\"current\",\"color\"";
         ((AndroidDriver) driver.getDriver()).pushFile("/sdcard/BeerFit/Activities.csv", Base64.encodeBase64(activities.getBytes()));
@@ -195,7 +195,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
     @Test
     public void verifyImportGoalsTest() throws SQLException, IOException, ClassNotFoundException {
         // write out some import files
-        String goals = "\"id\",\"activity\",\"measurement\",\"amount\"\n" +
+        String goals = "\"id\",\"exercise\",\"measurement\",\"amount\"\n" +
                 "\"4\",\"4\",\"1\",\"30\"";
         ((AndroidDriver) driver.getDriver()).pushFile("/sdcard/BeerFit/Goals.csv", Base64.encodeBase64(goals.getBytes()));
         // check the ability to import
@@ -210,7 +210,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
     @Test
     public void verifyImportActivityLogTest() throws SQLException, IOException, ClassNotFoundException {
         // write out some import files
-        String activityLog = "\"id\",\"time\",\"activity\",\"measurement\",\"amount\",\"beers\"\n" +
+        String activityLog = "\"id\",\"time\",\"exercise\",\"measurement\",\"amount\",\"beers\"\n" +
                 "\"1\",\"2020-04-10 12:46:00\",\"2\",\"2\",\"10\",\"2\"";
         ((AndroidDriver) driver.getDriver()).pushFile("/sdcard/BeerFit/ActivityLog.csv", Base64.encodeBase64(activityLog.getBytes()));
         // check the ability to import

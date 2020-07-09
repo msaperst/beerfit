@@ -47,6 +47,30 @@ public class ExerciseInstrumentedTest {
     }
 
     @Test
+    public void exerciseByIdExistsTest() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Exercise exercise = new Exercise(db, 1);
+        assertEquals(1, exercise.getId());
+        assertEquals("Walk", exercise.getCurrent());
+        assertEquals("Walked", exercise.getPast());
+        assertEquals(Color.GREEN, exercise.getColor());
+    }
+
+    @Test
+    public void exerciseByIdNotExistsTest() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Exercise exercise = new Exercise(db, 0);
+        assertEquals(0, exercise.getId());
+        assertNull(exercise.getCurrent());
+        assertNull(exercise.getPast());
+        // not checking color, as it's random
+    }
+
+    @Test
     public void existingExerciseUnique() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);

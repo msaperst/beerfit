@@ -52,7 +52,6 @@ public class Database {
             renameColumn(GOALS_TABLE, newGoalsTable);
         }
         if (isTableMissing(ACTIVITY_LOG_TABLE)) {
-            //TODO - don't call it an activity, call it an exercise - need to upgrade it properly
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITY_LOG_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, exercise INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
         } else if (!doesTableHaveColumn(ACTIVITY_LOG_TABLE, "exercise") && doesTableHaveColumn(ACTIVITY_LOG_TABLE, "activity")) {
             // migration from old schema that had column activity, now renaming it to exercise
