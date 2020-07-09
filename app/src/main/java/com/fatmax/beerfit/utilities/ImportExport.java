@@ -44,7 +44,7 @@ public class ImportExport {
     }
 
     public void exportData() {
-        exportData(Database.ACTIVITIES_TABLE);
+        exportData(Database.EXERCISES_TABLE);
         exportData(Database.GOALS_TABLE);
         exportData(Database.MEASUREMENTS_TABLE);
         exportData(Database.ACTIVITY_LOG_TABLE);
@@ -75,7 +75,7 @@ public class ImportExport {
 
     public void importData() {
         List<String> existingImports = new ArrayList<>();
-        List<String> allTables = Arrays.asList(Database.ACTIVITIES_TABLE, Database.GOALS_TABLE, Database.MEASUREMENTS_TABLE, Database.ACTIVITY_LOG_TABLE);
+        List<String> allTables = Arrays.asList(Database.EXERCISES_TABLE, Database.GOALS_TABLE, Database.MEASUREMENTS_TABLE, Database.ACTIVITY_LOG_TABLE);
         for (String table : allTables) {
             if (new File(exportDir, table + ".csv").exists()) {
                 existingImports.add(table);

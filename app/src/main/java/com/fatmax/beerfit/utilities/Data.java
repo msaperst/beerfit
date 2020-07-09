@@ -38,7 +38,7 @@ public class Data {
             series.setTitle(entry.getKey());
             series.setDrawDataPoints(true);
             series.setThickness(7);
-            series.setColor(database.getActivityColor(entry.getKey()));
+            series.setColor(database.getExerciseColor(entry.getKey()));
             graphSeries.add(series);
         }
         return graphSeries;

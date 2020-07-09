@@ -1,7 +1,6 @@
 package com.fatmax.beerfit;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,12 +14,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fatmax.beerfit.utilities.Database;
+import com.fatmax.beerfit.utilities.Goal;
 
 import java.util.List;
 
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
+import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class AddGoalActivity extends AppCompatActivity {
@@ -38,7 +37,7 @@ public class AddGoalActivity extends AppCompatActivity {
         database = new Database(sqLiteDatabase);
 
         // setup our two spinners
-        createSpinner(ACTIVITIES_TABLE, "current", R.id.goalSelection);
+        createSpinner(EXERCISES_TABLE, "current", R.id.goalSelection);
         createSpinner(MEASUREMENTS_TABLE, "unit", R.id.goalDurationUnits);
         //setup our object widths
         findViewById(R.id.goalDurationInput).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
@@ -51,14 +50,10 @@ public class AddGoalActivity extends AppCompatActivity {
             submit.setTag(goalId);
             submit.setText(getString(R.string.update_goal));
 
-            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE id = " + goalId, null);
-            cursor.moveToFirst();
-
-            ((Spinner) findViewById(R.id.goalSelection)).setSelection(cursor.getInt(1));
-            ((TextView) findViewById(R.id.goalDurationInput)).setText(cursor.getString(3));
-            ((Spinner) findViewById(R.id.goalDurationUnits)).setSelection(cursor.getInt(2));
-
-            cursor.close();
+            Goal goal = new Goal(sqLiteDatabase, goalId);
+            ((Spinner) findViewById(R.id.goalSelection)).setSelection(goal.getExercise().getId());
+            ((TextView) findViewById(R.id.goalDurationInput)).setText(String.valueOf(goal.getAmount()));
+            ((Spinner) findViewById(R.id.goalDurationUnits)).setSelection(goal.getMeasurement().getId());
         }
     }
 
@@ -71,7 +66,7 @@ public class AddGoalActivity extends AppCompatActivity {
             TextView errorText = (TextView) activity.getSelectedView();
             errorText.setError("");
             errorText.setTextColor(Color.RED);
-            errorText.setText(R.string.indicate_activity);
+            errorText.setText(R.string.indicate_exercise);
             isFilledOut = false;
         }
         if ("".equals(units.getSelectedItem().toString())) {

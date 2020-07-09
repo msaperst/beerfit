@@ -6,18 +6,20 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Database {
 
     public static final String MEASUREMENTS_TABLE = "Measurements";
-    public static final String ACTIVITIES_TABLE = "Activities";
+    public static final String EXERCISES_TABLE = "Exercises";
     public static final String GOALS_TABLE = "Goals";
-    public static final String ACTIVITY_LOG_TABLE = "ActivityLog";
-    private static final String CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ";
-    private static final String INSERT_INTO = "INSERT INTO ";
+    public static final String ACTIVITY_LOG_TABLE = "ActivityLog";      //TODO - rename to Activities and do migration/upgrade if needed
+    static final String INSERT_INTO = "INSERT INTO ";
+    static final String WHERE_ID = " WHERE id = '";
+    static final String CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ";
     private static final String VALUES = " VALUES(";
-    private static final String WHERE_ID = " WHERE id = '";
     private SQLiteDatabase database;
 
     public Database(SQLiteDatabase database) {
@@ -30,19 +32,37 @@ public class Database {
             database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(1,'time','minutes');");
             database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(2,'distance','kilometers');");
         }
-        if (isTableMissing(ACTIVITIES_TABLE)) {
-            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITIES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, past VARCHAR, current VARCHAR, color NUMBER);");
-            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(1,'Walked','Walk'," + Color.GREEN + ");");
-            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(2,'Ran','Run'," + Color.BLUE + ");");
-            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(3,'Cycled','Cycle'," + Color.RED + ");");
-            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(4,'Lifted','Lift'," + Color.MAGENTA + ");");
-            database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + " VALUES(5,'Played Soccer','Play Soccer'," + Color.DKGRAY + ");");
+        if (isTableMissing(EXERCISES_TABLE)) {
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + EXERCISES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, past VARCHAR, current VARCHAR, color NUMBER);");
+            database.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(1,'Walked','Walk'," + Color.GREEN + ");");
+            database.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(2,'Ran','Run'," + Color.BLUE + ");");
+            database.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(3,'Cycled','Cycle'," + Color.RED + ");");
+            database.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(4,'Lifted','Lift'," + Color.MAGENTA + ");");
+            database.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(5,'Played Soccer','Play Soccer'," + Color.DKGRAY + ");");
         }
         if (isTableMissing(GOALS_TABLE)) {
-            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + GOALS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, activity INTEGER, measurement INTEGER, amount NUMBER);");
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + GOALS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise INTEGER, measurement INTEGER, amount NUMBER);");
+        } else if (!doesTableHaveColumn(GOALS_TABLE, "exercise") && doesTableHaveColumn(GOALS_TABLE, "activity")) {
+            // migration from old schema that had column activity, now renaming it to exercise
+            Map<String, String> newGoalsTable = new LinkedHashMap<>();
+            newGoalsTable.put("id", "INTEGER PRIMARY KEY AUTOINCREMENT");
+            newGoalsTable.put("exercise", "INTEGER");
+            newGoalsTable.put("measurement", "INTEGER");
+            newGoalsTable.put("amount", "NUMBER");
+            renameColumn(GOALS_TABLE, newGoalsTable);
         }
         if (isTableMissing(ACTIVITY_LOG_TABLE)) {
-            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITY_LOG_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, activity INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + ACTIVITY_LOG_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT, exercise INTEGER, measurement INTEGER, amount NUMBER, beers NUMBER);");
+        } else if (!doesTableHaveColumn(ACTIVITY_LOG_TABLE, "exercise") && doesTableHaveColumn(ACTIVITY_LOG_TABLE, "activity")) {
+            // migration from old schema that had column activity, now renaming it to exercise
+            Map<String, String> newGoalsTable = new LinkedHashMap<>();
+            newGoalsTable.put("id", "INTEGER PRIMARY KEY AUTOINCREMENT");
+            newGoalsTable.put("time", "TEXT");
+            newGoalsTable.put("exercise", "INTEGER");
+            newGoalsTable.put("measurement", "INTEGER");
+            newGoalsTable.put("amount", "NUMBER");
+            newGoalsTable.put("beers", "NUMBER");
+            renameColumn(ACTIVITY_LOG_TABLE, newGoalsTable);
         }
     }
 
@@ -56,6 +76,25 @@ public class Database {
             cursor.close();
         }
         return !isExist;
+    }
+
+    boolean doesTableHaveColumn(String tableName, String column) {
+        boolean isExist = false;
+        Cursor cursor = database.rawQuery("PRAGMA table_info(" + tableName + ")", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    if (column.equals(cursor.getString(1))) {
+                        isExist = true;
+                        break;
+                    }
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }
+        return isExist;
     }
 
     boolean doesDataExist(String tableName, int id) {
@@ -123,6 +162,39 @@ public class Database {
         return columnList;
     }
 
+    List<String> getColumns(String table) {
+        List<String> columns = new ArrayList<>();
+        Cursor cursor = database.rawQuery("PRAGMA table_info(" + table + ")", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    columns.add(cursor.getString(1));
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }
+        return columns;
+    }
+
+    void renameColumn(String table, Map<String, String> newTableColumns) {
+        StringBuilder tableStructure = new StringBuilder();
+        StringBuilder columns = new StringBuilder();
+        String prefix = "";
+        for (Map.Entry<String, String> newTableColumn : newTableColumns.entrySet()) {
+            tableStructure.append(prefix).append(newTableColumn.getKey()).append(" ").append(newTableColumn.getValue());
+            columns.append(prefix).append(newTableColumn.getKey());
+            prefix = ", ";
+        }
+        database.execSQL("BEGIN TRANSACTION;");
+        database.execSQL("CREATE TABLE TMP(" + tableStructure.toString() + ");");
+        database.execSQL("INSERT INTO TMP(" + columns + ") SELECT " + String.join(",", getColumns(table)) + " FROM " + table + ";");
+        database.execSQL("DROP TABLE " + table + ";");
+        database.execSQL("ALTER TABLE TMP RENAME TO " + table + ";");
+        database.execSQL("COMMIT;");
+    }
+
     int getOrdinal(String table, String column, String lookup) {
         int ordinal = -1;
         Cursor cursor = database.rawQuery("SELECT id FROM " + table + " WHERE " + column + " = '" + lookup + "';", null);
@@ -136,10 +208,10 @@ public class Database {
         return ordinal;
     }
 
-    int getActivityColor(String activity) {
+    int getExerciseColor(String exercise) {
         int color = Color.YELLOW;
-        int activityId = getOrdinal(ACTIVITIES_TABLE, "past", activity.split(" \\(")[0]);
-        Cursor cursor = database.rawQuery("SELECT color FROM " + ACTIVITIES_TABLE + WHERE_ID + activityId + "';", null);
+        int exerciseId = getOrdinal(EXERCISES_TABLE, "past", exercise.split(" \\(")[0]);
+        Cursor cursor = database.rawQuery("SELECT color FROM " + EXERCISES_TABLE + WHERE_ID + exerciseId + "';", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -150,15 +222,15 @@ public class Database {
         return color;
     }
 
-    public void logActivity(String time, String activity, String units, double duration) {
-        logActivity(null, time, activity, units, duration);
+    public void logActivity(String time, String exercise, String units, double duration) {
+        logActivity(null, time, exercise, units, duration);
     }
 
-    public void logActivity(String id, String time, String activity, String units, double duration) {
-        int activityId = getOrdinal(ACTIVITIES_TABLE, "past", activity);
+    public void logActivity(String id, String time, String exercise, String units, double duration) {
+        int exerciseId = getOrdinal(EXERCISES_TABLE, "past", exercise);
         int measurementsId = getOrdinal(MEASUREMENTS_TABLE, "unit", units);
         database.execSQL(INSERT_INTO + ACTIVITY_LOG_TABLE + VALUES + id + ", '" + time + "', " +
-                activityId + ", " + measurementsId + ", " + duration + ", " + getBeersEarned(activity, units, duration) + ");");
+                exerciseId + ", " + measurementsId + ", " + duration + ", " + getBeersEarned(exercise, units, duration) + ");");
     }
 
     public void logBeer() {
@@ -188,7 +260,7 @@ public class Database {
 
     int getBeersDrank() {
         int beersDrank = 0;
-        Cursor cursor = database.rawQuery("SELECT SUM(amount) FROM " + ACTIVITY_LOG_TABLE + " WHERE activity = 0;", null);
+        Cursor cursor = database.rawQuery("SELECT SUM(amount) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise = 0;", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -199,11 +271,11 @@ public class Database {
         return beersDrank;
     }
 
-    double getBeersEarned(String activity, String units, double duration) {
-        int activityId = getOrdinal(ACTIVITIES_TABLE, "past", activity);
+    double getBeersEarned(String exercise, String units, double duration) {
+        int exerciseId = getOrdinal(EXERCISES_TABLE, "past", exercise);
         int measurementsId = getOrdinal(MEASUREMENTS_TABLE, "unit", units);
         double goalAmountForBeer = -1;
-        Cursor goalResults = database.rawQuery("SELECT amount FROM " + GOALS_TABLE + " WHERE activity = " + activityId + " AND measurement = " + measurementsId + ";", null);
+        Cursor goalResults = database.rawQuery("SELECT amount FROM " + GOALS_TABLE + " WHERE exercise = " + exerciseId + " AND measurement = " + measurementsId + ";", null);
         if (goalResults != null) {
             if (goalResults.getCount() > 0) {
                 goalResults.moveToFirst();
@@ -219,7 +291,7 @@ public class Database {
 
     double getTotalBeersEarned() {
         double beersEarned = 0;
-        Cursor cursor = database.rawQuery("SELECT SUM(beers) FROM " + ACTIVITY_LOG_TABLE + " WHERE activity != 0;", null);
+        Cursor cursor = database.rawQuery("SELECT SUM(beers) FROM " + ACTIVITY_LOG_TABLE + " WHERE exercise != 0;", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -234,13 +306,13 @@ public class Database {
         return (int) getTotalBeersEarned() - getBeersDrank();
     }
 
-    public void addGoal(String activity, String units, double duration) {
-        addGoal(null, activity, units, duration);
+    public void addGoal(String exercise, String units, double duration) {
+        addGoal(null, exercise, units, duration);
     }
 
-    public void addGoal(String id, String activity, String units, double duration) {
+    public void addGoal(String id, String exercise, String units, double duration) {
         database.execSQL(INSERT_INTO + GOALS_TABLE + VALUES + id + ", " +
-                getOrdinal(ACTIVITIES_TABLE, "current", activity) + ", " +
+                getOrdinal(EXERCISES_TABLE, "current", exercise) + ", " +
                 getOrdinal(MEASUREMENTS_TABLE, "unit", units) + ", " + duration + ");");
     }
 
