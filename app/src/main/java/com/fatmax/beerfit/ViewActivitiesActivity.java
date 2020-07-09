@@ -2,7 +2,6 @@ package com.fatmax.beerfit;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
@@ -14,27 +13,22 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fatmax.beerfit.utilities.Activity;
 import com.fatmax.beerfit.utilities.Database;
+import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.TableBuilder;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.List;
 import java.util.Locale;
-
-import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
-import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class ViewActivitiesActivity extends AppCompatActivity {
 
+    final SimpleDateFormat datetimeFormat = new SimpleDateFormat("EEE, MMM d yyyy, kk:mm", Locale.US);
     SQLiteDatabase sqLiteDatabase;
     Database database;
     TableBuilder tableBuilder;
-
-    final SimpleDateFormat datetimeFormat = new SimpleDateFormat("EEE, MMM d yyyy, kk:mm", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,21 +42,19 @@ public class ViewActivitiesActivity extends AppCompatActivity {
 
         // dynamically build our table
         TableLayout tableLayout = findViewById(R.id.activityBodyTable);
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT " + ACTIVITY_LOG_TABLE + ".id, " + ACTIVITY_LOG_TABLE + ".time, " + ACTIVITIES_TABLE + ".past, " + ACTIVITY_LOG_TABLE + ".amount, " + MEASUREMENTS_TABLE + ".unit FROM " + ACTIVITY_LOG_TABLE + " LEFT JOIN " + ACTIVITIES_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".activity = " + ACTIVITIES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITY_LOG_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id ORDER BY " + ACTIVITY_LOG_TABLE + ".time DESC", null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            // setup our cells
-            LocalDateTime localDateTime = LocalDateTime.parse(cursor.getString(1).replace(" ", "T"));
-            Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-            TextView time = tableBuilder.createTextView(datetimeFormat.format(date));
-            TextView activity;
-            if (cursor.getString(2) == null) {
-                activity = tableBuilder.createTextView("Drank " + cursor.getInt(3) + " beer");
-                if (cursor.getInt(3) > 1) {
-                    activity.setText(getString(R.string.plural, activity.getText()));
+        List<Activity> activities = Elements.getAllActivities(sqLiteDatabase);
+        for (Activity activity : activities) {
+            // setup our time cell
+            TextView timeView = tableBuilder.createTextView(datetimeFormat.format(activity.getDateTime()));
+            // setup our activity cell
+            TextView activityView;
+            if (activity.getExercise().getId() == 0 && activity.getMeasurement().getId() == 0) {    // if it's beer
+                activityView = tableBuilder.createTextView("Drank " + (int) activity.getAmount() + " beer");
+                if (activity.getAmount() > 1) {
+                    activityView.setText(getString(R.string.plural, activityView.getText()));
                 }
             } else {
-                activity = tableBuilder.createTextView(cursor.getString(2) + " for " + cursor.getDouble(3) + " " + cursor.getString(4));
+                activityView = tableBuilder.createTextView(activity.getExercise().getPast() + " for " + activity.getAmount() + " " + activity.getMeasurement().getUnit());
             }
 
             // create and setup our edit button
@@ -73,11 +65,9 @@ public class ViewActivitiesActivity extends AppCompatActivity {
             deleteButton.setOnClickListener(this::deleteActivity);
 
             // build our row
-            tableLayout.addView(tableBuilder.createTableRow(cursor.getString(0),
-                    Arrays.asList(time, activity, editButton, deleteButton)));
-            cursor.moveToNext();
+            tableLayout.addView(tableBuilder.createTableRow(String.valueOf(activity.getId()),
+                    Arrays.asList(timeView, activityView, editButton, deleteButton)));
         }
-        cursor.close();
     }
 
     void editActivity(View editButton) {

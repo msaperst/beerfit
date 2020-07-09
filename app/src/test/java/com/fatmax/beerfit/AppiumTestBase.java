@@ -134,29 +134,29 @@ public class AppiumTestBase {
         return conn.createStatement().executeQuery(query);
     }
 
-    void assertGoals(ResultSet resultSet, int id, int activity, int measurement, int amount) throws SQLException {
-        assertEquals(resultSet.getInt("id"), id, "Expected to find id of '" + id + "' for activity in DB",
+    void assertGoals(ResultSet resultSet, int id, int exercise, int measurement, int amount) throws SQLException {
+        assertEquals(resultSet.getInt("id"), id, "Expected to find id of '" + id + "' for goal in DB",
                 "Actually found id of '" + resultSet.getInt("id") + "'");
-        assertEquals(resultSet.getInt("activity"), activity, "Expected to find activity of '" + activity + "' for activity in DB",
-                "Actually found activity of '" + resultSet.getInt("activity") + "'");
-        assertEquals(resultSet.getInt("measurement"), measurement, "Expected to find measurement of '" + measurement + "' for activity in DB",
+        assertEquals(resultSet.getInt("exercise"), exercise, "Expected to find exercise of '" + exercise + "' for goal in DB",
+                "Actually found exercise of '" + resultSet.getInt("exercise") + "'");
+        assertEquals(resultSet.getInt("measurement"), measurement, "Expected to find measurement of '" + measurement + "' for goal in DB",
                 "Actually found measurement of '" + resultSet.getInt("measurement") + "'");
-        assertEquals(resultSet.getInt("amount"), amount, "Expected to find amount of '" + amount + "' for activity in DB",
+        assertEquals(resultSet.getInt("amount"), amount, "Expected to find amount of '" + amount + "' for goal in DB",
                 "Actually found amount of '" + resultSet.getInt("amount") + "'");
     }
 
-    void assertActivityLog(ResultSet resultSet, int id, String dateTime, int activity, int measurement, int amount, int beers) throws SQLException {
+    void assertActivities(ResultSet resultSet, int id, String dateTime, int exercise, int measurement, int amount, int beers) throws SQLException {
         assertEquals(resultSet.getInt("id"), id, "Expected to find id of '" + id + "' for activity in DB",
                 "Actually found id of '" + resultSet.getInt("id") + "'");
         assertEquals(resultSet.getString("time"), dateTime, "Expected to find time of '" +
-                dateTime + "' for activity in DB", "Actually found id of '" + resultSet.getString("time") + "'");
-        assertEquals(resultSet.getInt("activity"), activity, "Expected to find activity of '" + activity + "' for activity in DB",
-                "Actually found activity of '" + resultSet.getInt("activity") + "'");
+                dateTime + "' for activity in DB", "Actually found time of '" + resultSet.getString("time") + "'");
+        assertEquals(resultSet.getInt("exercise"), exercise, "Expected to find exercise of '" + exercise + "' for activity in DB",
+                "Actually found exercise of '" + resultSet.getInt("exercise") + "'");
         assertEquals(resultSet.getInt("measurement"), measurement, "Expected to find measurement of '" + measurement + "' for activity in DB",
                 "Actually found measurement of '" + resultSet.getInt("measurement") + "'");
         assertEquals(resultSet.getInt("amount"), amount, "Expected to find amount of '" + amount + "' for activity in DB",
                 "Actually found amount of '" + resultSet.getInt("amount") + "'");
-        assertEquals(resultSet.getInt("beers"), beers, "Expected to find beers of '" + beers + "' for beers in DB",
+        assertEquals(resultSet.getInt("beers"), beers, "Expected to find beers of '" + beers + "' for activity in DB",
                 "Actually found beers of '" + resultSet.getInt("beers") + "'");
     }
 

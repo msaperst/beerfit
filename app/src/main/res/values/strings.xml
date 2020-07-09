@@ -2,7 +2,7 @@
     <string name="app_name">BeerFit</string>
     <string name="add_an_activity">Add An Activity</string>
     <string name="edit_your_activity">Edit Your Activity</string>
-    <string name="select_activity">Select Activity</string>
+    <string name="select_exercise">Select Exercise</string>
     <string name="activity">Activity</string>
     <string name="select_time">Select Time</string>
     <string name="enter_duration">Enter Duration</string>
@@ -29,8 +29,8 @@
     <string name="enter_amount">Enter Amount</string>
     <string name="drank_beer">Drank Beer</string>
     <string name="beers">beers</string>
-    <string name="indicate_activity">You need to indicate some activity</string>
-    <string name="indicate_duration">"You need to indicate some duration of your activity"</string>
+    <string name="indicate_exercise">You need to indicate some exercise</string>
+    <string name="indicate_duration">You need to indicate some duration</string>
     <string name="export_data">Export Data</string>
     <string name="import_data">Import Data</string>
     <string name="plural">%1$ss</string>

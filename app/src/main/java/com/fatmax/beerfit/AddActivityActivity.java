@@ -3,7 +3,6 @@ package com.fatmax.beerfit;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +19,7 @@ import android.widget.TimePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fatmax.beerfit.utilities.Activity;
 import com.fatmax.beerfit.utilities.Database;
 
 import java.text.SimpleDateFormat;
@@ -28,8 +28,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.utilities.Database.ACTIVITY_LOG_TABLE;
+import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class AddActivityActivity extends AppCompatActivity {
@@ -51,7 +50,7 @@ public class AddActivityActivity extends AppCompatActivity {
         database = new Database(sqLiteDatabase);
 
         // setup our two spinners
-        createSpinner(ACTIVITIES_TABLE, "past", R.id.activitySelection);
+        createSpinner(EXERCISES_TABLE, "past", R.id.activityExercise);
         createSpinner(MEASUREMENTS_TABLE, "unit", R.id.activityDurationUnits);
         //setup our object widths
         findViewById(R.id.activityDate).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
@@ -69,40 +68,32 @@ public class AddActivityActivity extends AppCompatActivity {
             submit.setTag(activityId);
             submit.setText(getString(R.string.update_activity));
 
-            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITY_LOG_TABLE + " WHERE id = " + activityId, null);
-            cursor.moveToFirst();
-            String dateTime = cursor.getString(1);
 
-            cal.set(Calendar.YEAR, Integer.parseInt(dateTime.split(" ")[0].split("-")[0]));
-            cal.set(Calendar.MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[1])-1);  //subtracting one as that's how months are counted
-            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateTime.split(" ")[0].split("-")[2]));
-            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(dateTime.split(" ")[1].split(":")[0]));
-            cal.set(Calendar.MINUTE, Integer.parseInt(dateTime.split(" ")[1].split(":")[1]));
-
-            ((Spinner) findViewById(R.id.activitySelection)).setSelection(cursor.getInt(2));
-            ((TextView) findViewById(R.id.activityDate)).setText(dateTime.split(" ")[0]);
-            ((TextView) findViewById(R.id.activityTime)).setText(dateTime.split(" ")[1]);
-            ((TextView) findViewById(R.id.activityDurationInput)).setText(cursor.getString(4));
-            ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(cursor.getInt(3));
-
+            Activity activity = new Activity(sqLiteDatabase, activityId);
+            cal.setTime(activity.getDateTime());
+            ((Spinner) findViewById(R.id.activityExercise)).setSelection(activity.getExercise().getId());
+            ((TextView) findViewById(R.id.activityDate)).setText(activity.getDate());
+            ((TextView) findViewById(R.id.activityTime)).setText(activity.getTime());
+            ((TextView) findViewById(R.id.activityDurationInput)).setText(String.valueOf(activity.getAmount()));
+            ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(activity.getMeasurement().getId());
             ((TextView) findViewById(R.id.activityDateTimeHeader)).setText(R.string.update_time);
 
             //if beer activity
-            if (cursor.getInt(2) == 0) {
-                ((TextView) findViewById(R.id.activitySelectionHeader)).setText(R.string.activity);
+            if (activity.getExercise().getId() == 0) {
+                ((TextView) findViewById(R.id.activityExerciseHeader)).setText(R.string.activity);
                 ((TextView) findViewById(R.id.activityDurationHeader)).setText(R.string.enter_amount);
                 ((EditText) findViewById(R.id.activityDurationInput)).setInputType(InputType.TYPE_CLASS_NUMBER);
                 //fix our activity
-                Spinner activitySpinner = findViewById(R.id.activitySelection);
+                Spinner activitySpinner = findViewById(R.id.activityExercise);
                 ViewGroup.LayoutParams activityLayoutParams = activitySpinner.getLayoutParams();
-                TextView activity = new TextView(this);
-                activity.setId(activitySpinner.getId());
-                activity.setText(R.string.drank_beer);
-                activity.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                activity.setLayoutParams(activityLayoutParams);
+                TextView exercise = new TextView(this);
+                exercise.setId(activitySpinner.getId());
+                exercise.setText(R.string.drank_beer);
+                exercise.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                exercise.setLayoutParams(activityLayoutParams);
                 ViewGroup rootLayout = (ViewGroup) activitySpinner.getParent();
-                rootLayout.removeView(findViewById(R.id.activitySelection));
-                rootLayout.addView(activity);
+                rootLayout.removeView(findViewById(R.id.activityExercise));
+                rootLayout.addView(exercise);
                 //fix our units
                 Spinner unitSpinner = findViewById(R.id.activityDurationUnits);
                 ViewGroup.LayoutParams unitLayoutParams = unitSpinner.getLayoutParams();
@@ -113,7 +104,6 @@ public class AddActivityActivity extends AppCompatActivity {
                 rootLayout.removeView(findViewById(R.id.activityDurationUnits));
                 rootLayout.addView(unit);
             }
-            cursor.close();
         } else {
             // otherwise initialize date time
             cal = Calendar.getInstance();
@@ -160,18 +150,18 @@ public class AddActivityActivity extends AppCompatActivity {
 
     public void addActivity(View view) {
         boolean isFilledOut = true;
-        Spinner activity = null;
+        Spinner exercise = null;
         TextView date = findViewById(R.id.activityDate);
         TextView time = findViewById(R.id.activityTime);
         Spinner units = null;
         EditText duration = findViewById(R.id.activityDurationInput);
         if (!isBeerActivity()) {
-            activity = findViewById(R.id.activitySelection);
-            if ("".equals(activity.getSelectedItem().toString())) {
-                TextView errorText = (TextView) activity.getSelectedView();
+            exercise = findViewById(R.id.activityExercise);
+            if ("".equals(exercise.getSelectedItem().toString())) {
+                TextView errorText = (TextView) exercise.getSelectedView();
                 errorText.setError("");
                 errorText.setTextColor(Color.RED);
-                errorText.setText(R.string.indicate_activity);
+                errorText.setText(R.string.indicate_exercise);
                 isFilledOut = false;
             }
             units = findViewById(R.id.activityDurationUnits);
@@ -194,18 +184,18 @@ public class AddActivityActivity extends AppCompatActivity {
             int activityId = (int) submit.getTag();
             database.removeActivity(activityId);
             if (isBeerActivity()) {
-                database.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", Integer.parseInt(duration.getText().toString()));
+                database.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", (int) Double.parseDouble(duration.getText().toString()));
             } else {
-                database.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
+                database.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), exercise.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
             }
         } else {
-            database.logActivity(date.getText() + " " + time.getText(), activity.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
+            database.logActivity(date.getText() + " " + time.getText(), exercise.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
         }
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
     private boolean isBeerActivity() {
-        return "Activity".contentEquals(((TextView) findViewById(R.id.activitySelectionHeader)).getText());
+        return "Activity".contentEquals(((TextView) findViewById(R.id.activityExerciseHeader)).getText());
     }
 }

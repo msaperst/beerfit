@@ -7,19 +7,19 @@
     tools:context=".AddActivityActivity">
 
     <TextView
-        android:id="@+id/activitySelectionHeader"
+        android:id="@+id/activityExerciseHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/select_activity"
+        android:text="@string/select_exercise"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/activitySelection"
+        app:layout_constraintBottom_toTopOf="@+id/activityExercise"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
-        android:id="@+id/activitySelection"
+        android:id="@+id/activityExercise"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -28,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activitySelectionHeader" />
+        app:layout_constraintTop_toBottomOf="@+id/activityExerciseHeader" />
 
     <TextView
         android:id="@+id/activityDateTimeHeader"
@@ -40,7 +40,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activitySelection" />
+        app:layout_constraintTop_toBottomOf="@+id/activityExercise" />
 
     <TextView
         android:id="@+id/activityDate"

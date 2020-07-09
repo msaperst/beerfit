@@ -20,12 +20,12 @@ public class Data {
         dataPoints = new HashMap<>();
     }
 
-    public void addDataPoint(String activity, Double xValue, Double yValue) {
+    public void addDataPoint(String activity, DataPoint dataPoint) {
         if (!dataPoints.containsKey(activity)) {
             dataPoints.put(activity, new ArrayList<>());
         }
         List<DataPoint> activities = dataPoints.get(activity);
-        activities.add(new DataPoint(xValue, yValue));
+        activities.add(dataPoint);
         dataPoints.put(activity, activities);
     }
 
@@ -38,7 +38,7 @@ public class Data {
             series.setTitle(entry.getKey());
             series.setDrawDataPoints(true);
             series.setThickness(7);
-            series.setColor(database.getActivityColor(entry.getKey()));
+            series.setColor(database.getExerciseColor(entry.getKey()));
             graphSeries.add(series);
         }
         return graphSeries;
