@@ -184,7 +184,7 @@ public class AddActivityActivity extends AppCompatActivity {
             int activityId = (int) submit.getTag();
             database.removeActivity(activityId);
             if (isBeerActivity()) {
-                database.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", Integer.parseInt(duration.getText().toString()));
+                database.logBeer(String.valueOf(activityId), "'" + date.getText() + " " + time.getText() + "'", (int) Double.parseDouble(duration.getText().toString()));
             } else {
                 database.logActivity(String.valueOf(activityId), date.getText() + " " + time.getText(), exercise.getSelectedItem().toString(), units.getSelectedItem().toString(), Double.parseDouble(duration.getText().toString()));
             }

@@ -1,6 +1,5 @@
 package com.fatmax.beerfit;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fatmax.beerfit.utilities.Data;
 import com.fatmax.beerfit.utilities.Database;
+import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.Metric;
 import com.fatmax.beerfit.utilities.TableBuilder;
 import com.jjoe64.graphview.GraphView;
@@ -24,22 +24,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
-import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
-import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
+import java.util.Map;
 
 public class ViewMetricsActivity extends AppCompatActivity {
     public static final String TIME_AS_DATE_FROM = "',time) AS date FROM ";
 
     //TODO
     // - on scroll, change other to match it
-
+    final List<Metric> metrics = new ArrayList<>();
     SQLiteDatabase sqLiteDatabase;
     Database database;
     TableBuilder tableBuilder;
-
-    final List<Metric> metrics = new ArrayList<>();
     Iterator<Metric> metricsIterator;
     Metric metric;
 
@@ -79,94 +74,41 @@ public class ViewMetricsActivity extends AppCompatActivity {
         // setup our table
         TableLayout metricsView = findViewById(R.id.metricsBodyTable);
         metricsView.removeAllViews();
-        //TODO - move to utilities class
-        Cursor timeCursor = sqLiteDatabase.rawQuery("SELECT DISTINCT strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " ORDER BY date DESC", null);
-        if (timeCursor != null) {
-            if (timeCursor.getCount() > 0) {
-                timeCursor.moveToFirst();
-                while (!timeCursor.isAfterLast()) {
-                    loopThroughActivitiesData(metric, metricsView, timeCursor);
-                    timeCursor.moveToNext();
-                }
+
+        List<String> activityTimes = Elements.getAllActivityTimes(sqLiteDatabase, metric, "DESC");
+        for (String activityTime : activityTimes) {
+            // each date metric needs it's own title row and data
+            List<TableRow> periodRows = new ArrayList<>();
+            // determine the beers drank
+            int beersDrank = Elements.getBeersDrank(sqLiteDatabase, metric, activityTime);
+            int beersEarned = 0;
+            Map<String, Integer> activityGroups = Elements.getActivitiesPerformed(sqLiteDatabase, metric, activityTime);
+            for (Map.Entry<String, Integer> activityGroup : activityGroups.entrySet()) {
+                periodRows.add(createMetricsRow(activityTime, Collections.singletonList(tableBuilder.createTextView(activityGroup.getKey()))));
+                beersEarned += activityGroup.getValue();
             }
-            timeCursor.close();
+            // finally, add each of our rows
+            metricsView.addView(createMetricsRow(activityTime, Collections.singletonList(tableBuilder.createHeaderView(metric.getTitle(activityTime) + " (" + beersDrank + " drank / " + beersEarned + " earned beers)"))));
+            for (TableRow row : periodRows) {
+                metricsView.addView(row);
+            }
         }
         if (tag != null) {
             scrollTo(tag);
         }
     }
 
-    private void loopThroughActivitiesData(Metric metric, TableLayout metricsView, Cursor timeCursor) {
-        String dateMetric = timeCursor.getString(0);
-        // each date metric needs it's own title row and data
-        List<TableRow> periodRows = new ArrayList<>();
-        // determine the beers drank
-        int beersDrank = 0;
-        int beersEarned = 0;
-        //TODO - move to utilities class
-        Cursor beersCursor = sqLiteDatabase.rawQuery("SELECT SUM(amount), strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " WHERE date = '" + dateMetric + "' AND " + ACTIVITIES_TABLE + ".exercise = 0 GROUP BY date", null);
-        if (beersCursor != null) {
-            if (beersCursor.getCount() > 0) {
-                beersCursor.moveToFirst();
-                while (!beersCursor.isAfterLast()) {
-                    beersDrank = beersCursor.getInt(0);
-                    //for each activity in the date metric, tally them all
-                    beersCursor.moveToNext();
-                }
-            }
-            beersCursor.close();
-        }
-        //for each activity in the date metric, tally them all
-        //TODO - move to utilities class
-        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, SUM(beers), strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' AND " + ACTIVITIES_TABLE + ".exercise != 0 GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
-        if (activityCursor != null) {
-            if (activityCursor.getCount() > 0) {
-                activityCursor.moveToFirst();
-                while (!activityCursor.isAfterLast()) {
-                    beersEarned += activityCursor.getInt(3);
-                    String text = getActivityText(activityCursor);
-                    periodRows.add(createMetricsRow(dateMetric, Collections.singletonList(tableBuilder.createTextView(text))));
-                    //for each activity in the date metric, tally them all
-                    activityCursor.moveToNext();
-                }
-            }
-            activityCursor.close();
-        }
-        // finally, add each of our rows
-        metricsView.addView(createMetricsRow(dateMetric, Collections.singletonList(tableBuilder.createHeaderView(metric.getTitle(dateMetric) + " (" + beersDrank + " drank / " + beersEarned + " earned beers)"))));
-        for (TableRow row : periodRows) {
-            metricsView.addView(row);
-        }
-    }
-
-    private String getActivityText(Cursor activityCursor) {
-        // each distinct activity needs it's own row and data
-        String text;
-        if (activityCursor.getString(0) == null) {
-            text = "Drank " + activityCursor.getInt(1) + " beer";
-            if (activityCursor.getInt(1) > 1) {
-                text += "s";
-            }
-        } else {
-            text = activityCursor.getString(0) + " for " + activityCursor.getDouble(1) + " " + activityCursor.getString(2);
-        }
-        return text;
-    }
-
     void createDataGraph(String tag, Metric metric) {
         GraphView graph = findViewById(R.id.metricsGraph);
         graph.removeAllSeries();
         Data data = new Data(database);
-        Cursor timeCursor = sqLiteDatabase.rawQuery("SELECT DISTINCT strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " ORDER BY date ASC", null);
-        if (timeCursor != null) {
-            if (timeCursor.getCount() > 0) {
-                timeCursor.moveToFirst();
-                while (!timeCursor.isAfterLast()) {
-                    loopThroughActivitiesGraph(metric, data, timeCursor);
-                    timeCursor.moveToNext();
-                }
+        List<String> activityTimes = Elements.getAllActivityTimes(sqLiteDatabase, metric, "ASC");
+        for (String activityTime : activityTimes) {
+            //for each activity in the date metric, tally them all
+            Map<String, DataPoint> activityGroups = Elements.getActivitiesGroupedByExerciseAndTimeFrame(sqLiteDatabase, metric, data, activityTime);
+            for (Map.Entry<String, DataPoint> activityGroup : activityGroups.entrySet()) {
+                data.addDataPoint(activityGroup.getKey(), activityGroup.getValue());
             }
-            timeCursor.close();
         }
         // setup the metrics
         for (LineGraphSeries<DataPoint> series : data.getSeriesData()) {
@@ -174,32 +116,6 @@ public class ViewMetricsActivity extends AppCompatActivity {
         }
         if (tag != null) {
             setupGraph(graph, data, tag);
-        }
-    }
-
-    private void loopThroughActivitiesGraph(Metric metric, Data data, Cursor timeCursor) {
-        String dateMetric = timeCursor.getString(0);
-        //for each activity in the date metric, tally them all
-        //TODO - move to utilities class
-        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
-        if (activityCursor != null) {
-            if (activityCursor.getCount() > 0) {
-                activityCursor.moveToFirst();
-                while (!activityCursor.isAfterLast()) {
-                    // determine the unique activity string
-                    String activity;
-                    if (activityCursor.getString(0) == null) {
-                        activity = "Drank (beers)";
-                    } else {
-                        activity = activityCursor.getString(0) + " (" + activityCursor.getString(2) + ")";
-                    }
-                    // if the activity doesn't have a list, create one
-                    data.addDataPoint(activity, data.getXAxis(dateMetric), activityCursor.getDouble(1));
-                    //for each activity in the date metric, tally them all
-                    activityCursor.moveToNext();
-                }
-            }
-            activityCursor.close();
         }
     }
 

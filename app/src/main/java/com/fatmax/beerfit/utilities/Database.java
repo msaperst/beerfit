@@ -15,7 +15,7 @@ public class Database {
     public static final String MEASUREMENTS_TABLE = "Measurements";
     public static final String EXERCISES_TABLE = "Exercises";
     public static final String GOALS_TABLE = "Goals";
-    public static final String ACTIVITIES_TABLE = "Activities";      //TODO - rename to Activities and do migration/upgrade if needed
+    public static final String ACTIVITIES_TABLE = "Activities";
     static final String INSERT_INTO = "INSERT INTO ";
     static final String WHERE_ID = " WHERE id = '";
     static final String CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ";

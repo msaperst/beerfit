@@ -20,12 +20,12 @@ public class Data {
         dataPoints = new HashMap<>();
     }
 
-    public void addDataPoint(String activity, Double xValue, Double yValue) {
+    public void addDataPoint(String activity, DataPoint dataPoint) {
         if (!dataPoints.containsKey(activity)) {
             dataPoints.put(activity, new ArrayList<>());
         }
         List<DataPoint> activities = dataPoints.get(activity);
-        activities.add(new DataPoint(xValue, yValue));
+        activities.add(dataPoint);
         dataPoints.put(activity, activities);
     }
 

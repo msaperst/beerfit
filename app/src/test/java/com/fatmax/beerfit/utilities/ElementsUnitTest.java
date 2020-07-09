@@ -6,8 +6,13 @@ import android.database.sqlite.SQLiteDatabase;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.util.Map;
+
+import static com.fatmax.beerfit.ViewMetricsActivity.TIME_AS_DATE_FROM;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
+import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -65,5 +70,134 @@ public class ElementsUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + GOALS_TABLE, null)).thenReturn(mockedCursor);
 
         assertEquals(2, Elements.getAllGoals(mockedSQLiteDatabase).size());
+    }
+
+    @Test
+    public void getAllActivityTimesBadTableTest() {
+        when(mockedSQLiteDatabase.rawQuery("SELECT DISTINCT strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " ORDER BY date ASC", null)).thenReturn(null);
+
+        assertEquals(0, Elements.getAllActivityTimes(mockedSQLiteDatabase, new Metric("%Y %m"), "ASC").size());
+    }
+
+    @Test
+    public void getAllActivityTimesEmptyTableTest() {
+        when(mockedCursor.getCount()).thenReturn(0);
+        when(mockedSQLiteDatabase.rawQuery("SELECT DISTINCT strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " ORDER BY date DESC", null)).thenReturn(mockedCursor);
+
+        assertEquals(0, Elements.getAllActivityTimes(mockedSQLiteDatabase, new Metric("%Y %m"), "DESC").size());
+    }
+
+    @Test
+    public void getAllActivityTimesFullTableTest() {
+        when(mockedCursor.getCount()).thenReturn(2);
+        when(mockedCursor.isAfterLast()).thenReturn(false, false, true);
+        when(mockedSQLiteDatabase.rawQuery("SELECT DISTINCT strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " ORDER BY date ASC", null)).thenReturn(mockedCursor);
+
+        assertEquals(2, Elements.getAllActivityTimes(mockedSQLiteDatabase, new Metric("%Y %m"), "ASC").size());
+    }
+
+    @Test
+    public void getActivitiesGroupedByExerciseAndTimeFrameBadTableTest() {
+        when(mockedSQLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '2020' GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null)).thenReturn(null);
+
+        assertEquals(0, Elements.getActivitiesGroupedByExerciseAndTimeFrame(mockedSQLiteDatabase, new Metric("%Y %m"), new Data(null), "2020").size());
+    }
+
+    @Test
+    public void getActivitiesGroupedByExerciseAndTimeFrameEmptyTableTest() {
+        when(mockedCursor.getCount()).thenReturn(0);
+        when(mockedSQLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '2020' GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null)).thenReturn(mockedCursor);
+
+        assertEquals(0, Elements.getActivitiesGroupedByExerciseAndTimeFrame(mockedSQLiteDatabase, new Metric("%Y %m"), new Data(null), "2020").size());
+    }
+
+    @Test
+    public void getActivitiesGroupedByExerciseAndTimeFrameFullTableTest() {
+        when(mockedCursor.getCount()).thenReturn(2);
+        when(mockedCursor.isAfterLast()).thenReturn(false, false, true);
+        when(mockedCursor.getString(0)).thenReturn("hello");
+        when(mockedCursor.getString(2)).thenReturn("world");
+        when(mockedSQLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '2020' GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null)).thenReturn(mockedCursor);
+
+        assertEquals(1, Elements.getActivitiesGroupedByExerciseAndTimeFrame(mockedSQLiteDatabase, new Metric("%Y %m"), new Data(null), "2020").size());
+    }
+
+    @Test
+    public void getActivitiesGroupedByExerciseAndTimeFrameFullTableDualTest() {
+        when(mockedCursor.getCount()).thenReturn(2);
+        when(mockedCursor.isAfterLast()).thenReturn(false, false, true);
+        when(mockedCursor.getString(0)).thenReturn("hello", "foo");
+        when(mockedCursor.getString(2)).thenReturn("world", "bar");
+
+        when(mockedSQLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '2020' GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null)).thenReturn(mockedCursor);
+
+        assertEquals(2, Elements.getActivitiesGroupedByExerciseAndTimeFrame(mockedSQLiteDatabase, new Metric("%Y %m"), new Data(null), "2020").size());
+    }
+
+    @Test
+    public void getActivitiesGroupedByExerciseAndTimeFrameFullTableDrinksTest() {
+        when(mockedCursor.getCount()).thenReturn(2);
+        when(mockedCursor.isAfterLast()).thenReturn(false, false, true);
+        when(mockedCursor.getString(0)).thenReturn(null, "foo");
+        when(mockedCursor.getString(2)).thenReturn("bar");
+
+        when(mockedSQLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '2020' GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null)).thenReturn(mockedCursor);
+
+        assertEquals(2, Elements.getActivitiesGroupedByExerciseAndTimeFrame(mockedSQLiteDatabase, new Metric("%Y %m"), new Data(null), "2020").size());
+    }
+
+    @Test
+    public void getBeersDrankBadTableTest() {
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount), strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " WHERE date = '2020' AND " + ACTIVITIES_TABLE + ".exercise = 0 GROUP BY date", null)).thenReturn(null);
+
+        assertEquals(0, Elements.getBeersDrank(mockedSQLiteDatabase, new Metric("%Y %m"), "2020"));
+    }
+
+    @Test
+    public void getBeersDrankEmptyTableTest() {
+        when(mockedCursor.getCount()).thenReturn(0);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount), strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " WHERE date = '2020' AND " + ACTIVITIES_TABLE + ".exercise = 0 GROUP BY date", null)).thenReturn(mockedCursor);
+
+        assertEquals(0, Elements.getBeersDrank(mockedSQLiteDatabase, new Metric("%Y %m"), "2020"));
+    }
+
+    @Test
+    public void getBeersDrankFullTableTest() {
+        when(mockedCursor.getCount()).thenReturn(2);
+        when(mockedCursor.isAfterLast()).thenReturn(false, false, true);
+        when(mockedCursor.getInt(0)).thenReturn(1, 2);
+        when(mockedSQLiteDatabase.rawQuery("SELECT SUM(amount), strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " WHERE date = '2020' AND " + ACTIVITIES_TABLE + ".exercise = 0 GROUP BY date", null)).thenReturn(mockedCursor);
+
+        assertEquals(1, Elements.getBeersDrank(mockedSQLiteDatabase, new Metric("%Y %m"), "2020"));
+    }
+
+    @Test
+    public void getActivitiesPerformedBadTableTest() {
+        when(mockedSQLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, SUM(beers), strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '2020' AND " + ACTIVITIES_TABLE + ".exercise != 0 GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null)).thenReturn(null);
+
+        assertEquals(0, Elements.getActivitiesPerformed(mockedSQLiteDatabase, new Metric("%Y %m"), "2020").size());
+    }
+
+    @Test
+    public void getActivitiesPerformedEmptyTableTest() {
+        when(mockedCursor.getCount()).thenReturn(0);
+        when(mockedSQLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, SUM(beers), strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '2020' AND " + ACTIVITIES_TABLE + ".exercise != 0 GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null)).thenReturn(mockedCursor);
+
+        assertEquals(0, Elements.getActivitiesPerformed(mockedSQLiteDatabase, new Metric("%Y %m"), "2020").size());
+    }
+
+    @Test
+    public void getActivitiesPerformedFullTableTest() {
+        when(mockedCursor.getCount()).thenReturn(2);
+        when(mockedCursor.isAfterLast()).thenReturn(false, false, true);
+        when(mockedCursor.getString(0)).thenReturn("Walked", "Ran");
+        when(mockedCursor.getDouble(1)).thenReturn(1.0, 5.0);
+        when(mockedCursor.getString(2)).thenReturn("kilometers", "kilometers");
+        when(mockedCursor.getInt(3)).thenReturn(1, 1);
+        when(mockedSQLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, SUM(beers), strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '2020' AND " + ACTIVITIES_TABLE + ".exercise != 0 GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null)).thenReturn(mockedCursor);
+
+        Map<String,Integer> activities = Elements.getActivitiesPerformed(mockedSQLiteDatabase, new Metric("%Y %m"), "2020");
+        assertEquals(1, (int) activities.get("Walked for 1.0 kilometers"));
+        assertEquals(1, (int) activities.get("Ran for 5.0 kilometers"));
     }
 }
