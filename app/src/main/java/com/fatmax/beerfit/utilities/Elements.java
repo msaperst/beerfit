@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import com.jjoe64.graphview.series.DataPoint;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +58,7 @@ public class Elements {
             if (timeCursor.getCount() > 0) {
                 timeCursor.moveToFirst();
                 while (!timeCursor.isAfterLast()) {
-                        activityTimes.add(timeCursor.getString(0));
+                    activityTimes.add(timeCursor.getString(0));
                     timeCursor.moveToNext();
                 }
             }

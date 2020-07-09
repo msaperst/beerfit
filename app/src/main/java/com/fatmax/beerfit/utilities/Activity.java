@@ -55,7 +55,7 @@ public class Activity {
     }
 
     public String getDate() {
-        if( time == null ) {
+        if (time == null) {
             return null;
         } else {
             return DATE_FORMAT.format(time);
@@ -63,7 +63,7 @@ public class Activity {
     }
 
     public String getTime() {
-        if( time == null ) {
+        if (time == null) {
             return null;
         } else {
             return TIME_FORMAT.format(time);

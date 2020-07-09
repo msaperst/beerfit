@@ -2,7 +2,6 @@ package com.fatmax.beerfit;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fatmax.beerfit.utilities.Activity;
 import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.Goal;
@@ -22,10 +20,6 @@ import com.fatmax.beerfit.utilities.TableBuilder;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
-import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
-import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class ViewGoalsActivity extends AppCompatActivity {
 
