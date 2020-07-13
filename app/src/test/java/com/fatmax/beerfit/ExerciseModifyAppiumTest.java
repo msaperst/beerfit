@@ -114,7 +114,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -146,7 +146,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -167,7 +167,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -187,7 +187,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -209,7 +209,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -231,7 +231,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -262,7 +262,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
         resultSet.next();
         assertExercise(resultSet, 6, "Wulked", "Wulk", -2139062144);
-        assertEquals(false, resultSet.next(),"Expected to find '6' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '6' exercises", "There are more exercises present");
     }
 
     @Test
@@ -284,7 +284,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -308,7 +308,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         resultSet.next();
         resultSet.next();
         assertExercise(resultSet, 6, "Cardioed", "Cardio", -2139062144);
-        assertEquals(false, resultSet.next(),"Expected to find '6' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '6' exercises", "There are more exercises present");
     }
 
     @Test
@@ -356,7 +356,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -377,7 +377,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -401,7 +401,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         resultSet.next();
         resultSet.next();
         resultSet.next();
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -424,7 +424,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -447,7 +447,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -470,7 +470,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -493,7 +493,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -516,7 +516,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -548,7 +548,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
         resultSet.next();
         assertExercise(resultSet, 6, "Wulked", "Wulk", -2139062144);
-        assertEquals(false, resultSet.next(),"Expected to find '6' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '6' exercises", "There are more exercises present");
     }
 
     @Test
@@ -571,7 +571,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -635,7 +635,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 
     @Test
@@ -654,7 +654,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '4' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '4' exercises", "There are more exercises present");
     }
 
     @Test
@@ -707,6 +707,6 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         assertExercise(resultSet, 4, "Lifted", "Lift", Color.MAGENTA);
         resultSet.next();
         assertExercise(resultSet, 5, "Played Soccer", "Play Soccer", Color.DKGRAY);
-        assertEquals(false, resultSet.next(),"Expected to find '5' exercises", "There are more exercises present");
+        assertEquals(false, resultSet.next(), "Expected to find '5' exercises", "There are more exercises present");
     }
 }

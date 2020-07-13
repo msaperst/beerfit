@@ -274,11 +274,11 @@ public class ElementsInstrumentedTest {
         database.logActivity("2020-08-09 10:23", "Ran", "kilometers", 5.0);
         database.logActivity("2021-11-10 10:23", "Walked", "kilometers", 5.0);
         database.logBeer("6", "'2021-11-11 10:23'", 2);
-        Map<String,Integer> activityGroups2020 = Elements.getActivitiesPerformed(db, new Metric("%Y"), "2020");
+        Map<String, Integer> activityGroups2020 = Elements.getActivitiesPerformed(db, new Metric("%Y"), "2020");
         assertEquals(2, activityGroups2020.size());
         assertEquals(1, (int) activityGroups2020.get("Ran for 5.0 kilometers"));
         assertEquals(10, (int) activityGroups2020.get("Walked for 10.0 kilometers"));
-        Map<String,Integer> activityGroups2021 = Elements.getActivitiesPerformed(db, new Metric("%Y"), "2021");
+        Map<String, Integer> activityGroups2021 = Elements.getActivitiesPerformed(db, new Metric("%Y"), "2021");
         assertEquals(1, activityGroups2021.size());
         assertEquals(5, (int) activityGroups2021.get("Walked for 5.0 kilometers"));
     }
