@@ -3,4 +3,7 @@
     <item
         android:id="@+id/editExercises"
         android:title="@string/edit_exercises" />
+    <item
+        android:id="@+id/editMeasurements"
+        android:title="@string/edit_measurements" />
 </menu>

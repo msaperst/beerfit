@@ -76,6 +76,9 @@ public class ViewGoalsActivity extends AppCompatActivity {
             case R.id.editExercises:
                 measures.editExercises();
                 return true;
+            case R.id.editMeasurements:
+                measures.editMeasurements();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

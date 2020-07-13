@@ -326,10 +326,10 @@ public class DatabaseUnitTest {
     public void getOrdinalMatchTest() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getInt(0)).thenReturn(5);
-        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'minutes';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'minute';", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(5, database.getOrdinal(MEASUREMENTS_TABLE, "unit", "minutes"));
+        assertEquals(5, database.getOrdinal(MEASUREMENTS_TABLE, "unit", "minute"));
     }
 
     @Test
@@ -414,7 +414,7 @@ public class DatabaseUnitTest {
     @Test
     public void getBeersEarnedNullTest() {
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(0.0, database.getBeersEarned("Ran", "kilometers", 10), 0);
+        assertEquals(0.0, database.getBeersEarned("Ran", "kilometer", 10), 0);
     }
 
     @Test
@@ -423,7 +423,7 @@ public class DatabaseUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT amount FROM " + GOALS_TABLE + " WHERE exercise = -1 AND measurement = -1;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(0.0, database.getBeersEarned("Ran", "kilometers", 10), 0);
+        assertEquals(0.0, database.getBeersEarned("Ran", "kilometer", 10), 0);
     }
 
     @Test
@@ -433,7 +433,7 @@ public class DatabaseUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT amount FROM " + GOALS_TABLE + " WHERE exercise = -1 AND measurement = -1;", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(2.0, database.getBeersEarned("Ran", "kilometers", 10), 0);
+        assertEquals(2.0, database.getBeersEarned("Ran", "kilometer", 10), 0);
     }
 
     @Test

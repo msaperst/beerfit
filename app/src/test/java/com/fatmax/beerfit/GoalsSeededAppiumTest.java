@@ -86,7 +86,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.AccessibilityId("Edit Activity")).click();
         assertElementTextEquals("Walk", driver.findElement(By.id("goalSelection")).findElement(By.className("android.widget.TextView")));
         assertElementTextEquals("5.0", By.id("goalDurationInput"));
-        assertElementTextEquals("kilometers", driver.findElement(By.id("goalDurationUnits")).findElement(By.className("android.widget.TextView")));
+        assertElementTextEquals("kilometer", driver.findElement(By.id("goalDurationUnits")).findElement(By.className("android.widget.TextView")));
     }
 
     @Test

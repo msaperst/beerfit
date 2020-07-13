@@ -130,8 +130,8 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         new Navigate(driver).export();
         byte[] measurements = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/Measurements.csv");
         assertEquals(new String(measurements), "\"id\",\"type\",\"unit\"\n" +
-                        "\"1\",\"time\",\"minutes\"\n" +
-                        "\"2\",\"distance\",\"kilometers\"\n",
+                        "\"1\",\"time\",\"minute\"\n" +
+                        "\"2\",\"distance\",\"kilometer\"\n",
                 "Expected Base Measurements Table", "Got: <br/>\n" + new String(measurements));
     }
 

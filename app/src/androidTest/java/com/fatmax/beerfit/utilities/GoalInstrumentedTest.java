@@ -22,7 +22,7 @@ public class GoalInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.addGoal("Walk", "kilometers", 5.0);
+        database.addGoal("Walk", "kilometer", 5.0);
         Goal goal = new Goal(db, 1);
         assertEquals(1, goal.getId());
         assertEquals(new Exercise(db, 1).getId(), goal.getExercise().getId());

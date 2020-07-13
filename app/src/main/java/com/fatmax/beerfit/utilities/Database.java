@@ -27,11 +27,22 @@ public class Database {
     }
 
     public void setupDatabase() {
+        ////// MEASUREMENTS TABLE
         if (isTableMissing(MEASUREMENTS_TABLE)) {
-            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + MEASUREMENTS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, unit VARCHAR);");
-            database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(1,'time','minutes');");
-            database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(2,'distance','kilometers');");
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + MEASUREMENTS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, unit VARCHAR, conversion NUMBER);");
+            populateMeasurementsTable();
         }
+        // migration from old schema that didn't have conversion column
+        if( !doesTableHaveColumn(MEASUREMENTS_TABLE, "conversion")) {
+            // add our missing column
+            database.execSQL("ALTER TABLE " + MEASUREMENTS_TABLE + " ADD conversion NUMBER;");
+            // update our table to match
+            database.execSQL("DELETE FROM " + MEASUREMENTS_TABLE);
+            database.execSQL("VACUUM");
+            populateMeasurementsTable();
+        }
+
+        ////// EXERCISES TABLE
         if (isTableMissing(EXERCISES_TABLE)) {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + EXERCISES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, past VARCHAR, current VARCHAR, color NUMBER);");
             database.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(1,'Walked','Walk'," + Color.GREEN + ");");
@@ -40,6 +51,8 @@ public class Database {
             database.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(4,'Lifted','Lift'," + Color.MAGENTA + ");");
             database.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(5,'Played Soccer','Play Soccer'," + Color.DKGRAY + ");");
         }
+
+        ////// GOALS TABLE
         if (isTableMissing(GOALS_TABLE)) {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + GOALS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise INTEGER, measurement INTEGER, amount NUMBER);");
         } else if (!doesTableHaveColumn(GOALS_TABLE, "exercise") && doesTableHaveColumn(GOALS_TABLE, "activity")) {
@@ -51,6 +64,8 @@ public class Database {
             newGoalsTable.put("amount", "NUMBER");
             renameColumn(GOALS_TABLE, newGoalsTable);
         }
+
+        ////// ACTIVITIES TABLE
         // migration from old table name to new one
         if (isTableMissing(ACTIVITIES_TABLE) && !isTableMissing("ActivityLog")) {
             database.execSQL("ALTER TABLE ActivityLog RENAME TO " + ACTIVITIES_TABLE);
@@ -68,6 +83,16 @@ public class Database {
             newGoalsTable.put("beers", "NUMBER");
             renameColumn(ACTIVITIES_TABLE, newGoalsTable);
         }
+    }
+
+    private void populateMeasurementsTable() {
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(3,'time','second', 3600);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(1,'time','minute', 60);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(4,'time','hour', 1);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(2,'distance','kilometer', 1);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(5,'distance','mile', 0.6213712);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(6,null,'class', -1);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(7,null,'rep', -1);");
     }
 
     boolean isTableMissing(String tableName) {

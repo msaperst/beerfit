@@ -158,8 +158,8 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         assertEquals(durationList.size(), 3, "Expected to find '3' durations", "Actually found '" + durationList.size() + "' durations");
         assertElementTextEquals("", durationList.get(0));
-        assertElementTextEquals("minutes", durationList.get(1));
-        assertElementTextEquals("kilometers", durationList.get(2));
+        assertElementTextEquals("minute", durationList.get(1));
+        assertElementTextEquals("kilometer", durationList.get(2));
     }
 
     @Test

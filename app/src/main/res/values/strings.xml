@@ -35,6 +35,9 @@
     <string name="import_data">Import Data</string>
     <string name="plural">%1$ss</string>
     <string name="edit_exercises">Edit Exercises</string>
+    <string name="edit_measurements">Edit Measurements</string>
+
+    <string name="add_new_exercise">Add New Exercise</string>
     <string name="edit_exercise">Edit Exercise</string>
     <string name="delete_exercise">Delete Exercise</string>
     <string name="modify_exercise">Select Exercise To Modify</string>
@@ -55,5 +58,11 @@
     <string name="exercise_required">Exercise Description is Required!</string>
     <string name="confirm_exercise_delete">Do you really want to delete the exercise \'%1$s\'?</string>
     <string name="unable_to_delete_exercise">Unable to delete this exercise, as you have goals and/or activities utilizing this exercise!</string>
-    <string name="add_new_exercise">Add New Exercise</string>
+
+    <string name="add_new_measurement">Add New Measurement</string>
+    <string name="edit_measurement">Edit Measurement</string>
+    <string name="delete_measurement">Delete Measurement</string>
+    <string name="modify_measurement">Select Measurement to Modify</string>
+    <string name="confirm_measurement_delete">Do you really want to delete the measurement \'%1$s\'?</string>
+    <string name="unable_to_delete_measurement">Unable to delete this measurement, as you have goals and/or activities utilizing this measurement!</string>
 </resources>

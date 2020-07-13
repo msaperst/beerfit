@@ -53,7 +53,7 @@ public class ActivitiesEditActivityAppiumTest extends AppiumTestBase {
         assertElementTextEquals("2020-02-15", By.id("activityDate"));
         assertElementTextEquals("23:59", By.id("activityTime"));
         assertElementTextEquals("5.0", By.id("activityDurationInput"));
-        assertElementTextEquals("kilometers", driver.findElement(By.id("activityDurationUnits")).findElement(By.className("android.widget.TextView")));
+        assertElementTextEquals("kilometer", driver.findElement(By.id("activityDurationUnits")).findElement(By.className("android.widget.TextView")));
     }
 
     @Test

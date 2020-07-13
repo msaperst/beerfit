@@ -18,6 +18,7 @@ import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import java.util.List;
 
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class Measures {
 
@@ -124,7 +125,7 @@ public class Measures {
         dialog.show();
     }
 
-    public void pickColor(Exercise exercise) {
+    private void pickColor(Exercise exercise) {
         ColorPickerDialogBuilder
                 .with(context)
                 .setTitle(R.string.choose_color)
@@ -139,5 +140,97 @@ public class Measures {
                 .setNegativeButton(R.string.cancel, null)
                 .build()
                 .show();
+    }
+
+    public void editMeasurements() {
+        Database database = new Database(sqLiteDatabase);
+        List<Object> allMeasurements = database.getFullColumn(MEASUREMENTS_TABLE, "unit");
+        String[] selectMeasurement = allMeasurements.toArray(new String[allMeasurements.size()]);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.modify_measurement);
+        builder.setSingleChoiceItems(selectMeasurement, -1, (dialog, which) -> {
+            selectedOption = selectMeasurement[which];
+            this.dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+            this.dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+        });
+        builder.setNeutralButton(context.getString(R.string.add_new), (dialog, which) -> addNewMeasurement());
+        builder.setNegativeButton(context.getString(R.string.edit), (dialog, which) -> editMeasurement());
+        builder.setPositiveButton(context.getString(R.string.delete), (dialog, which) -> deleteMeasurement());
+        this.dialog = builder.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+    }
+
+    private void addNewMeasurement() {
+        setupMeasurementModal(new Measurement(sqLiteDatabase), R.string.add_new_measurement);
+    }
+
+    private void editMeasurement() {
+        setupMeasurementModal(new Measurement(sqLiteDatabase, selectedOption), R.string.edit_measurement);
+    }
+
+    private void deleteMeasurement() {
+        Measurement measurement = new Measurement(sqLiteDatabase, selectedOption);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.delete_measurement);
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        if (measurement.safeToDelete()) {
+            builder.setMessage(context.getString(R.string.confirm_measurement_delete, measurement.getUnit()));
+            builder.setPositiveButton(android.R.string.yes, (dialog, whichButton) -> measurement.delete());
+            builder.setNegativeButton(android.R.string.no, null);
+        } else {
+            builder.setMessage(R.string.unable_to_delete_measurement);
+        }
+        builder.show();
+    }
+
+    private void setupMeasurementModal(Measurement measurement, int title) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        builder.setTitle(title);
+//        LayoutInflater inflater = LayoutInflater.from(context);
+//        LinearLayout editMeasurementModal = (LinearLayout) inflater.inflate(R.layout.modal_edit_measurement, null);
+//        measurementColorView = editMeasurementModal.findViewById(R.id.editMeasurementColor);
+//        ((EditText) editMeasurementeModal.findViewById(R.id.editMeasurementName)).setText(measurement.getCurrent());
+//        ((EditText) editMeasurementModal.findViewById(R.id.editMeasurementPastName)).setText(measurement.getPast());
+//        measurementColorView.setBackgroundColor(measurement.getColor());
+//        measurementColorView.setOnClickListener(v -> pickColor(measurement));
+//        builder.setView(editMeasurementModal);
+//        builder.setPositiveButton(R.string.save, null);
+//        builder.setNegativeButton(R.string.cancel, null);
+//        this.dialog = builder.create();
+//        dialog.setOnShowListener(dialog -> {
+//            Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+//            button.setOnClickListener(view -> {
+//                // check to ensure measurement is filled in
+//                EditText measurementName = editMeasurementModal.findViewById(R.id.editMeasurementName);
+//                if (TextUtils.isEmpty(measurementName.getText())) {
+//                    measurementName.setError(context.getString(R.string.measurement_required));
+//                }
+//                measurement.setCurrent(measurementName.getText().toString());
+//                // check to ensure past tense measurement is filled in
+//                EditText measurementPastName = editMeasurementModal.findViewById(R.id.editMeasurementPastName);
+//                if (TextUtils.isEmpty(measurementPastName.getText())) {
+//                    measurementPastName.setError(context.getString(R.string.past_measurement_required));
+//                }
+//                measurement.setPast(measurementPastName.getText().toString());
+//                // check for uniqueness
+//                if (!measurement.isCurrentUnique()) {
+//                    measurementName.setError(context.getString(R.string.duplicate_measurement_description));
+//                }
+//                if (!measurement.isPastUnique()) {
+//                    measurementPastName.setError(context.getString(R.string.duplicate_measurement_past_description));
+//                }
+//                if (!measurement.isColorUnique()) {
+//                    measurementColorView.setTextColor(Color.RED);
+//                    measurementColorView.setText(R.string.duplicate_measurement_color);
+//                }
+//                if (!"".equals(measurement.getPast()) && !"".equals(measurement.getCurrent()) && measurement.isCurrentUnique() && measurement.isPastUnique() && measurement.isColorUnique()) {
+//                    measurement.save();
+//                    dialog.dismiss();
+//                }
+//            });
+//        });
+//        dialog.show();
     }
 }

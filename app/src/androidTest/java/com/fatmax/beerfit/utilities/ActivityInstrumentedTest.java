@@ -25,7 +25,7 @@ public class ActivityInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
         Activity activity = new Activity(db, 1);
         assertEquals(1, activity.getId());
         assertEquals(DATE_TIME_FORMAT.parse("2020-10-10 10:23"), activity.getDateTime());
@@ -42,8 +42,8 @@ public class ActivityInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.addGoal("Walk", "kilometers", 5.0);
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometers", 5.0);
+        database.addGoal("Walk", "kilometer", 5.0);
+        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
         Activity activity = new Activity(db, 1);
         assertEquals(1, activity.getId());
         assertEquals(DATE_TIME_FORMAT.parse("2020-10-10 10:23"), activity.getDateTime());
