@@ -592,7 +592,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
     public void checkDeleteExerciseIcon() {
         driver.findElements(By.className("android.widget.CheckedTextView")).get(0).click();
         driver.findElement(By.id("android:id/button1")).click();
-        assertElementDisabled(By.id("android:id/icon"));
+        assertElementDisplayed(By.id("android:id/icon"));
     }
 
     @Test
@@ -678,7 +678,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(15,\"2020-02-15 23:59\",2,2,5,1);");
         driver.findElements(By.className("android.widget.CheckedTextView")).get(1).click();
         driver.findElement(By.id("android:id/button1")).click();
-        assertElementDisabled(By.id("android:id/icon"));
+        assertElementDisplayed(By.id("android:id/icon"));
     }
 
     @Test
