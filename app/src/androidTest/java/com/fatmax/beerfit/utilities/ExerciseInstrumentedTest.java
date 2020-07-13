@@ -71,7 +71,7 @@ public class ExerciseInstrumentedTest {
     }
 
     @Test
-    public void existingExerciseUnique() {
+    public void existingExerciseCurrentUnique() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
@@ -80,7 +80,7 @@ public class ExerciseInstrumentedTest {
     }
 
     @Test
-    public void newExerciseUnique() {
+    public void newExerciseCurrentUnique() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
@@ -90,13 +90,42 @@ public class ExerciseInstrumentedTest {
     }
 
     @Test
-    public void newExerciseNotUnique() {
+    public void newExerciseCurrentNotUnique() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
         Exercise exercise = new Exercise(db);
         exercise.setCurrent("Walk");
         assertFalse(exercise.isCurrentUnique());
+    }
+
+    @Test
+    public void existingExercisePastUnique() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Exercise exercise = new Exercise(db, "Walk");
+        assertTrue(exercise.isPastUnique());
+    }
+
+    @Test
+    public void newExercisePastUnique() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Exercise exercise = new Exercise(db);
+        exercise.setPast("Wulked");
+        assertTrue(exercise.isPastUnique());
+    }
+
+    @Test
+    public void newExercisePastNotUnique() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Exercise exercise = new Exercise(db);
+        exercise.setPast("Walked");
+        assertFalse(exercise.isPastUnique());
     }
 
     @Test

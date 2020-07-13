@@ -53,11 +53,11 @@ public class Measures {
     }
 
     private void addNewExercise() {
-        setupExerciseModal(new Exercise(sqLiteDatabase));
+        setupExerciseModal(new Exercise(sqLiteDatabase), R.string.add_new_exercise);
     }
 
     private void editExercise() {
-        setupExerciseModal(new Exercise(sqLiteDatabase, selectedOption));
+        setupExerciseModal(new Exercise(sqLiteDatabase, selectedOption), R.string.edit_exercise);
     }
 
     private void deleteExercise() {
@@ -75,9 +75,9 @@ public class Measures {
         builder.show();
     }
 
-    private void setupExerciseModal(Exercise exercise) {
+    private void setupExerciseModal(Exercise exercise, int title) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.edit_exercise);
+        builder.setTitle(title);
         LayoutInflater inflater = LayoutInflater.from(context);
         LinearLayout editExerciseModal = (LinearLayout) inflater.inflate(R.layout.modal_edit_exercise, null);
         exerciseColorView = editExerciseModal.findViewById(R.id.editExerciseColor);
@@ -108,11 +108,14 @@ public class Measures {
                 if (!exercise.isCurrentUnique()) {
                     exerciseName.setError(context.getString(R.string.duplicate_exercise_description));
                 }
+                if (!exercise.isPastUnique()) {
+                    exercisePastName.setError(context.getString(R.string.duplicate_exercise_past_description));
+                }
                 if (!exercise.isColorUnique()) {
                     exerciseColorView.setTextColor(Color.RED);
                     exerciseColorView.setText(R.string.duplicate_exercise_color);
                 }
-                if (!"".equals(exercise.getPast()) && !"".equals(exercise.getCurrent()) && exercise.isCurrentUnique() && exercise.isColorUnique()) {
+                if (!"".equals(exercise.getPast()) && !"".equals(exercise.getCurrent()) && exercise.isCurrentUnique() && exercise.isPastUnique() && exercise.isColorUnique()) {
                     exercise.save();
                     dialog.dismiss();
                 }

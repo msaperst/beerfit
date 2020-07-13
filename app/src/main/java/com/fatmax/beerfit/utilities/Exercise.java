@@ -83,20 +83,20 @@ public class Exercise {
     }
 
     public boolean isCurrentUnique() {
-        boolean isUnique = true;
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = '" + current + "' AND id != " + id + ";", null);
-        if (cursor != null) {
-            if (cursor.getCount() > 0) {
-                isUnique = false;
-            }
-            cursor.close();
-        }
-        return isUnique;
+        return isUnique("current", current);
+    }
+
+    public boolean isPastUnique() {
+        return isUnique("past", past);
     }
 
     public boolean isColorUnique() {
+        return isUnique("color", color);
+    }
+
+    private boolean isUnique(String query, Object object) {
         boolean isUnique = true;
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE color = '" + color + "' AND id != " + id + ";", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE " + query + " = '" + object + "' AND id != " + id + ";", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 isUnique = false;

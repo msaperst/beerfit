@@ -191,7 +191,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
         resultSet.next();
-        assertActivities(resultSet, 1, dateTime, 1, 2, 10, 0);
+        assertActivity(resultSet, 1, dateTime, 1, 2, 10, 0);
     }
 
     @Test
@@ -227,7 +227,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(calendar.getTime()) + " 01:30";
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
         resultSet.next();
-        assertActivities(resultSet, 1, dateTime, 1, 2, 10, 2);
+        assertActivity(resultSet, 1, dateTime, 1, 2, 10, 2);
     }
 
     @Test
@@ -263,6 +263,6 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(calendar.getTime()) + " 13:30";
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
         resultSet.next();
-        assertActivities(resultSet, 1, dateTime, 1, 2, 10, 10);
+        assertActivity(resultSet, 1, dateTime, 1, 2, 10, 10);
     }
 }

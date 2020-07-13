@@ -50,8 +50,10 @@
     <string name="choose_color">Choose Color</string>
     <string name="duplicate_exercise_color">Another Exercise Already Has This Color</string>
     <string name="duplicate_exercise_description">This Exercise Description Already Exists!</string>
+    <string name="duplicate_exercise_past_description">This Past Tense Exercise Description Already Exists!</string>
     <string name="past_exercise_required">Past Tense Exercise Description is Required!</string>
     <string name="exercise_required">Exercise Description is Required!</string>
     <string name="confirm_exercise_delete">Do you really want to delete the exercise \'%1$s\'?</string>
     <string name="unable_to_delete_exercise">Unable to delete this exercise, as you have goals and/or activities utilizing this exercise!</string>
+    <string name="add_new_exercise">Add New Exercise</string>
 </resources>

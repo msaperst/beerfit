@@ -205,7 +205,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         // verify data was imported
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
         resultSet.next();
-        assertGoals(resultSet, 4, 4, 1, 30);
+        assertGoal(resultSet, 4, 4, 1, 30);
     }
 
     @Test
@@ -220,7 +220,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         // verify data was imported
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
         resultSet.next();
-        assertActivities(resultSet, 1, "2020-04-10 12:46:00", 2, 2, 10, 2);
+        assertActivity(resultSet, 1, "2020-04-10 12:46:00", 2, 2, 10, 2);
         assertElementTextEquals("2 Beers Left", By.id("beersLeft"));
     }
 }

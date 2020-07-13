@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -41,9 +42,17 @@ import static com.fatmax.beerfit.objects.Report.testResults;
 
 public class AppiumTestBase {
 
+    private static final Logger log = LoggerFactory.getLogger(AppiumTestBase.class);
+    static Map<String, Reporter> testsExecuted = new HashMap<>();
+    static Step.Status overallStatus = Step.Status.PASS;
+    static long startTime = new Date().getTime();
     @Rule
     public TestName name = new TestName();
-
+    File sqliteDatabase = new File("beerfit");
+    File app = new File("build/outputs/apk/debug/app-debug.apk");
+    String beerfitDatabase = "/data/data/com.fatmax.beerfit/databases/beerfit";
+    AndroidDriver driver;
+    AppiumDriverLocalService service;
     @Rule(order = Integer.MIN_VALUE)
     public TestWatcher watchman = new TestWatcher() {
         @Override
@@ -76,21 +85,14 @@ public class AppiumTestBase {
             }
         }
     };
-
-    private static final Logger log = LoggerFactory.getLogger(AppiumTestBase.class);
-    File sqliteDatabase = new File("beerfit");
-    File app = new File("build/outputs/apk/debug/app-debug.apk");
-    String beerfitDatabase = "/data/data/com.fatmax.beerfit/databases/beerfit";
-
-    static Map<String, Reporter> testsExecuted = new HashMap<>();
-    static Step.Status overallStatus = Step.Status.PASS;
-    static long startTime = new Date().getTime();
-
-    AndroidDriver driver;
-    AppiumDriverLocalService service;
     WebDriverWait wait;
     long waitTime = 5;
     long pollTime = 50;
+
+    @AfterClass
+    public static void allDone() throws IOException {
+        Report.writeOverallReport(testsExecuted, overallStatus, startTime);
+    }
 
     @Before
     public void setupDriver() throws IOException {
@@ -114,11 +116,6 @@ public class AppiumTestBase {
         wait = new WebDriverWait(driver, waitTime, pollTime);
     }
 
-    @AfterClass
-    public static void allDone() throws IOException {
-        Report.writeOverallReport(testsExecuted, overallStatus, startTime);
-    }
-
     void modifyDB(String statement) {
         Map<String, Object> args = new HashMap<>();
         args.put("command", "sqlite3 " + beerfitDatabase + " '" + statement + "'");
@@ -131,10 +128,10 @@ public class AppiumTestBase {
         Class.forName("org.sqlite.JDBC");
         String url = "jdbc:sqlite:beerfit";
         Connection conn = DriverManager.getConnection(url);
-        return conn.createStatement().executeQuery(query);
+        return conn.prepareStatement(query).executeQuery();
     }
 
-    void assertGoals(ResultSet resultSet, int id, int exercise, int measurement, int amount) throws SQLException {
+    void assertGoal(ResultSet resultSet, int id, int exercise, int measurement, int amount) throws SQLException {
         assertEquals(resultSet.getInt("id"), id, "Expected to find id of '" + id + "' for goal in DB",
                 "Actually found id of '" + resultSet.getInt("id") + "'");
         assertEquals(resultSet.getInt("exercise"), exercise, "Expected to find exercise of '" + exercise + "' for goal in DB",
@@ -145,7 +142,7 @@ public class AppiumTestBase {
                 "Actually found amount of '" + resultSet.getInt("amount") + "'");
     }
 
-    void assertActivities(ResultSet resultSet, int id, String dateTime, int exercise, int measurement, int amount, int beers) throws SQLException {
+    void assertActivity(ResultSet resultSet, int id, String dateTime, int exercise, int measurement, int amount, int beers) throws SQLException {
         assertEquals(resultSet.getInt("id"), id, "Expected to find id of '" + id + "' for activity in DB",
                 "Actually found id of '" + resultSet.getInt("id") + "'");
         assertEquals(resultSet.getString("time"), dateTime, "Expected to find time of '" +
@@ -158,6 +155,17 @@ public class AppiumTestBase {
                 "Actually found amount of '" + resultSet.getInt("amount") + "'");
         assertEquals(resultSet.getInt("beers"), beers, "Expected to find beers of '" + beers + "' for activity in DB",
                 "Actually found beers of '" + resultSet.getInt("beers") + "'");
+    }
+
+    void assertExercise(ResultSet resultSet, int id, String past, String current, int color) throws SQLException {
+        assertEquals(resultSet.getInt("id"), id, "Expected to find id of '" + id + "' for exercise in DB",
+                "Actually found id of '" + resultSet.getInt("id") + "'");
+        assertEquals(resultSet.getString("past"), past, "Expected to find past of '" +
+                past + "' for exercise in DB", "Actually found past of '" + resultSet.getString("past") + "'");
+        assertEquals(resultSet.getString("current"), current, "Expected to find current of '" + current + "' for exercise in DB",
+                "Actually found current of '" + resultSet.getString("current") + "'");
+        assertEquals(resultSet.getInt("color"), color, "Expected to find color of '" + color + "' for exercise in DB",
+                "Actually found color of '" + resultSet.getInt("color") + "'");
     }
 
     void assertEquals(Object actual, Object expected, String expectedString, String actualString) {
@@ -188,11 +196,31 @@ public class AppiumTestBase {
 
     void assertElementDisplayed(WebElement element) {
         assertEquals(true, element.isDisplayed(), "Expected element '" + element.getAttribute("resourceId") + "' to be displayed",
-                "Element '" + element.getAttribute("resourceId") + "' is visible");
+                "Element '" + element.getAttribute("resourceId") + "' visibility is set to '" + element.isDisplayed() + "'");
     }
 
     void assertElementDisplayed(By element) {
         assertEquals(true, driver.findElement(element).isDisplayed(), "Expected element '" + element.getBy() + "' to be displayed",
-                "Element '" + element.getBy() + "' is visible");
+                "Element '" + element.getBy() + "' visibility is set to '" + driver.findElement(element).isDisplayed() + "'");
+    }
+
+    void assertElementEnabled(WebElement element) {
+        assertEquals(true, element.isEnabled(), "Expected element '" + element.getAttribute("resourceId") + "' to be enabled",
+                "Element '" + element.getAttribute("resourceId") + "' enablement is set to '" + element.isEnabled() + "'");
+    }
+
+    void assertElementEnabled(By element) {
+        assertEquals(true, driver.findElement(element).isEnabled(), "Expected element '" + element.getBy() + "' to be enabled",
+                "Element '" + element.getBy() + "' enablement is set to '" + driver.findElement(element).isEnabled() + "'");
+    }
+
+    void assertElementDisabled(WebElement element) {
+        assertEquals(false, element.isEnabled(), "Expected element '" + element.getAttribute("resourceId") + "' to be disabled",
+                "Element '" + element.getAttribute("resourceId") + "' enablement is set to '" + element.isEnabled() + "'");
+    }
+
+    void assertElementDisabled(By element) {
+        assertEquals(false, driver.findElement(element).isEnabled(), "Expected element '" + element.getBy() + "' to be disabled",
+                "Element '" + element.getBy() + "' enablement is set to '" + driver.findElement(element).isEnabled() + "'");
     }
 }
