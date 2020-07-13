@@ -33,12 +33,11 @@ import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class AddActivityActivity extends AppCompatActivity {
 
-    SQLiteDatabase sqLiteDatabase;
-    Database database;
-
-    Calendar cal;
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm", Locale.US);
+    SQLiteDatabase sqLiteDatabase;
+    Database database;
+    Calendar cal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +66,6 @@ public class AddActivityActivity extends AppCompatActivity {
             Button submit = findViewById(R.id.submitActivity);
             submit.setTag(activityId);
             submit.setText(getString(R.string.update_activity));
-
 
             Activity activity = new Activity(sqLiteDatabase, activityId);
             cal.setTime(activity.getDateTime());

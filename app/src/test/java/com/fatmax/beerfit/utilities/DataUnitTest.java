@@ -11,6 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 public class DataUnitTest {
@@ -86,9 +87,10 @@ public class DataUnitTest {
         assertEquals(1.0 / 366, data.getMultiplier("0 0 0 0"), 0);
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void getXAxisTestBad() {
-        data.getXAxis("d");
+        NumberFormatException exception = assertThrows(NumberFormatException.class, () -> data.getXAxis("d"));
+        assertEquals("For input string: \"d\"", exception.getMessage());
     }
 
     @Test
@@ -105,14 +107,16 @@ public class DataUnitTest {
         assertEquals(2001, data.getXAxis("2000 1 0 367"), 0);
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void getXAxisMinBadTest() {
-        data.getXAxisMin("d", null);
+        NumberFormatException exception = assertThrows(NumberFormatException.class, () -> data.getXAxisMin("d", null));
+        assertEquals("For input string: \"d\"", exception.getMessage());
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void getXAxisMaxBadTest() {
-        data.getXAxisMax("d", null);
+        NumberFormatException exception = assertThrows(NumberFormatException.class, () -> data.getXAxisMax("d", null));
+        assertEquals("For input string: \"d\"", exception.getMessage());
     }
 
     @Test

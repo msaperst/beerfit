@@ -36,4 +36,17 @@ public class GoalsAppiumTest extends AppiumTestBase {
         List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
         assertEquals(tableRows.size(), 0, "Expected to find '0' goals", "Actually found '" + tableRows.size() + "'");
     }
+
+    @Test
+    public void checkOptionsMenuExistsTest() {
+        assertElementDisplayed(By.AccessibilityId("More options"));
+    }
+
+    @Test
+    public void checkOptionsMenuValuesTest() {
+        driver.findElement(By.AccessibilityId("More options")).click();
+        List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
+        assertEquals(menuOptions.size(), 1, "Expected to find '1' menu items", "Actually found '" + menuOptions.size() + "' menu items");
+        assertElementTextEquals("Edit Exercises", menuOptions.get(0));
+    }
 }

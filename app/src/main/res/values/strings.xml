@@ -34,4 +34,26 @@
     <string name="export_data">Export Data</string>
     <string name="import_data">Import Data</string>
     <string name="plural">%1$ss</string>
+    <string name="edit_exercises">Edit Exercises</string>
+    <string name="edit_exercise">Edit Exercise</string>
+    <string name="delete_exercise">Delete Exercise</string>
+    <string name="modify_exercise">Select Exercise To Modify</string>
+    <string name="add_new">Add New</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="exercise_description">Exercise Description (Run)</string>
+    <string name="past_tense_exercise_description">Past Tense Exercise Description (Ran)</string>
+    <string name="exercise_color">Exercise Color</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="choose">Choose</string>
+    <string name="choose_color">Choose Color</string>
+    <string name="duplicate_exercise_color">Another Exercise Already Has This Color</string>
+    <string name="duplicate_exercise_description">This Exercise Description Already Exists!</string>
+    <string name="duplicate_exercise_past_description">This Past Tense Exercise Description Already Exists!</string>
+    <string name="past_exercise_required">Past Tense Exercise Description is Required!</string>
+    <string name="exercise_required">Exercise Description is Required!</string>
+    <string name="confirm_exercise_delete">Do you really want to delete the exercise \'%1$s\'?</string>
+    <string name="unable_to_delete_exercise">Unable to delete this exercise, as you have goals and/or activities utilizing this exercise!</string>
+    <string name="add_new_exercise">Add New Exercise</string>
 </resources>

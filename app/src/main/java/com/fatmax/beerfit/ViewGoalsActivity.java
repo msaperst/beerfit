@@ -4,6 +4,9 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -16,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.Goal;
+import com.fatmax.beerfit.utilities.Measures;
 import com.fatmax.beerfit.utilities.TableBuilder;
 
 import java.util.Arrays;
@@ -26,6 +30,7 @@ public class ViewGoalsActivity extends AppCompatActivity {
     SQLiteDatabase sqLiteDatabase;
     Database database;
     TableBuilder tableBuilder;
+    Measures measures;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,25 @@ public class ViewGoalsActivity extends AppCompatActivity {
             // build our row
             tableLayout.addView(tableBuilder.createTableRow(String.valueOf(goal.getId()),
                     Arrays.asList(goalView, editButton, deleteButton)));
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.goals_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        measures = new Measures(this, sqLiteDatabase);
+        switch (item.getItemId()) {
+            case R.id.editExercises:
+                measures.editExercises();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

@@ -111,6 +111,6 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
         //verify the data is in there
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
         resultSet.next();
-        assertGoals(resultSet, 1, 1, 2, 10);
+        assertGoal(resultSet, 1, 1, 2, 10);
     }
 }

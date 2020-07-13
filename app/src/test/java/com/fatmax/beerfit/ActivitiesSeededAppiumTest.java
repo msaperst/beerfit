@@ -119,7 +119,7 @@ public class ActivitiesSeededAppiumTest extends AppiumTestBase {
         //verify the activity is still there
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '15';");
         resultSet.next();
-        assertActivities(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 1);
+        assertActivity(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 1);
     }
 
     @Test

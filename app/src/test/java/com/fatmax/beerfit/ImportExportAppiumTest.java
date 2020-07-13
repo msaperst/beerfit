@@ -141,6 +141,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         String date = format.format(new Date());
         driver.findElement(By.id("drankABeer")).click();
         new Navigate(driver).export();
+
         byte[] activities = ((AndroidDriver) driver.getDriver()).pullFile("/sdcard/BeerFit/Activities.csv");
         assertEquals(new String(activities), "\"id\",\"time\",\"exercise\",\"measurement\",\"amount\",\"beers\"\n" +
                 "\"1\",\"" + date + "\",\"0\",\"0\",\"1\",\"-1\"\n", "Expected Base Activities Table: <br/>\n" +
@@ -149,9 +150,14 @@ public class ImportExportAppiumTest extends AppiumTestBase {
     }
 
     @Test
+    public void verifyImportTitle() {
+        new Navigate(driver).mport();
+        assertElementTextEquals("Select Table to Import", By.id("android:id/alertTitle"));
+    }
+
+    @Test
     public void verifyNothingToImportTest() {
         new Navigate(driver).mport();
-        assertElementDisplayed(By.id("android:id/alertTitle"));
         List<WebElement> imports = driver.findElements(By.id("android:id/text1"));
         assertEquals(imports.size(), 0, "Expected to find '0' import options", "Actually found '" + imports.size() + "'");
     }
@@ -199,7 +205,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         // verify data was imported
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
         resultSet.next();
-        assertGoals(resultSet, 4, 4, 1, 30);
+        assertGoal(resultSet, 4, 4, 1, 30);
     }
 
     @Test
@@ -214,7 +220,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         // verify data was imported
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
         resultSet.next();
-        assertActivities(resultSet, 1, "2020-04-10 12:46:00", 2, 2, 10, 2);
+        assertActivity(resultSet, 1, "2020-04-10 12:46:00", 2, 2, 10, 2);
         assertElementTextEquals("2 Beers Left", By.id("beersLeft"));
     }
 }

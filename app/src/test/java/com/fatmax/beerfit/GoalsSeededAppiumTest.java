@@ -39,7 +39,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         //verify the goal is still there
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
         resultSet.next();
-        assertGoals(resultSet, 1, 1, 2, 5);
+        assertGoal(resultSet, 1, 1, 2, 5);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         //verify the goal is not changed
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
         resultSet.next();
-        assertGoals(resultSet, 1, 1, 2, 5);
+        assertGoal(resultSet, 1, 1, 2, 5);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         //verify the goal is not changed
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
         resultSet.next();
-        assertGoals(resultSet, 1, 1, 2, 5);
+        assertGoal(resultSet, 1, 1, 2, 5);
     }
 
     @Test
@@ -114,6 +114,6 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         //verify the goal is changed
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
         resultSet.next();
-        assertGoals(resultSet, 1, 2, 1, 30);
+        assertGoal(resultSet, 1, 2, 1, 30);
     }
 }

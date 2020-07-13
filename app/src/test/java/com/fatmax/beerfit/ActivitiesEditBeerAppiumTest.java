@@ -27,7 +27,7 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
         //verify the activity is not changed
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '9';");
         resultSet.next();
-        assertActivities(resultSet, 9, "2020-01-09 08:00", 0, 0, 1, -1);
+        assertActivity(resultSet, 9, "2020-01-09 08:00", 0, 0, 1, -1);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
         //verify the activity is not changed
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '9';");
         resultSet.next();
-        assertActivities(resultSet, 9, "2020-01-09 08:00", 0, 0, 1, -1);
+        assertActivity(resultSet, 9, "2020-01-09 08:00", 0, 0, 1, -1);
     }
 
     @Test
@@ -106,6 +106,6 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '9';");
         resultSet.next();
         // beer changes to none, as no activities are set
-        assertActivities(resultSet, 9, "2020-01-16 13:30", 0, 0, 2, -2);
+        assertActivity(resultSet, 9, "2020-01-16 13:30", 0, 0, 2, -2);
     }
 }

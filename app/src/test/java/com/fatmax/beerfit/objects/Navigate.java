@@ -6,8 +6,6 @@ import com.testpros.fast.WebElement;
 
 import java.util.List;
 
-import static org.junit.Assert.fail;
-
 public class Navigate {
 
     private final WebDriver driver;

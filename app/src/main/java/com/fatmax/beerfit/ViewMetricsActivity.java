@@ -102,6 +102,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
         GraphView graph = findViewById(R.id.metricsGraph);
         graph.removeAllSeries();
         Data data = new Data(database);
+
         List<String> activityTimes = Elements.getAllActivityTimes(sqLiteDatabase, metric, "ASC");
         for (String activityTime : activityTimes) {
             //for each activity in the date metric, tally them all
