@@ -43,7 +43,6 @@ public class MetricsSeededAppiumTest extends AppiumTestBase {
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(13,\"2020-02-13 00:00\",0,0,2,-2);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(14,\"2020-02-14 00:00\",1,2,5,1);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(15,\"2020-02-15 00:00\",2,2,5,1);");
-        // TODO - add an activity with only one minute (for pluralization)
         new Navigate(driver).toMetrics();
     }
 

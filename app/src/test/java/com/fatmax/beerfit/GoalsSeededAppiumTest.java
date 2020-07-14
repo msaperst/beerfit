@@ -49,7 +49,9 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("android:id/button1")).click();
         //verify the goal is gone
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
-        assertEquals(false, resultSet.next(), "Expected no results", "");
+        resultSet.next();
+        assertGoal(resultSet, 2, 2, 1, 1);
+        assertEquals(false, resultSet.next(), "Expected only 1 result", "");
     }
 
     @Test

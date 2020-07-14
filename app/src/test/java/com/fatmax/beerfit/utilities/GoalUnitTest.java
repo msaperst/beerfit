@@ -24,7 +24,7 @@ public class GoalUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE id = 1", null)).thenReturn(null);
 
         Goal goal = new Goal(mockedSQLiteDatabase, 1);
-        assertEquals(0, goal.getId());
+        assertEquals(-1, goal.getId());
         assertNull(goal.getExercise());
         assertNull(goal.getMeasurement());
         assertEquals(0.0, goal.getAmount(), 0.0001);
@@ -41,8 +41,8 @@ public class GoalUnitTest {
 
         Goal goal = new Goal(mockedSQLiteDatabase, 1);
         assertEquals(1, goal.getId());
-        assertEquals(0, goal.getExercise().getId());
-        assertEquals(0, goal.getMeasurement().getId());
+        assertEquals(-1, goal.getExercise().getId());
+        assertEquals(-1, goal.getMeasurement().getId());
         assertEquals(0.2, goal.getAmount(), 0.0001);
     }
 
@@ -52,7 +52,7 @@ public class GoalUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Goal goal = new Goal(mockedSQLiteDatabase, 1);
-        assertEquals(0, goal.getId());
+        assertEquals(-1, goal.getId());
         assertNull(goal.getExercise());
         assertNull(goal.getMeasurement());
         assertEquals(0.0, goal.getAmount(), 0.0001);

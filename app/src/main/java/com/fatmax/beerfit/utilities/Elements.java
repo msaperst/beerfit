@@ -3,7 +3,6 @@ package com.fatmax.beerfit.utilities;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.fatmax.beerfit.R;
 import com.jjoe64.graphview.series.DataPoint;
 
 import java.util.ArrayList;
@@ -109,16 +108,20 @@ public class Elements {
      * the same string is returned, if it's not, the plural form of the string is returned. This is
      * the string with an s added onto it, unless it already ends with an s, and then it has an es
      * tacked on
+     *
      * @param string the string to determine proper pluralization of
      * @param amount the amount of the string
      * @return the properly pluralized (or not) version of the input string
      */
     public static String getProperStringPluralization(String string, double amount) {
-        if( amount == 1) {
+        if (amount == 1) {
             return string;
         }
-        if( string.endsWith("s")) {
+        if (string.endsWith("s")) {
             return string + "es";
+        }
+        if (string.endsWith("y")) {
+            return string.substring(0, string.length() - 1) + "ies";
         }
         return string + "s";
     }
@@ -139,14 +142,14 @@ public class Elements {
         return activities;
     }
 
-    public static List<String> getSortedMeasurements(SQLiteDatabase sqLiteDatabase) {
+    public static List<String> getSortedMeasurements(SQLiteDatabase sqLiteDatabase, int amount) {
         List<String> measurements = new ArrayList<>();
         Cursor measurementCursor = sqLiteDatabase.rawQuery("SELECT unit FROM " + MEASUREMENTS_TABLE + " ORDER BY conversion ASC", null);
         if (measurementCursor != null) {
             if (measurementCursor.getCount() > 0) {
                 measurementCursor.moveToFirst();
                 while (!measurementCursor.isAfterLast()) {
-                    measurements.add(measurementCursor.getString(0));
+                    measurements.add(getProperStringPluralization(measurementCursor.getString(0), amount));
                     measurementCursor.moveToNext();
                 }
             }

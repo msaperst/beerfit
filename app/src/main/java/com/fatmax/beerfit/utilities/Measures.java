@@ -142,13 +142,13 @@ public class Measures {
     }
 
     public void editMeasurements() {
-        List<String> allMeasurements = Elements.getSortedMeasurements(sqLiteDatabase);
+        List<String> allMeasurements = Elements.getSortedMeasurements(sqLiteDatabase, 1);
         String[] selectMeasurement = allMeasurements.toArray(new String[allMeasurements.size()]);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.modify_measurement);
         builder.setSingleChoiceItems(selectMeasurement, -1, (dialog, which) -> {
             selectedOption = selectMeasurement[which];
-            if( new Measurement(sqLiteDatabase, selectedOption).safeToEdit() ) {
+            if (new Measurement(sqLiteDatabase, selectedOption).safeToEdit()) {
                 this.dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
             } else {
                 this.dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);

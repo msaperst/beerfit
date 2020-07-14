@@ -228,10 +228,15 @@ public class ElementsUnitTest {
     }
 
     @Test
+    public void getProperStringPluralizationSuperFancyTest() {
+        assertEquals("activities", Elements.getProperStringPluralization("activity", 0));
+    }
+
+    @Test
     public void getSortedMeasurementsBadTableTest() {
         when(mockedSQLiteDatabase.rawQuery("SELECT unit FROM " + MEASUREMENTS_TABLE + " ORDER BY conversion ASC", null)).thenReturn(null);
 
-        assertEquals(0, Elements.getSortedMeasurements(mockedSQLiteDatabase).size());
+        assertEquals(0, Elements.getSortedMeasurements(mockedSQLiteDatabase, 1).size());
     }
 
     @Test
@@ -239,7 +244,7 @@ public class ElementsUnitTest {
         when(mockedCursor.getCount()).thenReturn(0);
         when(mockedSQLiteDatabase.rawQuery("SELECT unit FROM " + MEASUREMENTS_TABLE + " ORDER BY conversion ASC", null)).thenReturn(mockedCursor);
 
-        assertEquals(0, Elements.getSortedMeasurements(mockedSQLiteDatabase).size());
+        assertEquals(0, Elements.getSortedMeasurements(mockedSQLiteDatabase, 2).size());
     }
 
     @Test
@@ -249,7 +254,7 @@ public class ElementsUnitTest {
         when(mockedCursor.getString(0)).thenReturn("mile", "kilometer");
         when(mockedSQLiteDatabase.rawQuery("SELECT unit FROM " + MEASUREMENTS_TABLE + " ORDER BY conversion ASC", null)).thenReturn(mockedCursor);
 
-        List<String> measurements = Elements.getSortedMeasurements(mockedSQLiteDatabase);
+        List<String> measurements = Elements.getSortedMeasurements(mockedSQLiteDatabase, 1);
         assertEquals(2, measurements.size());
         assertEquals("mile", measurements.get(0));
         assertEquals("kilometer", measurements.get(1));

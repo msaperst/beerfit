@@ -12,7 +12,7 @@ import static com.fatmax.beerfit.utilities.Database.WHERE_ID;
 public class Measurement {
 
     private final SQLiteDatabase sqLiteDatabase;
-    private int id = 0;
+    private int id = -1;
     private String type = null;
     private String unit = null;
     private double conversion = 0;
@@ -84,11 +84,11 @@ public class Measurement {
     }
 
     public boolean safeToEdit() {
-        return ( type == null );
+        return (type == null);
     }
 
     public void save() {
-        if (id == 0) { // create a new one
+        if (id == -1) { // create a new one
             sqLiteDatabase.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(null, null,'" + unit + "', -1);");
         } else if (safeToEdit()) {
             sqLiteDatabase.execSQL("UPDATE " + MEASUREMENTS_TABLE + " SET unit = '" + unit + "' WHERE id = " + id + ";");

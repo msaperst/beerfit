@@ -63,7 +63,7 @@
     <string name="add_new_measurement">Add New Measurement</string>
     <string name="edit_measurement">Edit Measurement</string>
     <string name="delete_measurement">Delete Measurement</string>
-    <string name="measurement_description">Measurement Name</string>
+    <string name="measurement_description">Singular Measurement Name</string>
     <string name="modify_measurement">Select Measurement to Modify</string>
     <string name="measurement_required">Measurement Name is Required!</string>
     <string name="duplicate_measurement_description">This Measurement Name Already Exists!</string>

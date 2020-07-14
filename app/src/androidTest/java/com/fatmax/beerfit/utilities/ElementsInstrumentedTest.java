@@ -288,7 +288,7 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        List<String> measurements = Elements.getSortedMeasurements(db);
+        List<String> measurements = Elements.getSortedMeasurements(db, 1);
         assertEquals(7, measurements.size());
         assertEquals("class", measurements.get(0));
         assertEquals("repetition", measurements.get(1));
@@ -297,6 +297,21 @@ public class ElementsInstrumentedTest {
         assertEquals("hour", measurements.get(4));
         assertEquals("minute", measurements.get(5));
         assertEquals("second", measurements.get(6));
+    }
 
+    @Test
+    public void getSortedMeasurementsDefaultPlural() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        List<String> measurements = Elements.getSortedMeasurements(db, 2);
+        assertEquals(7, measurements.size());
+        assertEquals("classes", measurements.get(0));
+        assertEquals("repetitions", measurements.get(1));
+        assertEquals("miles", measurements.get(2));
+        assertEquals("kilometers", measurements.get(3));
+        assertEquals("hours", measurements.get(4));
+        assertEquals("minutes", measurements.get(5));
+        assertEquals("seconds", measurements.get(6));
     }
 }

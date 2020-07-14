@@ -308,31 +308,6 @@ public class DatabaseUnitTest {
     }
 
     @Test
-    public void getOrdinalNullTest() {
-        Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(-1, database.getOrdinal(MEASUREMENTS_TABLE, "unit", "hours"));
-    }
-
-    @Test
-    public void getOrdinalNoMatchTest() {
-        when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'hours';", null)).thenReturn(mockedCursor);
-
-        Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(-1, database.getOrdinal(MEASUREMENTS_TABLE, "unit", "hours"));
-    }
-
-    @Test
-    public void getOrdinalMatchTest() {
-        when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedCursor.getInt(0)).thenReturn(5);
-        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'minute';", null)).thenReturn(mockedCursor);
-
-        Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(5, database.getOrdinal(MEASUREMENTS_TABLE, "unit", "minute"));
-    }
-
-    @Test
     public void getActivityColorNullTest() {
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(Color.YELLOW, database.getExerciseColor("running"));
@@ -340,10 +315,7 @@ public class DatabaseUnitTest {
 
     @Test
     public void getActivityColorNoMatchTest() {
-        when(mockedCursor.getCount()).thenReturn(1, 0);
-        when(mockedCursor.getInt(0)).thenReturn(5);
-        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + EXERCISES_TABLE + " WHERE past = 'ran';", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT color FROM " + EXERCISES_TABLE + " WHERE id = '5';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'ran' OR past = 'ran';", null, null)).thenReturn(null);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(Color.YELLOW, database.getExerciseColor("ran"));
@@ -352,9 +324,11 @@ public class DatabaseUnitTest {
     @Test
     public void getActivityColorMatchTest() {
         when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedCursor.getInt(0)).thenReturn(5, Color.GREEN);
-        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + EXERCISES_TABLE + " WHERE past = 'ran';", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT color FROM " + EXERCISES_TABLE + " WHERE id = '5';", null)).thenReturn(mockedCursor);
+        when(mockedCursor.getInt(0)).thenReturn(5);
+        when(mockedCursor.getString(1)).thenReturn("Run");
+        when(mockedCursor.getString(2)).thenReturn("Ran");
+        when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'ran' OR past = 'ran';", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals(Color.GREEN, database.getExerciseColor("ran"));
@@ -412,28 +386,190 @@ public class DatabaseUnitTest {
     }
 
     @Test
-    public void getBeersEarnedNullTest() {
+    public void getMatchingMeasurementsNullTypeTest() {
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(null);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(0.0, database.getBeersEarned("Ran", "kilometer", 10), 0);
+        assertEquals(1, database.getMatchingMeasurements(measurement).size());
+        assertEquals(measurement.getId(), database.getMatchingMeasurements(measurement).get(0).getId());
+        assertEquals(measurement.getUnit(), database.getMatchingMeasurements(measurement).get(0).getUnit());
+        assertEquals(measurement.getType(), database.getMatchingMeasurements(measurement).get(0).getType());
+        assertEquals(measurement.getConversion(), database.getMatchingMeasurements(measurement).get(0).getConversion(), 0);
     }
 
     @Test
-    public void getBeersEarnedNoMatchTest() {
-        when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT amount FROM " + GOALS_TABLE + " WHERE exercise = -1 AND measurement = -1;", null)).thenReturn(mockedCursor);
-
-        Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(0.0, database.getBeersEarned("Ran", "kilometer", 10), 0);
-    }
-
-    @Test
-    public void getBeersEarnedSingleTest() {
+    public void getMatchingMeasurementNoSuchTest() {
         when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedCursor.getDouble(0)).thenReturn(5.0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT amount FROM " + GOALS_TABLE + " WHERE exercise = -1 AND measurement = -1;", null)).thenReturn(mockedCursor);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance");
+        when(mockedCursor.getString(2)).thenReturn("kilometer");
+        when(mockedCursor.getDouble(3)).thenReturn(1.0);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE type = 'distance';", null)).thenReturn(null);
 
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
         Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(2.0, database.getBeersEarned("Ran", "kilometer", 10), 0);
+        assertEquals(0, database.getMatchingMeasurements(measurement).size());
+    }
+
+    @Test
+    public void getMatchingMeasurementEmptyTableTest() {
+        when(mockedCursor.getCount()).thenReturn(1,0);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance");
+        when(mockedCursor.getString(2)).thenReturn("kilometer");
+        when(mockedCursor.getDouble(3)).thenReturn(1.0);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE type = 'distance';", null)).thenReturn(mockedCursor);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
+        Database database = new Database(mockedSQLiteDatabase);
+        assertEquals(0, database.getMatchingMeasurements(measurement).size());
+    }
+
+    @Test
+    public void getMatchingMeasurementOneMatchTest() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance");
+        when(mockedCursor.getString(2)).thenReturn("kilometer");
+        when(mockedCursor.getDouble(3)).thenReturn(1.0);
+        when(mockedCursor.isAfterLast()).thenReturn(false, true);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE type = 'distance';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
+        Database database = new Database(mockedSQLiteDatabase);
+        List<Measurement> measurements = database.getMatchingMeasurements(measurement);
+        assertEquals(1, measurements.size());
+        assertEquals(measurement.getId(), measurements.get(0).getId());
+        assertEquals(measurement.getUnit(), measurements.get(0).getUnit());
+        assertEquals(measurement.getType(), measurements.get(0).getType());
+        assertEquals(measurement.getConversion(), measurements.get(0).getConversion(), 0);
+    }
+
+    @Test
+    public void getMatchingGoalsBadQueryTest() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance", "Walked");
+        when(mockedCursor.getString(2)).thenReturn("kilometer", "Walk");
+        when(mockedCursor.getDouble(3)).thenReturn(1.0);
+        when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
+        when(mockedCursor.isAfterLast()).thenReturn(false, true);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE type = 'distance';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + GOALS_TABLE + " WHERE exercise = 1 AND measurement = 1", null)).thenReturn(null);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
+        Database database = new Database(mockedSQLiteDatabase);
+        assertNull(database.getMatchingGoals(exercise, measurement));
+    }
+
+    @Test
+    public void getMatchingGoalsNoMatchTest() {
+        when(mockedCursor.getCount()).thenReturn(1, 1,1,1,0);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance", "Walked");
+        when(mockedCursor.getString(2)).thenReturn("kilometer", "Walk");
+        when(mockedCursor.getDouble(3)).thenReturn(1.0);
+        when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
+        when(mockedCursor.isAfterLast()).thenReturn(false, true);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE type = 'distance';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + GOALS_TABLE + " WHERE exercise = 1 AND measurement = 1", null)).thenReturn(mockedCursor);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
+        Database database = new Database(mockedSQLiteDatabase);
+        assertNull(database.getMatchingGoals(exercise, measurement));
+    }
+
+    @Test
+    public void getMatchingGoalsEmptyMatchTest() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance", "Walked");
+        when(mockedCursor.getString(2)).thenReturn("kilometer", "Walk");
+        when(mockedCursor.getDouble(3)).thenReturn(1.0);
+        when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
+        when(mockedCursor.isAfterLast()).thenReturn(false, true, false, true);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE type = 'distance';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + GOALS_TABLE + " WHERE exercise = 1 AND measurement = 1", null)).thenReturn(mockedCursor);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
+        Database database = new Database(mockedSQLiteDatabase);
+        assertEquals(-1, database.getMatchingGoals(exercise, measurement).getId());
+    }
+
+    @Test
+    public void getMatchingGoalsRealMatchTest() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance", "Walked", "distance", "Walked", "distance");
+        when(mockedCursor.getString(2)).thenReturn("kilometer", "Walk", "kilometer", "Walk", "kilometer");
+        when(mockedCursor.getDouble(3)).thenReturn(1.0);
+        when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
+        when(mockedCursor.getInt(1)).thenReturn(1);
+        when(mockedCursor.getInt(2)).thenReturn(1);
+        when(mockedCursor.isAfterLast()).thenReturn(false, true, false, true);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE type = 'distance';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + GOALS_TABLE + " WHERE exercise = 1 AND measurement = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
+        Database database = new Database(mockedSQLiteDatabase);
+        Goal goal = database.getMatchingGoals(exercise, measurement);
+        assertEquals(1, goal.getId());
+    }
+
+    @Test
+    public void getBeersEarnedNullTest() {
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
+        Database database = new Database(mockedSQLiteDatabase);
+        assertEquals(0.0, database.getBeersEarned(exercise, measurement, 10), 0);
+    }
+
+    @Test
+    public void getBeersEarnedMatchTest() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance", "Walked", "distance", "Walked", "distance");
+        when(mockedCursor.getString(2)).thenReturn("kilometer", "Walk", "kilometer", "Walk", "kilometer");
+        when(mockedCursor.getDouble(3)).thenReturn(1.0);
+        when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
+        when(mockedCursor.getInt(1)).thenReturn(1);
+        when(mockedCursor.getInt(2)).thenReturn(1);
+        when(mockedCursor.isAfterLast()).thenReturn(false, true, false, true);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE type = 'distance';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT id FROM " + GOALS_TABLE + " WHERE exercise = 1 AND measurement = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
+        Database database = new Database(mockedSQLiteDatabase);
+        assertEquals(10.0, database.getBeersEarned(exercise, measurement, 10), 0);
     }
 
     @Test

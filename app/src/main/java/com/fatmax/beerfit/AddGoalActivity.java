@@ -14,8 +14,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fatmax.beerfit.utilities.Database;
+import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.Goal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.fatmax.beerfit.MainActivity.getScreenWidth;
@@ -37,8 +39,8 @@ public class AddGoalActivity extends AppCompatActivity {
         database = new Database(sqLiteDatabase);
 
         // setup our two spinners
-        createSpinner(EXERCISES_TABLE, "current", R.id.goalSelection);
-        createSpinner(MEASUREMENTS_TABLE, "unit", R.id.goalDurationUnits);
+        createSpinner(EXERCISES_TABLE, "current", R.id.goalSelection, false);
+        createSpinner(MEASUREMENTS_TABLE, "unit", R.id.goalDurationUnits, true);
         //setup our object widths
         findViewById(R.id.goalDurationInput).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
 
@@ -94,10 +96,18 @@ public class AddGoalActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void createSpinner(String activity, String type, int p) {
-        List<Object> activities = database.getFullColumn(activity, type);
-        activities.add(0, "");
-        ArrayAdapter<Object> activitiesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, activities);
+    private void createSpinner(String activity, String type, int p, boolean sort) {
+        List<String> items = new ArrayList<>();
+        if (sort) {
+            items = Elements.getSortedMeasurements(sqLiteDatabase, 1);
+        } else {
+            List<Object> objects = database.getFullColumn(activity, type);
+            for (Object object : objects) {
+                items.add(object.toString());
+            }
+        }
+        items.add(0, "");
+        ArrayAdapter<String> activitiesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
         activitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner activitySpinner = findViewById(p);
         activitySpinner.setAdapter(activitiesAdapter);

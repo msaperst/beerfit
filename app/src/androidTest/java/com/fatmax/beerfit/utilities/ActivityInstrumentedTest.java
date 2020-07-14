@@ -61,7 +61,7 @@ public class ActivityInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         Activity activity = new Activity(db, 0);
-        assertEquals(0, activity.getId());
+        assertEquals(-1, activity.getId());
         assertNull(activity.getDateTime());
         assertNull(activity.getDate());
         assertNull(activity.getTime());

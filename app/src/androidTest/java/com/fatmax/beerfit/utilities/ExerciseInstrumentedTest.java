@@ -40,7 +40,7 @@ public class ExerciseInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         Exercise exercise = new Exercise(db, "walk");
-        assertEquals(0, exercise.getId());
+        assertEquals(-1, exercise.getId());
         assertNull(exercise.getCurrent());
         assertNull(exercise.getPast());
         // not checking color, as it's random
@@ -64,7 +64,7 @@ public class ExerciseInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         Exercise exercise = new Exercise(db, 0);
-        assertEquals(0, exercise.getId());
+        assertEquals(-1, exercise.getId());
         assertNull(exercise.getCurrent());
         assertNull(exercise.getPast());
         // not checking color, as it's random

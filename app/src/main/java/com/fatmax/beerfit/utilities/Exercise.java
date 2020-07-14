@@ -15,14 +15,14 @@ import static com.fatmax.beerfit.utilities.Database.WHERE_ID;
 public class Exercise {
     private final SQLiteDatabase sqLiteDatabase;
     private Random rnd = new Random();
-    private int id = 0;
+    private int id = -1;
     private String past = null;
     private String current = null;
     private int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 
-    public Exercise(SQLiteDatabase sqLiteDatabase, String current) {
+    public Exercise(SQLiteDatabase sqLiteDatabase, String action) {
         this.sqLiteDatabase = sqLiteDatabase;
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = '" + current + "';", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = '" + action + "' OR past = '" + action + "';", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -107,7 +107,7 @@ public class Exercise {
     }
 
     public void save() {
-        if (id == 0) { // create a new one
+        if (id == -1) { // create a new one
             sqLiteDatabase.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(null,'" + past + "','" + current + "'," + color + ");");
         } else {
             sqLiteDatabase.execSQL("UPDATE " + EXERCISES_TABLE + " SET past = '" + past + "', current = '" + current + "', color = '" + color + "' WHERE id = " + id + ";");

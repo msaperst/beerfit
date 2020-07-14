@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -341,57 +342,6 @@ public class DatabaseInstrumentedTest {
         res.close();
     }
 
-    @Test(expected = SQLiteException.class)
-    public void getOrdinalNoTableTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        try {
-            database.getOrdinal(MEASUREMENTS_TABLE, "unit", "kilometer");
-            fail();
-        } finally {
-            wipeOutDB();
-        }
-    }
-
-    @Test(expected = SQLiteException.class)
-    public void getOrdinalNoColumnTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
-        try {
-            database.getOrdinal("fullColumn", "u", "kilometer");
-            fail();
-        } finally {
-            wipeOutDB();
-        }
-    }
-
-    @Test
-    public void getOrdinalNoMatchTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        db.execSQL("CREATE TABLE IF NOT EXISTS fullColumn(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, unit VARCHAR);");
-        assertEquals(-1, database.getOrdinal("fullColumn", "unit", "kilometer"));
-        wipeOutDB();
-    }
-
-    @Test
-    public void getOrdinalTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        assertEquals(1, database.getOrdinal(MEASUREMENTS_TABLE, "type", "time"));
-        assertEquals(2, database.getOrdinal(MEASUREMENTS_TABLE, "unit", "kilometer"));
-        db.execSQL("INSERT INTO " + MEASUREMENTS_TABLE + " VALUES(8,null,'hours', -1)");
-        assertEquals(8, database.getOrdinal(MEASUREMENTS_TABLE, "unit", "hours"));
-        db.execSQL("INSERT INTO " + MEASUREMENTS_TABLE + " VALUES(null,null,'seconds', -1)");
-        assertEquals(9, database.getOrdinal(MEASUREMENTS_TABLE, "unit", "seconds"));
-        // new data lookup
-        database.logBeer();
-        assertEquals(1, database.getOrdinal(ACTIVITIES_TABLE, "amount", "1"));
-        wipeOutDB();
-    }
-
     @Test
     public void getActivityColorTest() {
         SQLiteDatabase db = getDB();
@@ -517,16 +467,87 @@ public class DatabaseInstrumentedTest {
     }
 
     @Test
+    public void getMatchingMeasurementsNoMatch() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertEquals(1, database.getMatchingMeasurements(new Measurement(db, "new one")).size());
+    }
+
+    @Test
+    public void getMatchingMeasurementsNullMatch() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        List<Measurement> measurements = database.getMatchingMeasurements(new Measurement(db, "class"));
+        assertEquals(1, measurements.size());
+        assertEquals(6, measurements.get(0).getId());
+    }
+
+    @Test
+    public void getMatchingMeasurementsTimeMatch() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        List<Measurement> measurements = database.getMatchingMeasurements(new Measurement(db, "minute"));
+        assertEquals(3, measurements.size());
+        assertEquals(1, measurements.get(0).getId());
+        assertEquals(3, measurements.get(1).getId());
+        assertEquals(4, measurements.get(2).getId());
+    }
+
+    @Test
+    public void getMatchingGoalsNoMatches() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertNull(database.getMatchingGoals(new Exercise(db, "Ran"), new Measurement(db, "new one")));
+    }
+
+    @Test
+    public void getMatchingGoalsExerciseSingleMatch() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(1,2,2,1);");
+        assertEquals(1, database.getMatchingGoals(new Exercise(db, "Ran"), new Measurement(db, "kilometer")).getId());
+    }
+
+    @Test
+    public void getMatchingGoalsExerciseOppositeMatch() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(1,2,2,1);");
+        assertEquals(1, database.getMatchingGoals(new Exercise(db, "Ran"), new Measurement(db, "mile")).getId());
+    }
+
+    @Test
     public void getBeersEarnedTest() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
         addGoals(db);
-        assertEquals(1, database.getBeersEarned("Ran", "kilometer", 5), 0);
-        assertEquals(0, database.getBeersEarned("Ran", "kilometer", 0), 0);
-        assertEquals(1, database.getBeersEarned("Walked", "kilometer", 5), 0);
-        assertEquals(0.5, database.getBeersEarned("Played Soccer", "minute", 15), 0);
-        assertEquals(0, database.getBeersEarned("Played Soccer", "kilometer", 5), 0);
+        assertEquals(1, database.getBeersEarned(new Exercise(db, "Ran"), new Measurement(db, "kilometer"), 5), 0);
+        assertEquals(0, database.getBeersEarned(new Exercise(db, "Ran"), new Measurement(db, "kilometer"), 0), 0);
+        assertEquals(1, database.getBeersEarned(new Exercise(db, "Walked"), new Measurement(db, "kilometer"), 5), 0);
+        assertEquals(0.5, database.getBeersEarned(new Exercise(db, "Played Soccer"), new Measurement(db, "minute"), 15), 0);
+        assertEquals(0, database.getBeersEarned(new Exercise(db, "Played Soccer"), new Measurement(db, "kilometer"), 5), 0);
+        wipeOutDB();
+    }
+
+    @Test
+    public void getBeersEarnedSwapTest() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(1,2,2,5);");
+        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(2,1,1,10);");
+        assertEquals(1, database.getBeersEarned(new Exercise(db, "Ran"), new Measurement(db, "kilometer"), 5), 0);
+        assertEquals(0.9656063879, database.getBeersEarned(new Exercise(db, "Ran"), new Measurement(db, "mile"), 3), 0.00001);
+        assertEquals(3, database.getBeersEarned(new Exercise(db, "Walk"), new Measurement(db, "minute"), 30), 0);
+        assertEquals(2, database.getBeersEarned(new Exercise(db, "Walk"), new Measurement(db, "second"), 1200), 0);
+        assertEquals(1.5, database.getBeersEarned(new Exercise(db, "Walk"), new Measurement(db, "hour"), 0.25), 0);
         wipeOutDB();
     }
 

@@ -28,7 +28,7 @@ public class MeasurementUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(null);
 
         Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
-        assertEquals(0, measurement.getId());
+        assertEquals(-1, measurement.getId());
         assertNull(measurement.getType());
         assertNull(measurement.getUnit());
         assertEquals(0, measurement.getConversion(), 0.00001);
@@ -56,7 +56,7 @@ public class MeasurementUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
 
         Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
-        assertEquals(0, measurement.getId());
+        assertEquals(-1, measurement.getId());
         assertNull(measurement.getType());
         assertNull(measurement.getUnit());
         assertEquals(0, measurement.getConversion(), 0.00001);
@@ -67,7 +67,7 @@ public class MeasurementUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE id = 1", null)).thenReturn(null);
 
         Measurement measurement = new Measurement(mockedSQLiteDatabase, 1);
-        assertEquals(0, measurement.getId());
+        assertEquals(-1, measurement.getId());
         assertNull(measurement.getType());
         assertNull(measurement.getUnit());
         assertEquals(0, measurement.getConversion(), 0.00001);
@@ -95,7 +95,7 @@ public class MeasurementUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Measurement measurement = new Measurement(mockedSQLiteDatabase, 1);
-        assertEquals(0, measurement.getId());
+        assertEquals(-1, measurement.getId());
         assertNull(measurement.getType());
         assertNull(measurement.getUnit());
         assertEquals(0, measurement.getConversion(), 0.00001);
@@ -116,7 +116,7 @@ public class MeasurementUnitTest {
 
     @Test
     public void newMeasurementCurrentBadUnique() {
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer' AND id != 0;", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer' AND id != -1;", null)).thenReturn(null);
 
         Measurement measurement = new Measurement(mockedSQLiteDatabase);
         measurement.setUnit("kilometer");
@@ -126,7 +126,7 @@ public class MeasurementUnitTest {
     @Test
     public void newMeasurementCurrentUnique() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer' AND id != 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer' AND id != -1;", null)).thenReturn(mockedCursor);
 
         Measurement measurement = new Measurement(mockedSQLiteDatabase);
         measurement.setUnit("kilometer");
@@ -136,7 +136,7 @@ public class MeasurementUnitTest {
     @Test
     public void newMeasurementCurrentNotUnique() {
         when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer' AND id != 0;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer' AND id != -1;", null)).thenReturn(mockedCursor);
 
         Measurement measurement = new Measurement(mockedSQLiteDatabase);
         measurement.setUnit("kilometer");

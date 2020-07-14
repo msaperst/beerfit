@@ -39,7 +39,7 @@ public class MeasurementInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         Measurement measurement = new Measurement(db, "walk");
-        assertEquals(0, measurement.getId());
+        assertEquals(-1, measurement.getId());
         assertNull(measurement.getType());
         assertNull(measurement.getUnit());
         assertEquals(0.0, measurement.getConversion(), 0.00001);
@@ -63,7 +63,7 @@ public class MeasurementInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         Measurement measurement = new Measurement(db, 0);
-        assertEquals(0, measurement.getId());
+        assertEquals(-1, measurement.getId());
         assertNull(measurement.getUnit());
         assertNull(measurement.getType());
         assertEquals(0.0, measurement.getConversion(), 0.00001);

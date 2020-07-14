@@ -158,16 +158,14 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         assertEquals(durationList.size(), 8, "Expected to find '8' durations", "Actually found '" + durationList.size() + "' durations");
         assertElementTextEquals("", durationList.get(0));
-        assertElementTextEquals("miles", durationList.get(1));
-        assertElementTextEquals("kilometers", durationList.get(2));
-        assertElementTextEquals("hours", durationList.get(3));
-        assertElementTextEquals("minutes", durationList.get(4));
-        assertElementTextEquals("seconds", durationList.get(5));
-        assertElementTextEquals("classes", durationList.get(6));
-        assertElementTextEquals("repetitions", durationList.get(7));
+        assertElementTextEquals("mile", durationList.get(1));
+        assertElementTextEquals("kilometer", durationList.get(2));
+        assertElementTextEquals("hour", durationList.get(3));
+        assertElementTextEquals("minute", durationList.get(4));
+        assertElementTextEquals("second", durationList.get(5));
+        assertElementTextEquals("class", durationList.get(6));
+        assertElementTextEquals("repetition", durationList.get(7));
     }
-
-    //TODO - starts as plural, goes to singular if 1 is the value, back to plural when not 1 (e.g. 10)
 
     @Test
     public void addingActivityGoesToMainPage() {
@@ -271,5 +269,24 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
         resultSet.next();
         assertActivity(resultSet, 1, dateTime, 1, 2, 10, 10);
+    }
+
+    @Test
+    public void newSubmissionCrossGoal() throws IOException, SQLException, ClassNotFoundException {
+        modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,1);");
+        driver.findElement(By.id("activityExercise")).click();
+        List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        activityList.get(1).click();
+        driver.findElement(By.id("activityDurationInput")).sendKeys("10");
+        driver.findElement(By.id("activityDurationUnits")).click();
+        List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        durationList.get(5).click();
+        Calendar calendar = Calendar.getInstance();
+        driver.findElement(By.id("submitActivity")).click();
+        //verify the data is in there
+        String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
+        resultSet.next();
+        assertActivity(resultSet, 1, dateTime, 1, 5, 10, 16.093439798947873);
     }
 }

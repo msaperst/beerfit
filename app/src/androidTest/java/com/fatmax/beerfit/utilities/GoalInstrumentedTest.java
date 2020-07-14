@@ -36,7 +36,7 @@ public class GoalInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         Goal goal = new Goal(db, 1);
-        assertEquals(0, goal.getId());
+        assertEquals(-1, goal.getId());
         assertNull(goal.getExercise());
         assertNull(goal.getMeasurement());
         assertEquals(0.0, goal.getAmount(), 0.00001);
