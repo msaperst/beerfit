@@ -271,15 +271,32 @@ public class ElementsInstrumentedTest {
         database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
         database.logActivity("2020-10-09 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("3", "'2020-10-10 10:23'", 1);
-        database.logActivity("2020-08-09 10:23", "Ran", "kilometer", 5.0);
+        database.logActivity("2020-08-09 10:23", "Ran", "kilometer", 1.0);
         database.logActivity("2021-11-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("6", "'2021-11-11 10:23'", 2);
         Map<String, Integer> activityGroups2020 = Elements.getActivitiesPerformed(db, new Metric("%Y"), "2020");
         assertEquals(2, activityGroups2020.size());
-        assertEquals(1, (int) activityGroups2020.get("Ran for 5.0 kilometer"));
-        assertEquals(10, (int) activityGroups2020.get("Walked for 10.0 kilometer"));
+        assertEquals(0, (int) activityGroups2020.get("Ran for 1.0 kilometer"));
+        assertEquals(10, (int) activityGroups2020.get("Walked for 10.0 kilometers"));
         Map<String, Integer> activityGroups2021 = Elements.getActivitiesPerformed(db, new Metric("%Y"), "2021");
         assertEquals(1, activityGroups2021.size());
-        assertEquals(5, (int) activityGroups2021.get("Walked for 5.0 kilometer"));
+        assertEquals(5, (int) activityGroups2021.get("Walked for 5.0 kilometers"));
+    }
+
+    @Test
+    public void getSortedMeasurementsDefault() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        List<String> measurements = Elements.getSortedMeasurements(db);
+        assertEquals(7, measurements.size());
+        assertEquals("class", measurements.get(0));
+        assertEquals("repetition", measurements.get(1));
+        assertEquals("mile", measurements.get(2));
+        assertEquals("kilometer", measurements.get(3));
+        assertEquals("hour", measurements.get(4));
+        assertEquals("minute", measurements.get(5));
+        assertEquals("second", measurements.get(6));
+
     }
 }

@@ -92,7 +92,7 @@ public class Database {
         database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(2,'distance','kilometer', 1);");
         database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(5,'distance','mile', 0.6213712);");
         database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(6,null,'class', -1);");
-        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(7,null,'rep', -1);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(7,null,'repetition', -1);");
     }
 
     boolean isTableMissing(String tableName) {

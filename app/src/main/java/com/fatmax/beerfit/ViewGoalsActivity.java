@@ -47,7 +47,7 @@ public class ViewGoalsActivity extends AppCompatActivity {
         List<Goal> goals = Elements.getAllGoals(sqLiteDatabase);
         for (Goal goal : goals) {
             // setup our cells
-            TextView goalView = tableBuilder.createTextView(goal.getExercise().getCurrent() + " for " + goal.getAmount() + " " + goal.getMeasurement().getUnit(), "goal");
+            TextView goalView = tableBuilder.createTextView(goal.getExercise().getCurrent() + " for " + goal.getAmount() + " " + Elements.getProperStringPluralization(goal.getMeasurement().getUnit(), goal.getAmount()), "goal");
             goalView.setTextSize(20);
             // create and setup our edit button
             ImageButton editButton = tableBuilder.createEditButton();

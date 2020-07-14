@@ -98,7 +98,32 @@ public class MeasurementInstrumentedTest {
         assertFalse(measurement.isUnique());
     }
 
-    //TODO safeToEdit
+    @Test
+    public void safeToEditExistingMeasurement() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Measurement measurement = new Measurement(db, "repetition");
+        assertTrue(measurement.safeToEdit());
+    }
+
+    @Test
+    public void unsafeToEditExistingMeasurement() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Measurement measurement = new Measurement(db, "minute");
+        assertFalse(measurement.safeToEdit());
+    }
+
+    @Test
+    public void safeToEditNewMeasurement() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Measurement measurement = new Measurement(db, "game");
+        assertTrue(measurement.safeToEdit());
+    }
 
     @Test
     public void unableToSaveExistingMeasurement() {
@@ -122,7 +147,7 @@ public class MeasurementInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Measurement measurement = new Measurement(db, "rep");
+        Measurement measurement = new Measurement(db, "repetition");
         measurement.setUnit("reppp");
         measurement.save();
         Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + ";", null);
@@ -156,7 +181,7 @@ public class MeasurementInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Measurement measurement = new Measurement(db, "rep");
+        Measurement measurement = new Measurement(db, "repetition");
         assertTrue(measurement.safeToDelete());
     }
 

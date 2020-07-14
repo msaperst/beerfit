@@ -78,11 +78,18 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
     public void allGoalDurationsExist() {
         driver.findElement(By.id("goalDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
-        assertEquals(durationList.size(), 3, "Expected to find '3' durations", "Actually found '" + durationList.size() + "' durations");
+        assertEquals(durationList.size(), 8, "Expected to find '8' durations", "Actually found '" + durationList.size() + "' durations");
         assertElementTextEquals("", durationList.get(0));
-        assertElementTextEquals("minute", durationList.get(1));
-        assertElementTextEquals("kilometer", durationList.get(2));
+        assertElementTextEquals("miles", durationList.get(1));
+        assertElementTextEquals("kilometers", durationList.get(2));
+        assertElementTextEquals("hours", durationList.get(3));
+        assertElementTextEquals("minutes", durationList.get(4));
+        assertElementTextEquals("seconds", durationList.get(5));
+        assertElementTextEquals("classes", durationList.get(6));
+        assertElementTextEquals("repetitions", durationList.get(7));
     }
+
+    //TODO - starts as plural, goes to singular if 1 is the value, back to plural when not 1 (e.g. 10)
 
     @Test
     public void addingGoalGoesToGoalsPage() {

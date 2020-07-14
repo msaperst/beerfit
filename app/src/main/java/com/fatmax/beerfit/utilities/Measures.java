@@ -18,7 +18,6 @@ import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import java.util.List;
 
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
-import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class Measures {
 
@@ -143,14 +142,17 @@ public class Measures {
     }
 
     public void editMeasurements() {
-        Database database = new Database(sqLiteDatabase);
-        List<Object> allMeasurements = database.getFullColumn(MEASUREMENTS_TABLE, "unit");
+        List<String> allMeasurements = Elements.getSortedMeasurements(sqLiteDatabase);
         String[] selectMeasurement = allMeasurements.toArray(new String[allMeasurements.size()]);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.modify_measurement);
         builder.setSingleChoiceItems(selectMeasurement, -1, (dialog, which) -> {
             selectedOption = selectMeasurement[which];
-            this.dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+            if( new Measurement(sqLiteDatabase, selectedOption).safeToEdit() ) {
+                this.dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+            } else {
+                this.dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+            }
             this.dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
         });
         builder.setNeutralButton(context.getString(R.string.add_new), (dialog, which) -> addNewMeasurement());
@@ -186,51 +188,34 @@ public class Measures {
     }
 
     private void setupMeasurementModal(Measurement measurement, int title) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//        builder.setTitle(title);
-//        LayoutInflater inflater = LayoutInflater.from(context);
-//        LinearLayout editMeasurementModal = (LinearLayout) inflater.inflate(R.layout.modal_edit_measurement, null);
-//        measurementColorView = editMeasurementModal.findViewById(R.id.editMeasurementColor);
-//        ((EditText) editMeasurementeModal.findViewById(R.id.editMeasurementName)).setText(measurement.getCurrent());
-//        ((EditText) editMeasurementModal.findViewById(R.id.editMeasurementPastName)).setText(measurement.getPast());
-//        measurementColorView.setBackgroundColor(measurement.getColor());
-//        measurementColorView.setOnClickListener(v -> pickColor(measurement));
-//        builder.setView(editMeasurementModal);
-//        builder.setPositiveButton(R.string.save, null);
-//        builder.setNegativeButton(R.string.cancel, null);
-//        this.dialog = builder.create();
-//        dialog.setOnShowListener(dialog -> {
-//            Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-//            button.setOnClickListener(view -> {
-//                // check to ensure measurement is filled in
-//                EditText measurementName = editMeasurementModal.findViewById(R.id.editMeasurementName);
-//                if (TextUtils.isEmpty(measurementName.getText())) {
-//                    measurementName.setError(context.getString(R.string.measurement_required));
-//                }
-//                measurement.setCurrent(measurementName.getText().toString());
-//                // check to ensure past tense measurement is filled in
-//                EditText measurementPastName = editMeasurementModal.findViewById(R.id.editMeasurementPastName);
-//                if (TextUtils.isEmpty(measurementPastName.getText())) {
-//                    measurementPastName.setError(context.getString(R.string.past_measurement_required));
-//                }
-//                measurement.setPast(measurementPastName.getText().toString());
-//                // check for uniqueness
-//                if (!measurement.isCurrentUnique()) {
-//                    measurementName.setError(context.getString(R.string.duplicate_measurement_description));
-//                }
-//                if (!measurement.isPastUnique()) {
-//                    measurementPastName.setError(context.getString(R.string.duplicate_measurement_past_description));
-//                }
-//                if (!measurement.isColorUnique()) {
-//                    measurementColorView.setTextColor(Color.RED);
-//                    measurementColorView.setText(R.string.duplicate_measurement_color);
-//                }
-//                if (!"".equals(measurement.getPast()) && !"".equals(measurement.getCurrent()) && measurement.isCurrentUnique() && measurement.isPastUnique() && measurement.isColorUnique()) {
-//                    measurement.save();
-//                    dialog.dismiss();
-//                }
-//            });
-//        });
-//        dialog.show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        LinearLayout editMeasurementModal = (LinearLayout) inflater.inflate(R.layout.modal_edit_measurement, null);
+        ((EditText) editMeasurementModal.findViewById(R.id.editMeasurementName)).setText(measurement.getUnit());
+        builder.setView(editMeasurementModal);
+        builder.setPositiveButton(R.string.save, null);
+        builder.setNegativeButton(R.string.cancel, null);
+        this.dialog = builder.create();
+        dialog.setOnShowListener(dialog -> {
+            Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(view -> {
+                // check to ensure measurement is filled in
+                EditText measurementName = editMeasurementModal.findViewById(R.id.editMeasurementName);
+                if (TextUtils.isEmpty(measurementName.getText())) {
+                    measurementName.setError(context.getString(R.string.measurement_required));
+                }
+                measurement.setUnit(measurementName.getText().toString());
+                // check for uniqueness
+                if (!measurement.isUnique()) {
+                    measurementName.setError(context.getString(R.string.duplicate_measurement_description));
+                }
+                if (!"".equals(measurement.getUnit()) && measurement.isUnique()) {
+                    measurement.save();
+                    dialog.dismiss();
+                }
+            });
+        });
+        dialog.show();
     }
 }

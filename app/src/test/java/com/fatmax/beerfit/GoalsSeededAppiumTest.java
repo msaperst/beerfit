@@ -19,17 +19,18 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
     @Before
     public void seedAndNavigateToGoals() {
         modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,5);");
+        modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(2,2,1,1);");
         new Navigate(driver).toGoals();
     }
-
 
     @Test
     public void addedGoalsDisplayed() {
         List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
-        assertEquals(tableRows.size(), 1, "Expected to find '1' goals", "Actually found '" + tableRows.size() + "'");
+        assertEquals(tableRows.size(), 2, "Expected to find '2' goals", "Actually found '" + tableRows.size() + "'");
         assertElementTextEquals("Walk for 5.0 kilometers", tableRows.get(0).findElement(By.className("android.widget.TextView")));
         assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Edit Activity")));
         assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Delete Activity")));
+        assertElementTextEquals("Run for 1.0 minute", tableRows.get(1).findElement(By.className("android.widget.TextView")));
     }
 
     @Test
