@@ -125,7 +125,7 @@ public class MeasurementModifyAppiumTest extends AppiumTestBase {
     @Test
     public void checkAddMeasurementDefaultValues() {
         driver.findElement(By.id("android:id/button3")).click();
-        assertElementTextEquals("Measurement Name", By.id("editMeasurementName"));
+        assertElementTextEquals("Singular Measurement Name", By.id("editMeasurementName"));
     }
 
     @Test

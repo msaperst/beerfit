@@ -117,6 +117,6 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         //verify the goal is changed
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
         resultSet.next();
-        assertGoal(resultSet, 1, 2, 1, 30);
+        assertGoal(resultSet, 1, 2, 6, 30);
     }
 }
