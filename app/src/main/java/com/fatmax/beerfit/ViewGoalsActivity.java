@@ -73,6 +73,9 @@ public class ViewGoalsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         measures = new Measures(this, sqLiteDatabase);
         switch (item.getItemId()) {
+            case R.id.addGoal:
+                addGoal(null);
+                return true;
             case R.id.editExercises:
                 measures.editExercises();
                 return true;

@@ -18,8 +18,7 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         // ensure beers on main page is properly displayed
         Navigate navigate = new Navigate(driver);
         // first, we add the goal of 5 km run for one beer
-        navigate.toGoals();
-        driver.findElement(By.id("addGoalButton")).click();
+        navigate.toNewGoal();
         driver.findElement(By.id("goalSelection")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(2).click();

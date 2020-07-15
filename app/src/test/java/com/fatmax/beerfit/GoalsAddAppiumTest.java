@@ -18,8 +18,7 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
 
     @Before
     public void navigateToAddGoals() {
-        new Navigate(driver).toGoals();
-        driver.findElement(By.id("addGoalButton")).click();
+        new Navigate(driver).toNewGoal();
     }
 
     @Test

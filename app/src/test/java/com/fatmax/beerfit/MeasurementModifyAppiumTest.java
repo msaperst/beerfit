@@ -19,9 +19,7 @@ public class MeasurementModifyAppiumTest extends AppiumTestBase {
 
     @Before
     public void navigateToGoals() {
-        new Navigate(driver).toGoals();
-        driver.findElement(By.AccessibilityId("More options")).click();
-        driver.findElements(By.className("android.widget.TextView")).get(1).click();
+        new Navigate(driver).toEditMeasurement();
     }
 
     @Test
