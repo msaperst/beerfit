@@ -16,7 +16,7 @@ import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.touch.offset.PointOption;
 
-import static com.fatmax.beerfit.MetricsSeededAppiumTest.CYCLED_FOR_5_KILOMETERS;
+import static com.fatmax.beerfit.MetricsSeededAppiumTest.CYCLED_FOR_1_0_KILOMETER;
 import static com.fatmax.beerfit.MetricsSeededAppiumTest.LIFTED_FOR_30_MINUTES;
 import static com.fatmax.beerfit.MetricsSeededAppiumTest.PLAYED_SOCCER_FOR_30_MINUTES;
 import static com.fatmax.beerfit.MetricsSeededAppiumTest.RAN_FOR_5_KILOMETERS;
@@ -34,7 +34,7 @@ public class ActivitiesSeededAppiumTest extends AppiumTestBase {
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(5,\"2020-01-05 04:00\",2,2,5,1);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(6,\"2020-01-06 05:00\",2,2,5,1);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(7,\"2020-01-07 06:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(8,\"2020-01-08 07:00\",3,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(8,\"2020-01-08 07:00\",3,2,1,1);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(9,\"2020-01-09 08:00\",0,0,1,-1);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(10,\"2020-01-10 09:00\",0,0,1,-1);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(11,\"2020-02-11 10:00\",4,1,30,1);");
@@ -83,7 +83,7 @@ public class ActivitiesSeededAppiumTest extends AppiumTestBase {
         assertElementTextEquals("Thu, Jan 9 2020, 08:00", getTime(tableRows, 6));
         assertElementTextEquals("Drank 1 beer", getActivity(tableRows, 6));
         assertElementTextEquals("Wed, Jan 8 2020, 07:00", getTime(tableRows, 7));
-        assertElementTextEquals(CYCLED_FOR_5_KILOMETERS, getActivity(tableRows, 7));
+        assertElementTextEquals(CYCLED_FOR_1_0_KILOMETER, getActivity(tableRows, 7));
         assertElementTextEquals("Tue, Jan 7 2020, 06:00", getTime(tableRows, 8));
         assertElementTextEquals(WALKED_FOR_5_KILOMETERS, getActivity(tableRows, 8));
         assertElementTextEquals("Mon, Jan 6 2020, 05:00", getTime(tableRows, 9));

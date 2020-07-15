@@ -40,7 +40,7 @@ public class ExerciseInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         Exercise exercise = new Exercise(db, "walk");
-        assertEquals(0, exercise.getId());
+        assertEquals(-1, exercise.getId());
         assertNull(exercise.getCurrent());
         assertNull(exercise.getPast());
         // not checking color, as it's random
@@ -64,7 +64,7 @@ public class ExerciseInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         Exercise exercise = new Exercise(db, 0);
-        assertEquals(0, exercise.getId());
+        assertEquals(-1, exercise.getId());
         assertNull(exercise.getCurrent());
         assertNull(exercise.getPast());
         // not checking color, as it's random
@@ -215,11 +215,21 @@ public class ExerciseInstrumentedTest {
     }
 
     @Test
-    public void notSafeToDeleteExistingExercise() {
+    public void notSafeToDeleteExistingActivity() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-01-01 00:00", "Walked", "kilometers", 5);
+        database.logActivity("2020-01-01 00:00", "Walked", "kilometer", 5);
+        Exercise exercise = new Exercise(db, "Walk");
+        assertFalse(exercise.safeToDelete());
+    }
+
+    @Test
+    public void notSafeToDeleteExistingGoal() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        database.addGoal("Walk", "kilometer", 5);
         Exercise exercise = new Exercise(db, "Walk");
         assertFalse(exercise.safeToDelete());
     }
@@ -242,7 +252,7 @@ public class ExerciseInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-01-01 00:00", "Walked", "kilometers", 5);
+        database.logActivity("2020-01-01 00:00", "Walked", "kilometer", 5);
         Exercise exercise = new Exercise(db, "Walk");
         exercise.delete();
         Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE + ";", null);

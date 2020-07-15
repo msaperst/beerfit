@@ -17,7 +17,7 @@ public class Activity {
     public static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
 
     private final SQLiteDatabase sqLiteDatabase;
-    private int id = 0;
+    private int id = -1;
     private Date time = null;
     private Exercise exercise = null;
     private Measurement measurement = null;

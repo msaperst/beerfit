@@ -53,7 +53,7 @@ public class ActivitiesEditActivityAppiumTest extends AppiumTestBase {
         assertElementTextEquals("2020-02-15", By.id("activityDate"));
         assertElementTextEquals("23:59", By.id("activityTime"));
         assertElementTextEquals("5.0", By.id("activityDurationInput"));
-        assertElementTextEquals("kilometers", driver.findElement(By.id("activityDurationUnits")).findElement(By.className("android.widget.TextView")));
+        assertElementTextEquals("kilometer", driver.findElement(By.id("activityDurationUnits")).findElement(By.className("android.widget.TextView")));
     }
 
     @Test
@@ -117,6 +117,6 @@ public class ActivitiesEditActivityAppiumTest extends AppiumTestBase {
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '15';");
         resultSet.next();
         // beer changes to none, as no activities are set
-        assertActivity(resultSet, 15, "2020-02-16 13:30", 4, 1, 30, 0);
+        assertActivity(resultSet, 15, "2020-02-16 13:30", 4, 6, 30, 0);
     }
 }

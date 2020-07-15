@@ -48,13 +48,13 @@ public class ViewActivitiesActivity extends AppCompatActivity {
             TextView timeView = tableBuilder.createTextView(datetimeFormat.format(activity.getDateTime()));
             // setup our activity cell
             TextView activityView;
-            if (activity.getExercise().getId() == 0 && activity.getMeasurement().getId() == 0) {    // if it's beer
+            if (activity.getExercise().getId() == -1 && activity.getMeasurement().getId() == -1) {    // if it's beer
                 activityView = tableBuilder.createTextView("Drank " + (int) activity.getAmount() + " beer");
-                if (activity.getAmount() > 1) {
+                if (activity.getAmount() != 1) {
                     activityView.setText(getString(R.string.plural, activityView.getText()));
                 }
             } else {
-                activityView = tableBuilder.createTextView(activity.getExercise().getPast() + " for " + activity.getAmount() + " " + activity.getMeasurement().getUnit());
+                activityView = tableBuilder.createTextView(activity.getExercise().getPast() + " for " + activity.getAmount() + " " + Elements.getProperStringPluralization(activity.getMeasurement().getUnit(), activity.getAmount()));
             }
 
             // create and setup our edit button

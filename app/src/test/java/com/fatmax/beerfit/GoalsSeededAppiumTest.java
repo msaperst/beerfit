@@ -19,17 +19,18 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
     @Before
     public void seedAndNavigateToGoals() {
         modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,5);");
+        modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(2,2,1,1);");
         new Navigate(driver).toGoals();
     }
-
 
     @Test
     public void addedGoalsDisplayed() {
         List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
-        assertEquals(tableRows.size(), 1, "Expected to find '1' goals", "Actually found '" + tableRows.size() + "'");
+        assertEquals(tableRows.size(), 2, "Expected to find '2' goals", "Actually found '" + tableRows.size() + "'");
         assertElementTextEquals("Walk for 5.0 kilometers", tableRows.get(0).findElement(By.className("android.widget.TextView")));
         assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Edit Activity")));
         assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Delete Activity")));
+        assertElementTextEquals("Run for 1.0 minute", tableRows.get(1).findElement(By.className("android.widget.TextView")));
     }
 
     @Test
@@ -48,7 +49,9 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("android:id/button1")).click();
         //verify the goal is gone
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
-        assertEquals(false, resultSet.next(), "Expected no results", "");
+        resultSet.next();
+        assertGoal(resultSet, 2, 2, 1, 1);
+        assertEquals(false, resultSet.next(), "Expected only 1 result", "");
     }
 
     @Test
@@ -86,7 +89,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.AccessibilityId("Edit Activity")).click();
         assertElementTextEquals("Walk", driver.findElement(By.id("goalSelection")).findElement(By.className("android.widget.TextView")));
         assertElementTextEquals("5.0", By.id("goalDurationInput"));
-        assertElementTextEquals("kilometers", driver.findElement(By.id("goalDurationUnits")).findElement(By.className("android.widget.TextView")));
+        assertElementTextEquals("kilometer", driver.findElement(By.id("goalDurationUnits")).findElement(By.className("android.widget.TextView")));
     }
 
     @Test
@@ -114,6 +117,6 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         //verify the goal is changed
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
         resultSet.next();
-        assertGoal(resultSet, 1, 2, 1, 30);
+        assertGoal(resultSet, 1, 2, 6, 30);
     }
 }
