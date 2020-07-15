@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ViewMetricsActivity"
+            android:name=".MetricsActivity"
             android:label="@string/beerfit_metrics"
             android:parentActivityName=".MainActivity">
             <meta-data
@@ -23,13 +23,13 @@
         <activity
             android:name=".AddGoalActivity"
             android:label="@string/add_a_goal"
-            android:parentActivityName=".ViewGoalsActivity">
+            android:parentActivityName=".GoalsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ViewGoalsActivity" />
+                android:value=".GoalsActivity" />
         </activity>
         <activity
-            android:name=".ViewGoalsActivity"
+            android:name=".GoalsActivity"
             android:label="@string/beerfit_goals"
             android:parentActivityName=".MainActivity">
             <meta-data
@@ -37,7 +37,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".ViewActivitiesActivity"
+            android:name=".ActivitiesActivity"
             android:label="@string/beerfit_activities"
             android:parentActivityName=".MainActivity">
             <meta-data

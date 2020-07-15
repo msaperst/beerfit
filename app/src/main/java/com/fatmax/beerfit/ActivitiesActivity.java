@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-public class ViewActivitiesActivity extends AppCompatActivity {
+public class ActivitiesActivity extends AppCompatActivity {
 
     final SimpleDateFormat datetimeFormat = new SimpleDateFormat("EEE, MMM d yyyy, kk:mm", Locale.US);
     SQLiteDatabase sqLiteDatabase;
@@ -33,7 +33,7 @@ public class ViewActivitiesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_activities);
+        setContentView(R.layout.activity_activities);
 
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);

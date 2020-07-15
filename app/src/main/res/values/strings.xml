@@ -44,6 +44,7 @@
     <string name="modify_exercise">Select Exercise to Modify</string>
     <string name="add_new">Add New</string>
     <string name="edit">Edit</string>
+    <string name="update">Update</string>
     <string name="delete">Delete</string>
     <string name="exercise_description">Exercise Description (Run)</string>
     <string name="past_tense_exercise_description">Past Tense Exercise Description (Ran)</string>
@@ -69,4 +70,8 @@
     <string name="duplicate_measurement_description">This Measurement Name Already Exists!</string>
     <string name="confirm_measurement_delete">Do you really want to delete the measurement \'%1$s\'?</string>
     <string name="unable_to_delete_measurement">Unable to delete this measurement, as you have goals and/or activities utilizing this measurement!</string>
+
+    <string name="_for_">for</string>
+    <string name="delete_goal">Delete Goal</string>
+    <string name="confirm_goal_delete">Do you really want to delete the goal \'%1$s\'?</string>
 </resources>

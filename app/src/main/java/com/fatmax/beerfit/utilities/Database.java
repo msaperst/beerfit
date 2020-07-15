@@ -17,7 +17,7 @@ public class Database {
     public static final String GOALS_TABLE = "Goals";
     public static final String ACTIVITIES_TABLE = "Activities";
     static final String INSERT_INTO = "INSERT INTO ";
-    static final String WHERE_ID = " WHERE id = '";
+    static final String WHERE_ID = " WHERE id = ";
     static final String CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ";
     private static final String VALUES = " VALUES(";
     private SQLiteDatabase database;
@@ -244,12 +244,12 @@ public class Database {
     }
 
     public void removeActivity(int id) {
-        database.execSQL("DELETE FROM " + ACTIVITIES_TABLE + WHERE_ID + id + "';");
+        database.execSQL("DELETE FROM " + ACTIVITIES_TABLE + WHERE_ID + id);
     }
 
     public String getActivityTime(int id) {
         String time = "Unknown";
-        Cursor cursor = database.rawQuery("SELECT time FROM " + ACTIVITIES_TABLE + WHERE_ID + id + "';", null);
+        Cursor cursor = database.rawQuery("SELECT time FROM " + ACTIVITIES_TABLE + WHERE_ID + id, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -350,6 +350,6 @@ public class Database {
     }
 
     public void removeGoal(int id) {
-        database.execSQL("DELETE FROM " + GOALS_TABLE + WHERE_ID + id + "';");
+        database.execSQL("DELETE FROM " + GOALS_TABLE + WHERE_ID + id);
     }
 }

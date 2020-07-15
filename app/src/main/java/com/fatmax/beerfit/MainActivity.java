@@ -160,17 +160,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void viewActivities(MenuItem menuItem) {
-        Intent intent = new Intent(this, ViewActivitiesActivity.class);
+        Intent intent = new Intent(this, ActivitiesActivity.class);
         startActivity(intent);
     }
 
     public void viewGoals(MenuItem menuItem) {
-        Intent intent = new Intent(this, ViewGoalsActivity.class);
+        Intent intent = new Intent(this, GoalsActivity.class);
         startActivity(intent);
     }
 
     public void viewMetrics(MenuItem menuItem) {
-        Intent intent = new Intent(this, ViewMetricsActivity.class);
+        Intent intent = new Intent(this, MetricsActivity.class);
         startActivity(intent);
     }
 }
