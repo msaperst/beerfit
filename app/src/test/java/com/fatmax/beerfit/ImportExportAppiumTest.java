@@ -132,11 +132,11 @@ public class ImportExportAppiumTest extends AppiumTestBase {
         assertEquals(new String(measurements), "\"id\",\"type\",\"unit\",\"conversion\"\n" +
                         "\"1\",\"time\",\"minute\",\"60\"\n" +
                         "\"2\",\"distance\",\"kilometer\",\"1\"\n" +
-                "\"3\",\"time\",\"second\",\"3600\"\n" +
-                "\"4\",\"time\",\"hour\",\"1\"\n" +
-                "\"5\",\"distance\",\"mile\",\"0.621371\"\n" +
-                "\"6\",,\"class\",\"-1\"\n" +
-                "\"7\",,\"repetition\",\"-1\"\n",
+                        "\"3\",\"time\",\"second\",\"3600\"\n" +
+                        "\"4\",\"time\",\"hour\",\"1\"\n" +
+                        "\"5\",\"distance\",\"mile\",\"0.621371\"\n" +
+                        "\"6\",,\"class\",\"-1\"\n" +
+                        "\"7\",,\"repetition\",\"-1\"\n",
                 "Expected Base Measurements Table", "Got: <br/>\n" + new String(measurements));
     }
 

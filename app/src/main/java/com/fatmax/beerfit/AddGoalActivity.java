@@ -55,7 +55,7 @@ public class AddGoalActivity extends AppCompatActivity {
             Goal goal = new Goal(sqLiteDatabase, goalId);
             ((Spinner) findViewById(R.id.goalSelection)).setSelection(goal.getExercise().getId());
             ((TextView) findViewById(R.id.goalDurationInput)).setText(String.valueOf(goal.getAmount()));
-            ((Spinner) findViewById(R.id.goalDurationUnits)).setSelection(goal.getMeasurement().getId());
+            ((Spinner) findViewById(R.id.goalDurationUnits)).setSelection(Elements.getSortedMeasurement(sqLiteDatabase, 1, goal.getMeasurement()) + 1);
         }
     }
 

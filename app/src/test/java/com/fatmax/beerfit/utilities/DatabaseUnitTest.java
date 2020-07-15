@@ -415,7 +415,7 @@ public class DatabaseUnitTest {
 
     @Test
     public void getMatchingMeasurementEmptyTableTest() {
-        when(mockedCursor.getCount()).thenReturn(1,0);
+        when(mockedCursor.getCount()).thenReturn(1, 0);
         when(mockedCursor.getInt(0)).thenReturn(1);
         when(mockedCursor.getString(1)).thenReturn("distance");
         when(mockedCursor.getString(2)).thenReturn("kilometer");
@@ -473,7 +473,7 @@ public class DatabaseUnitTest {
 
     @Test
     public void getMatchingGoalsNoMatchTest() {
-        when(mockedCursor.getCount()).thenReturn(1, 1,1,1,0);
+        when(mockedCursor.getCount()).thenReturn(1, 1, 1, 1, 0);
         when(mockedCursor.getInt(0)).thenReturn(1);
         when(mockedCursor.getString(1)).thenReturn("distance", "Walked");
         when(mockedCursor.getString(2)).thenReturn("kilometer", "Walk");

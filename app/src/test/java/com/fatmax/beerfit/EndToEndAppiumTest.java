@@ -6,7 +6,6 @@ import com.testpros.fast.WebElement;
 
 import org.junit.Test;
 
-import java.util.Calendar;
 import java.util.List;
 
 public class EndToEndAppiumTest extends AppiumTestBase {
@@ -27,7 +26,7 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("goalDurationInput")).sendKeys("5");
         driver.findElement(By.id("goalDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
-        durationList.get(2).click();
+        durationList.get(4).click();
         driver.findElement(By.id("submitGoal")).click();
         //verify the goal is displayed there
         List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
@@ -36,16 +35,14 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         // log our activity
         navigate.goBack();
         assertElementTextEquals("0 Beers Left", BEERS_LEFT);
-        Calendar cal = Calendar.getInstance();
         driver.findElement(By.id("earnedABeer")).click();
         driver.findElement(By.id("activityExercise")).click();
-        Calendar calendar = Calendar.getInstance();
         activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(2).click();
         driver.findElement(By.id("activityDurationInput")).sendKeys("10");
         driver.findElement(By.id("activityDurationUnits")).click();
         durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
-        durationList.get(2).click();
+        durationList.get(4).click();
         driver.findElement(By.id("submitActivity")).click();
         //verify the run counted for beers
         assertElementTextEquals("2 Beers Left", BEERS_LEFT);

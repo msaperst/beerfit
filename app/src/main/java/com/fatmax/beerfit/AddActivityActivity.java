@@ -75,11 +75,11 @@ public class AddActivityActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.activityDate)).setText(activity.getDate());
             ((TextView) findViewById(R.id.activityTime)).setText(activity.getTime());
             ((TextView) findViewById(R.id.activityDurationInput)).setText(String.valueOf(activity.getAmount()));
-            ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(activity.getMeasurement().getId());
+            ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(Elements.getSortedMeasurement(sqLiteDatabase, 1, activity.getMeasurement()) + 1);
             ((TextView) findViewById(R.id.activityDateTimeHeader)).setText(R.string.update_time);
 
             //if beer activity
-            if (activity.getExercise().getId() == 0) {
+            if (activity.getExercise().getId() == -1) {
                 ((TextView) findViewById(R.id.activityExerciseHeader)).setText(R.string.activity);
                 ((TextView) findViewById(R.id.activityDurationHeader)).setText(R.string.enter_amount);
                 ((EditText) findViewById(R.id.activityDurationInput)).setInputType(InputType.TYPE_CLASS_NUMBER);

@@ -157,4 +157,10 @@ public class Elements {
         }
         return measurements;
     }
+
+    //TODO - UT/IT TEST ME
+    public static int getSortedMeasurement(SQLiteDatabase sqLiteDatabase, int amount, Measurement measurement) {
+        List<String> measurements = getSortedMeasurements(sqLiteDatabase, amount);
+        return measurements.lastIndexOf(getProperStringPluralization(measurement.getUnit(), amount));
+    }
 }

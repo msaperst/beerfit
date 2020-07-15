@@ -192,7 +192,7 @@ public class ElementsUnitTest {
         when(mockedCursor.getCount()).thenReturn(2);
         when(mockedCursor.isAfterLast()).thenReturn(false, false, true);
         when(mockedCursor.getString(0)).thenReturn("Walked", "Ran");
-        when(mockedCursor.getDouble(1)).thenReturn(1.0,1.0, 5.0, 5.0);
+        when(mockedCursor.getDouble(1)).thenReturn(1.0, 1.0, 5.0, 5.0);
         when(mockedCursor.getString(2)).thenReturn("kilometer", "kilometer");
         when(mockedCursor.getInt(3)).thenReturn(1, 1);
         when(mockedSQLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, SUM(beers), strftime('%Y %m" + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '2020' AND " + ACTIVITIES_TABLE + ".exercise != 0 GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null)).thenReturn(mockedCursor);
