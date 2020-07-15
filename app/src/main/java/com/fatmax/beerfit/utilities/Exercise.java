@@ -37,7 +37,7 @@ public class Exercise {
 
     public Exercise(SQLiteDatabase sqLiteDatabase, int id) {
         this.sqLiteDatabase = sqLiteDatabase;
-        if( id == 0 ) { // beer case
+        if (id == 0) { // beer case
             this.id = 0;
             this.past = "Drank";
             this.current = "Drink";

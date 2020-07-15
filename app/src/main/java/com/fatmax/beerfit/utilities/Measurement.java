@@ -34,7 +34,7 @@ public class Measurement {
 
     public Measurement(SQLiteDatabase sqLiteDatabase, int id) {
         this.sqLiteDatabase = sqLiteDatabase;
-        if( id == 0 ) { // beer case
+        if (id == 0) { // beer case
             this.id = 0;
             this.unit = "beer";
             return;

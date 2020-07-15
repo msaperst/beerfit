@@ -20,8 +20,8 @@ public class Data {
 
     public void addDataPoint(Activity activity) {
         for (Map.Entry<Activity, List<DataPoint>> entry : dataPoints.entrySet()) {
-            if ( entry.getKey().getExercise().getId() == activity.getExercise().getId() &&
-            entry.getKey().getMeasurement().getId() == activity.getMeasurement().getId() ) { // if the same exercise and measurement
+            if (entry.getKey().getExercise().getId() == activity.getExercise().getId() &&
+                    entry.getKey().getMeasurement().getId() == activity.getMeasurement().getId()) { // if the same exercise and measurement
                 entry.getValue().add(new DataPoint(activity.getBeers(), activity.getAmount()));
                 return;
             }
