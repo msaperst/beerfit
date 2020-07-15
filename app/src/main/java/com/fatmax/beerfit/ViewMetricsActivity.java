@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fatmax.beerfit.utilities.Activity;
 import com.fatmax.beerfit.utilities.Data;
 import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Elements;
@@ -101,14 +102,14 @@ public class ViewMetricsActivity extends AppCompatActivity {
     void createDataGraph(String tag, Metric metric) {
         GraphView graph = findViewById(R.id.metricsGraph);
         graph.removeAllSeries();
-        Data data = new Data(database);
+        Data data = new Data();
 
         List<String> activityTimes = Elements.getAllActivityTimes(sqLiteDatabase, metric, "ASC");
         for (String activityTime : activityTimes) {
             //for each activity in the date metric, tally them all
-            Map<String, DataPoint> activityGroups = Elements.getActivitiesGroupedByExerciseAndTimeFrame(sqLiteDatabase, metric, data, activityTime);
-            for (Map.Entry<String, DataPoint> activityGroup : activityGroups.entrySet()) {
-                data.addDataPoint(activityGroup.getKey(), activityGroup.getValue());
+            List<Activity> activities = Elements.getActivitiesGroupedByExerciseAndTimeFrame(sqLiteDatabase, metric, data, activityTime);
+            for (Activity activity : activities) {
+                data.addDataPoint(activity);
             }
         }
         // setup the metrics

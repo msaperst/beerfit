@@ -42,7 +42,7 @@ public class MeasurementInstrumentedTest {
         assertEquals(-1, measurement.getId());
         assertNull(measurement.getType());
         assertNull(measurement.getUnit());
-        assertEquals(0.0, measurement.getConversion(), 0.00001);
+        assertEquals(-1.0, measurement.getConversion(), 0.00001);
     }
 
     @Test
@@ -62,11 +62,23 @@ public class MeasurementInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Measurement measurement = new Measurement(db, 0);
+        Measurement measurement = new Measurement(db, 99);
         assertEquals(-1, measurement.getId());
         assertNull(measurement.getUnit());
         assertNull(measurement.getType());
-        assertEquals(0.0, measurement.getConversion(), 0.00001);
+        assertEquals(-1.0, measurement.getConversion(), 0.00001);
+    }
+
+    @Test
+    public void measurementByIdBeerTest() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Measurement measurement = new Measurement(db, 0);
+        assertEquals(0, measurement.getId());
+        assertEquals("beer", measurement.getUnit());
+        assertNull(measurement.getType());
+        assertEquals(-1.0, measurement.getConversion(), 0.00001);
     }
 
     @Test

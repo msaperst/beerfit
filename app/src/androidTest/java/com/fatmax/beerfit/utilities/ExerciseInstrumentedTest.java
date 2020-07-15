@@ -63,11 +63,23 @@ public class ExerciseInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Exercise exercise = new Exercise(db, 0);
+        Exercise exercise = new Exercise(db, 99);
         assertEquals(-1, exercise.getId());
         assertNull(exercise.getCurrent());
         assertNull(exercise.getPast());
         // not checking color, as it's random
+    }
+
+    @Test
+    public void exerciseByIdBeerTest() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        Exercise exercise = new Exercise(db, 0);
+        assertEquals(0, exercise.getId());
+        assertEquals("Drink", exercise.getCurrent());
+        assertEquals("Drank", exercise.getPast());
+        assertEquals(Color.YELLOW, exercise.getColor());
     }
 
     @Test

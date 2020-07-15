@@ -224,15 +224,6 @@ public class Database {
         database.execSQL("COMMIT;");
     }
 
-    // TODO - get rid of this,
-    int getExerciseColor(String activity) {
-        Exercise exercise = new Exercise(database, activity.split(" \\(")[0]);
-        if (exercise.getCurrent() != null) {
-            return exercise.getColor();
-        }
-        return Color.YELLOW;
-    }
-
     public void logActivity(String time, String exercise, String unit, double duration) {
         logActivity(null, time, exercise, unit, duration);
     }

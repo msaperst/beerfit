@@ -3,13 +3,10 @@ package com.fatmax.beerfit.utilities;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.jjoe64.graphview.series.DataPoint;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static com.fatmax.beerfit.ViewMetricsActivity.TIME_AS_DATE_FROM;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
@@ -67,27 +64,25 @@ public class Elements {
         return activityTimes;
     }
 
-    public static Map<String, DataPoint> getActivitiesGroupedByExerciseAndTimeFrame(SQLiteDatabase sqLiteDatabase, Metric metric, Data data, String dateMetric) {
-        Map<String, DataPoint> activityGroups = new TreeMap<>();
-        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
+    public static List<Activity> getActivitiesGroupedByExerciseAndTimeFrame(SQLiteDatabase sqLiteDatabase, Metric metric, Data data, String dateMetric) {
+        List<Activity> activities = new ArrayList<>();
+        Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT exercise, measurement, SUM(amount), strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " WHERE date = '" + dateMetric + "' GROUP BY exercise, measurement, date", null);
         if (activityCursor != null) {
             if (activityCursor.getCount() > 0) {
                 activityCursor.moveToFirst();
                 while (!activityCursor.isAfterLast()) {
-                    // determine the unique activity string
-                    String activity;
-                    if (activityCursor.getString(0) == null) {
-                        activity = "Drank (beers)";
-                    } else {
-                        activity = activityCursor.getString(0) + " (" + activityCursor.getString(2) + ")";
-                    }
-                    activityGroups.put(activity, new DataPoint(data.getXAxis(dateMetric), activityCursor.getDouble(1)));
+                    Activity activity = new Activity(sqLiteDatabase);
+                    activity.setExercise(new Exercise(sqLiteDatabase, activityCursor.getInt(0)));
+                    activity.setMeasurement(new Measurement(sqLiteDatabase, activityCursor.getInt(1)));
+                    activity.setAmount(activityCursor.getDouble(2));
+                    activity.setBeers(data.getXAxis(dateMetric));   //kludge to hold xaxis data
+                    activities.add(activity);
                     activityCursor.moveToNext();
                 }
             }
             activityCursor.close();
         }
-        return activityGroups;
+        return activities;
     }
 
     public static int getBeersDrank(SQLiteDatabase sqLiteDatabase, Metric metric, String dateMetric) {

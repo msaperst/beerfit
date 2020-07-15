@@ -2,8 +2,6 @@ package com.fatmax.beerfit.utilities;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import com.jjoe64.graphview.series.DataPoint;
-
 import org.junit.After;
 import org.junit.Test;
 
@@ -198,9 +196,9 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        Data data = new Data(database);
-        Map<String, DataPoint> activityGroups = Elements.getActivitiesGroupedByExerciseAndTimeFrame(db, new Metric("%Y"), data, "2020");
-        assertEquals(0, activityGroups.size());
+        Data data = new Data();
+        List<Activity> activities = Elements.getActivitiesGroupedByExerciseAndTimeFrame(db, new Metric("%Y"), data, "2020");
+        assertEquals(0, activities.size());
     }
 
     @Test
@@ -214,19 +212,20 @@ public class ElementsInstrumentedTest {
         database.logActivity("2020-08-09 10:23", "Ran", "kilometer", 5.0);
         database.logActivity("2021-11-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("6", "'2021-11-11 10:23'", 2);
-        Data data = new Data(database);
-        Map<String, DataPoint> activityGroups2020 = Elements.getActivitiesGroupedByExerciseAndTimeFrame(db, new Metric("%Y"), data, "2020");
-        assertEquals(2, activityGroups2020.size());
-        assertEquals(2020.0, activityGroups2020.get("Walked (kilometer)").getX(), 0.0001);
-        assertEquals(15.0, activityGroups2020.get("Walked (kilometer)").getY(), 0.0001);
-        assertEquals(2020.0, activityGroups2020.get("Ran (kilometer)").getX(), 0.0001);
-        assertEquals(5.0, activityGroups2020.get("Ran (kilometer)").getY(), 0.0001);
-        Map<String, DataPoint> activityGroups2021 = Elements.getActivitiesGroupedByExerciseAndTimeFrame(db, new Metric("%Y"), data, "2021");
-        assertEquals(2, activityGroups2021.size());
-        assertEquals(2021.0, activityGroups2021.get("Walked (kilometer)").getX(), 0.0001);
-        assertEquals(5.0, activityGroups2021.get("Walked (kilometer)").getY(), 0.0001);
-        assertEquals(2021.0, activityGroups2021.get("Drank (beers)").getX(), 0.0001);
-        assertEquals(2.0, activityGroups2021.get("Drank (beers)").getY(), 0.0001);
+        Data data = new Data();
+        List<Activity> activities2020 = Elements.getActivitiesGroupedByExerciseAndTimeFrame(db, new Metric("%Y"), data, "2020");
+        assertEquals(2, activities2020.size());
+        // kludge for (x,y) gives (beers,amount)
+        assertEquals(2020.0, activities2020.get(0).getBeers(), 0.0001);
+        assertEquals(15.0, activities2020.get(0).getAmount(), 0.0001);
+        assertEquals(2020.0, activities2020.get(1).getBeers(), 0.0001);
+        assertEquals(5.0, activities2020.get(1).getAmount(), 0.0001);
+        List<Activity> activities2021 = Elements.getActivitiesGroupedByExerciseAndTimeFrame(db, new Metric("%Y"), data, "2021");
+        assertEquals(2, activities2021.size());
+        assertEquals(2021.0, activities2021.get(0).getBeers(), 0.0001);
+        assertEquals(2.0, activities2021.get(0).getAmount(), 0.0001);
+        assertEquals(2021.0, activities2021.get(1).getBeers(), 0.0001);
+        assertEquals(5.0, activities2021.get(1).getAmount(), 0.0001);
     }
 
     @Test
