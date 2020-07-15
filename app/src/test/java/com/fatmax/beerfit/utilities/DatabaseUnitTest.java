@@ -308,34 +308,6 @@ public class DatabaseUnitTest {
     }
 
     @Test
-    public void getActivityColorNullTest() {
-        Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(Color.YELLOW, database.getExerciseColor("running"));
-    }
-
-    @Test
-    public void getActivityColorNoMatchTest() {
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'ran' OR past = 'ran';", null, null)).thenReturn(null);
-
-        Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(Color.YELLOW, database.getExerciseColor("ran"));
-    }
-
-    @Test
-    public void getActivityColorMatchTest() {
-        when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedCursor.getInt(0)).thenReturn(5);
-        when(mockedCursor.getString(1)).thenReturn("Run");
-        when(mockedCursor.getString(2)).thenReturn("Ran");
-        when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'ran' OR past = 'ran';", null)).thenReturn(mockedCursor);
-
-        Database database = new Database(mockedSQLiteDatabase);
-        assertEquals(Color.GREEN, database.getExerciseColor("ran"));
-    }
-
-
-    @Test
     public void getActivityTimeNullTest() {
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals("Unknown", database.getActivityTime(1));

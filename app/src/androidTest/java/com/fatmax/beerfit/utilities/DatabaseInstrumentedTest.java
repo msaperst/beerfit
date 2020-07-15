@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Color;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -340,19 +339,6 @@ public class DatabaseInstrumentedTest {
         assertEquals("kilometer", res.getString(2));
         assertEquals("1", res.getString(3));
         res.close();
-    }
-
-    @Test
-    public void getActivityColorTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        assertEquals(Color.BLUE, database.getExerciseColor("Ran"));
-        assertEquals(Color.BLUE, database.getExerciseColor("Ran (kilometer)"));
-        assertEquals(Color.BLUE, database.getExerciseColor("Ran (minute)"));
-        assertEquals(Color.YELLOW, database.getExerciseColor("Running"));
-        assertEquals(Color.YELLOW, database.getExerciseColor("Drank (beers)"));
-        assertEquals(Color.DKGRAY, database.getExerciseColor("Played Soccer (minute)"));
     }
 
     @Test

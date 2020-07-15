@@ -15,7 +15,7 @@ public class Measurement {
     private int id = -1;
     private String type = null;
     private String unit = null;
-    private double conversion = 0;
+    private double conversion = -1;
 
     public Measurement(SQLiteDatabase sqLiteDatabase, String unit) {
         this.sqLiteDatabase = sqLiteDatabase;
@@ -34,6 +34,11 @@ public class Measurement {
 
     public Measurement(SQLiteDatabase sqLiteDatabase, int id) {
         this.sqLiteDatabase = sqLiteDatabase;
+        if (id == 0) { // beer case
+            this.id = 0;
+            this.unit = "beer";
+            return;
+        }
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE id = " + id, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {

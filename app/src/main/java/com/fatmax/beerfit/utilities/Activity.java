@@ -46,6 +46,10 @@ public class Activity {
         }
     }
 
+    public Activity(SQLiteDatabase sqLiteDatabase) {
+        this.sqLiteDatabase = sqLiteDatabase;
+    }
+
     public int getId() {
         return id;
     }
@@ -74,15 +78,31 @@ public class Activity {
         return exercise;
     }
 
+    public void setExercise(Exercise exercise) {
+        this.exercise = exercise;
+    }
+
     public Measurement getMeasurement() {
         return measurement;
+    }
+
+    public void setMeasurement(Measurement measurement) {
+        this.measurement = measurement;
     }
 
     public double getAmount() {
         return amount;
     }
 
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
     public double getBeers() {
         return beers;
+    }
+
+    public void setBeers(Double beers) {
+        this.beers = beers;
     }
 }

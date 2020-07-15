@@ -54,4 +54,7 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         // TODO - verify metrics list
 
     }
+
+    // TODO - add usecase for adding new exercise, new measurement,
+    //      then new goal and activity with that, then check beers
 }

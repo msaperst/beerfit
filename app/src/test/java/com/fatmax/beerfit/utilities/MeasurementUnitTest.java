@@ -31,7 +31,7 @@ public class MeasurementUnitTest {
         assertEquals(-1, measurement.getId());
         assertNull(measurement.getType());
         assertNull(measurement.getUnit());
-        assertEquals(0, measurement.getConversion(), 0.00001);
+        assertEquals(-1, measurement.getConversion(), 0.00001);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class MeasurementUnitTest {
         assertEquals(-1, measurement.getId());
         assertNull(measurement.getType());
         assertNull(measurement.getUnit());
-        assertEquals(0, measurement.getConversion(), 0.00001);
+        assertEquals(-1, measurement.getConversion(), 0.00001);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class MeasurementUnitTest {
         assertEquals(-1, measurement.getId());
         assertNull(measurement.getType());
         assertNull(measurement.getUnit());
-        assertEquals(0, measurement.getConversion(), 0.00001);
+        assertEquals(-1, measurement.getConversion(), 0.00001);
     }
 
     @Test
@@ -98,7 +98,16 @@ public class MeasurementUnitTest {
         assertEquals(-1, measurement.getId());
         assertNull(measurement.getType());
         assertNull(measurement.getUnit());
-        assertEquals(0, measurement.getConversion(), 0.00001);
+        assertEquals(-1, measurement.getConversion(), 0.00001);
+    }
+
+    @Test
+    public void measurementByIdBeerTest() {
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, 0);
+        assertEquals(0, measurement.getId());
+        assertNull(measurement.getType());
+        assertEquals("beer", measurement.getUnit());
+        assertEquals(-1, measurement.getConversion(), 0.00001);
     }
 
     @Test

@@ -37,6 +37,13 @@ public class Exercise {
 
     public Exercise(SQLiteDatabase sqLiteDatabase, int id) {
         this.sqLiteDatabase = sqLiteDatabase;
+        if (id == 0) { // beer case
+            this.id = 0;
+            this.past = "Drank";
+            this.current = "Drink";
+            this.color = Color.YELLOW;
+            return;
+        }
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = " + id, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {

@@ -12,33 +12,35 @@ import java.util.Set;
 
 public class Data {
 
-    private Database database;
-    private Map<String, List<DataPoint>> dataPoints;
+    private Map<Activity, List<DataPoint>> dataPoints;
 
-    public Data(Database database) {
-        this.database = database;
+    public Data() {
         dataPoints = new HashMap<>();
     }
 
-    public void addDataPoint(String activity, DataPoint dataPoint) {
-        if (!dataPoints.containsKey(activity)) {
-            dataPoints.put(activity, new ArrayList<>());
+    public void addDataPoint(Activity activity) {
+        for (Map.Entry<Activity, List<DataPoint>> entry : dataPoints.entrySet()) {
+            if (entry.getKey().getExercise().getId() == activity.getExercise().getId() &&
+                    entry.getKey().getMeasurement().getId() == activity.getMeasurement().getId()) { // if the same exercise and measurement
+                entry.getValue().add(new DataPoint(activity.getBeers(), activity.getAmount()));
+                return;
+            }
         }
-        List<DataPoint> activities = dataPoints.get(activity);
-        activities.add(dataPoint);
-        dataPoints.put(activity, activities);
+        dataPoints.put(activity, new ArrayList<DataPoint>() {{
+            add(new DataPoint(activity.getBeers(), activity.getAmount()));
+        }});
     }
 
     public List<LineGraphSeries<DataPoint>> getSeriesData() {
         zeroOut();
         List<LineGraphSeries<DataPoint>> graphSeries = new ArrayList<>();
-        for (Map.Entry<String, List<DataPoint>> entry : dataPoints.entrySet()) {
+        for (Map.Entry<Activity, List<DataPoint>> entry : dataPoints.entrySet()) {
             List<DataPoint> activityDataPoints = entry.getValue();
             LineGraphSeries<DataPoint> series = new LineGraphSeries<>(activityDataPoints.toArray(new DataPoint[0]));
-            series.setTitle(entry.getKey());
+            series.setTitle(entry.getKey().getExercise().getPast() + " (" + Elements.getProperStringPluralization(entry.getKey().getMeasurement().getUnit(), 2) + ")");
             series.setDrawDataPoints(true);
             series.setThickness(7);
-            series.setColor(database.getExerciseColor(entry.getKey()));
+            series.setColor(entry.getKey().getExercise().getColor());
             graphSeries.add(series);
         }
         return graphSeries;
@@ -47,7 +49,7 @@ public class Data {
     void zeroOut() {
         List<Double> dates = new ArrayList<>();
         // get all of the dates
-        for (Map.Entry<String, List<DataPoint>> entry : dataPoints.entrySet()) {
+        for (Map.Entry<Activity, List<DataPoint>> entry : dataPoints.entrySet()) {
             for (DataPoint datapoint : entry.getValue()) {
                 dates.add(datapoint.getX());
             }
@@ -55,7 +57,7 @@ public class Data {
         // make them unique
         Set<Double> uniqueDates = new HashSet<>(dates);
         // zero out any that might be missing
-        for (Map.Entry<String, List<DataPoint>> entry : dataPoints.entrySet()) {
+        for (Map.Entry<Activity, List<DataPoint>> entry : dataPoints.entrySet()) {
             List<DataPoint> activityDataPoints = entry.getValue();
             for (Double date : uniqueDates) {
                 if (!doesDataPointsContainX(date, activityDataPoints)) {
@@ -65,7 +67,7 @@ public class Data {
         }
     }
 
-    int getDataPointSpot(String activity, Double date) {
+    int getDataPointSpot(Activity activity, Double date) {
         List<DataPoint> activityDataPoints = this.dataPoints.get(activity);
         if (activityDataPoints == null) {
             return 0;

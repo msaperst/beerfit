@@ -94,13 +94,22 @@ public class ExerciseUnitTest {
     @Test
     public void exerciseByIdNotExistsTest() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 0", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE id = 99", null)).thenReturn(mockedCursor);
 
-        Exercise exercise = new Exercise(mockedSQLiteDatabase, 0);
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, 99);
         assertEquals(-1, exercise.getId());
         assertNull(exercise.getCurrent());
         assertNull(exercise.getPast());
         // not checking color, as it's random
+    }
+
+    @Test
+    public void exerciseByIdBeerTest() {
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, 0);
+        assertEquals(0, exercise.getId());
+        assertEquals("Drink", exercise.getCurrent());
+        assertEquals("Drank", exercise.getPast());
+        assertEquals(Color.YELLOW, exercise.getColor());
     }
 
     @Test
