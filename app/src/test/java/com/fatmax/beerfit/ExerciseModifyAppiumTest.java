@@ -28,7 +28,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
 
     @Test
     public void checkModifyExerciseTitle() {
-        assertElementTextEquals("Select Exercise To Modify", By.id("android:id/alertTitle"));
+        assertElementTextEquals("Select Exercise to Modify", By.id("android:id/alertTitle"));
     }
 
     @Test

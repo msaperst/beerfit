@@ -27,11 +27,22 @@ public class Database {
     }
 
     public void setupDatabase() {
+        ////// MEASUREMENTS TABLE
         if (isTableMissing(MEASUREMENTS_TABLE)) {
-            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + MEASUREMENTS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, unit VARCHAR);");
-            database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(1,'time','minutes');");
-            database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(2,'distance','kilometers');");
+            database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + MEASUREMENTS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, unit VARCHAR, conversion NUMBER);");
+            populateMeasurementsTable();
         }
+        // migration from old schema that didn't have conversion column
+        if (!doesTableHaveColumn(MEASUREMENTS_TABLE, "conversion")) {
+            // add our missing column
+            database.execSQL("ALTER TABLE " + MEASUREMENTS_TABLE + " ADD conversion NUMBER;");
+            // update our table to match
+            database.execSQL("DELETE FROM " + MEASUREMENTS_TABLE);
+            database.execSQL("VACUUM");
+            populateMeasurementsTable();
+        }
+
+        ////// EXERCISES TABLE
         if (isTableMissing(EXERCISES_TABLE)) {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + EXERCISES_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, past VARCHAR, current VARCHAR, color NUMBER);");
             database.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(1,'Walked','Walk'," + Color.GREEN + ");");
@@ -40,6 +51,8 @@ public class Database {
             database.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(4,'Lifted','Lift'," + Color.MAGENTA + ");");
             database.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(5,'Played Soccer','Play Soccer'," + Color.DKGRAY + ");");
         }
+
+        ////// GOALS TABLE
         if (isTableMissing(GOALS_TABLE)) {
             database.execSQL(CREATE_TABLE_IF_NOT_EXISTS + GOALS_TABLE + "(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise INTEGER, measurement INTEGER, amount NUMBER);");
         } else if (!doesTableHaveColumn(GOALS_TABLE, "exercise") && doesTableHaveColumn(GOALS_TABLE, "activity")) {
@@ -51,6 +64,8 @@ public class Database {
             newGoalsTable.put("amount", "NUMBER");
             renameColumn(GOALS_TABLE, newGoalsTable);
         }
+
+        ////// ACTIVITIES TABLE
         // migration from old table name to new one
         if (isTableMissing(ACTIVITIES_TABLE) && !isTableMissing("ActivityLog")) {
             database.execSQL("ALTER TABLE ActivityLog RENAME TO " + ACTIVITIES_TABLE);
@@ -68,6 +83,16 @@ public class Database {
             newGoalsTable.put("beers", "NUMBER");
             renameColumn(ACTIVITIES_TABLE, newGoalsTable);
         }
+    }
+
+    private void populateMeasurementsTable() {
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(3,'time','second', 3600);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(1,'time','minute', 60);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(4,'time','hour', 1);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(2,'distance','kilometer', 1);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(5,'distance','mile', 0.6213712);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(6,null,'class', -1);");
+        database.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(7,null,'repetition', -1);");
     }
 
     boolean isTableMissing(String tableName) {
@@ -199,42 +224,24 @@ public class Database {
         database.execSQL("COMMIT;");
     }
 
-    int getOrdinal(String table, String column, String lookup) {
-        int ordinal = -1;
-        Cursor cursor = database.rawQuery("SELECT id FROM " + table + " WHERE " + column + " = '" + lookup + "';", null);
-        if (cursor != null) {
-            if (cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                ordinal = cursor.getInt(0);
-            }
-            cursor.close();
+    // TODO - get rid of this,
+    int getExerciseColor(String activity) {
+        Exercise exercise = new Exercise(database, activity.split(" \\(")[0]);
+        if (exercise.getCurrent() != null) {
+            return exercise.getColor();
         }
-        return ordinal;
+        return Color.YELLOW;
     }
 
-    int getExerciseColor(String exercise) {
-        int color = Color.YELLOW;
-        int exerciseId = getOrdinal(EXERCISES_TABLE, "past", exercise.split(" \\(")[0]);
-        Cursor cursor = database.rawQuery("SELECT color FROM " + EXERCISES_TABLE + WHERE_ID + exerciseId + "';", null);
-        if (cursor != null) {
-            if (cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                color = cursor.getInt(0);
-            }
-            cursor.close();
-        }
-        return color;
+    public void logActivity(String time, String exercise, String unit, double duration) {
+        logActivity(null, time, exercise, unit, duration);
     }
 
-    public void logActivity(String time, String exercise, String units, double duration) {
-        logActivity(null, time, exercise, units, duration);
-    }
-
-    public void logActivity(String id, String time, String exercise, String units, double duration) {
-        int exerciseId = getOrdinal(EXERCISES_TABLE, "past", exercise);
-        int measurementsId = getOrdinal(MEASUREMENTS_TABLE, "unit", units);
+    public void logActivity(String id, String time, String past, String unit, double duration) {
+        Exercise exercise = new Exercise(database, past);
+        Measurement measurement = new Measurement(database, unit);
         database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + VALUES + id + ", '" + time + "', " +
-                exerciseId + ", " + measurementsId + ", " + duration + ", " + getBeersEarned(exercise, units, duration) + ");");
+                exercise.getId() + ", " + measurement.getId() + ", " + duration + ", " + getBeersEarned(exercise, measurement, duration) + ");");
     }
 
     public void logBeer() {
@@ -275,22 +282,52 @@ public class Database {
         return beersDrank;
     }
 
-    double getBeersEarned(String exercise, String units, double duration) {
-        int exerciseId = getOrdinal(EXERCISES_TABLE, "past", exercise);
-        int measurementsId = getOrdinal(MEASUREMENTS_TABLE, "unit", units);
-        double goalAmountForBeer = -1;
-        Cursor goalResults = database.rawQuery("SELECT amount FROM " + GOALS_TABLE + " WHERE exercise = " + exerciseId + " AND measurement = " + measurementsId + ";", null);
-        if (goalResults != null) {
-            if (goalResults.getCount() > 0) {
-                goalResults.moveToFirst();
-                goalAmountForBeer = goalResults.getDouble(0);
+    List<Measurement> getMatchingMeasurements(Measurement measurement) {
+        List<Measurement> measurements = new ArrayList<>();
+        if (measurement.getType() == null) {
+            measurements.add(measurement);
+        } else {
+            Cursor cursor = database.rawQuery("SELECT id FROM " + MEASUREMENTS_TABLE + " WHERE type = '" + measurement.getType() + "';", null);
+            if (cursor != null) {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        measurements.add(new Measurement(database, cursor.getInt(0)));
+                        cursor.moveToNext();
+                    }
+                }
+                cursor.close();
             }
-            goalResults.close();
         }
-        if (goalAmountForBeer == -1) {
+        return measurements;
+    }
+
+    Goal getMatchingGoals(Exercise exercise, Measurement measurement) {
+        Goal goal = null;
+        // get all matching measurements
+        List<Measurement> measurements = getMatchingMeasurements(measurement);
+        for (Measurement meas : measurements) {
+            Cursor cursor = database.rawQuery("SELECT id FROM " + GOALS_TABLE + " WHERE exercise = " + exercise.getId() + " AND measurement = " + meas.getId(), null);
+            if (cursor != null) {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        goal = new Goal(database, cursor.getInt(0));
+                        cursor.moveToNext();
+                    }
+                }
+                cursor.close();
+            }
+        }
+        return goal;
+    }
+
+    double getBeersEarned(Exercise exercise, Measurement measurement, double duration) {
+        Goal goal = getMatchingGoals(exercise, measurement);
+        if (goal == null) {
             return 0;
         }
-        return duration / goalAmountForBeer;
+        return duration / goal.getAmount() * goal.getMeasurement().getConversion() / measurement.getConversion();
     }
 
     double getTotalBeersEarned() {
@@ -310,14 +347,15 @@ public class Database {
         return (int) getTotalBeersEarned() - getBeersDrank();
     }
 
-    public void addGoal(String exercise, String units, double duration) {
-        addGoal(null, exercise, units, duration);
+    public void addGoal(String past, String unit, double duration) {
+        addGoal(null, past, unit, duration);
     }
 
-    public void addGoal(String id, String exercise, String units, double duration) {
+    public void addGoal(String id, String past, String unit, double duration) {
+        Exercise exercise = new Exercise(database, past);
+        Measurement measurement = new Measurement(database, unit);
         database.execSQL(INSERT_INTO + GOALS_TABLE + VALUES + id + ", " +
-                getOrdinal(EXERCISES_TABLE, "current", exercise) + ", " +
-                getOrdinal(MEASUREMENTS_TABLE, "unit", units) + ", " + duration + ");");
+                exercise.getId() + ", " + measurement.getId() + ", " + duration + ");");
     }
 
     public void removeGoal(int id) {

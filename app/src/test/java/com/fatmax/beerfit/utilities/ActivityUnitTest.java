@@ -27,7 +27,7 @@ public class ActivityUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(null);
 
         Activity activity = new Activity(mockedSQLiteDatabase, 1);
-        assertEquals(0, activity.getId());
+        assertEquals(-1, activity.getId());
         assertNull(activity.getDateTime());
         assertNull(activity.getDate());
         assertNull(activity.getTime());
@@ -53,8 +53,8 @@ public class ActivityUnitTest {
         assertEquals(DATE_TIME_FORMAT.parse("2020-10-10 10:23"), activity.getDateTime());
         assertEquals("2020-10-10", activity.getDate());
         assertEquals("10:23", activity.getTime());
-        assertEquals(0, activity.getExercise().getId());
-        assertEquals(0, activity.getMeasurement().getId());
+        assertEquals(-1, activity.getExercise().getId());
+        assertEquals(-1, activity.getMeasurement().getId());
         assertEquals(5.0, activity.getAmount(), 0.0001);
         assertEquals(0.0, activity.getBeers(), 0.0001);
     }
@@ -75,8 +75,8 @@ public class ActivityUnitTest {
         assertEquals(DATE_TIME_FORMAT.parse("2020-10-10 10:23"), activity.getDateTime());
         assertEquals("2020-10-10", activity.getDate());
         assertEquals("10:23", activity.getTime());
-        assertEquals(0, activity.getExercise().getId());
-        assertEquals(0, activity.getMeasurement().getId());
+        assertEquals(-1, activity.getExercise().getId());
+        assertEquals(-1, activity.getMeasurement().getId());
         assertEquals(5.0, activity.getAmount(), 0.0001);
         assertEquals(0.0, activity.getBeers(), 0.0001);
     }
@@ -97,8 +97,8 @@ public class ActivityUnitTest {
         assertNull(activity.getDateTime());
         assertNull(activity.getDate());
         assertNull(activity.getTime());
-        assertEquals(0, activity.getExercise().getId());
-        assertEquals(0, activity.getMeasurement().getId());
+        assertEquals(-1, activity.getExercise().getId());
+        assertEquals(-1, activity.getMeasurement().getId());
         assertEquals(5.0, activity.getAmount(), 0.0001);
         assertEquals(0.0, activity.getBeers(), 0.0001);
     }
@@ -109,7 +109,7 @@ public class ActivityUnitTest {
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Activity activity = new Activity(mockedSQLiteDatabase, 1);
-        assertEquals(0, activity.getId());
+        assertEquals(-1, activity.getId());
         assertNull(activity.getDateTime());
         assertNull(activity.getDate());
         assertNull(activity.getTime());

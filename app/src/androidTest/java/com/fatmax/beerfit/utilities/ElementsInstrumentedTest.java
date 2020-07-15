@@ -34,7 +34,7 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer();
         assertEquals(2, Elements.getAllActivities(db).size());
     }
@@ -44,10 +44,10 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-10 10:26", "Ran", "kilometers", 5.0);
-        database.logActivity("2020-10-10 11:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-09 09:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-10 10:26", "Ran", "kilometer", 5.0);
+        database.logActivity("2020-10-10 11:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-09 09:23", "Walked", "kilometer", 5.0);
         List<Activity> activites = Elements.getAllActivities(db);
         assertEquals(4, activites.size());
         assertEquals(3, activites.get(0).getId());
@@ -69,8 +69,8 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.addGoal("Run", "kilometers", 5);
-        database.addGoal("Walk", "minutes", 30);
+        database.addGoal("Run", "kilometer", 5);
+        database.addGoal("Walk", "minute", 30);
         List<Goal> goals = Elements.getAllGoals(db);
         assertEquals(2, goals.size());
         assertEquals(1, goals.get(0).getId());
@@ -90,11 +90,11 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2021-11-10 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2021-11-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("6", "'2021-11-11 10:23'", 2);
         List<String> activityTimes = Elements.getAllActivityTimes(db, new Metric("%Y"), "ASC");
         assertEquals(2, activityTimes.size());
@@ -107,11 +107,11 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2021-11-10 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2021-11-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("6", "'2021-11-11 10:23'", 2);
         List<String> activityTimes = Elements.getAllActivityTimes(db, new Metric("%Y"), "DESC");
         assertEquals(2, activityTimes.size());
@@ -124,11 +124,11 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2021-11-10 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2021-11-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("6", "'2021-11-11 10:23'", 2);
         List<String> activityTimes = Elements.getAllActivityTimes(db, new Metric("%Y %m"), "ASC");
         assertEquals(3, activityTimes.size());
@@ -142,11 +142,11 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2021-02-10 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2021-02-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("6", "'2021-02-11 10:23'", 2);
         List<String> activityTimes = Elements.getAllActivityTimes(db, new Metric("%Y %m %W"), "ASC");
         assertEquals(3, activityTimes.size());
@@ -160,11 +160,11 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2021-02-10 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2021-02-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("6", "'2021-02-11 10:23'", 2);
         List<String> activityTimes = Elements.getAllActivityTimes(db, new Metric("%Y %m %W"), "DESC");
         assertEquals(3, activityTimes.size());
@@ -178,11 +178,11 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2021-11-10 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2021-11-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("6", "'2021-11-11 10:23'", 2);
         List<String> activityTimes = Elements.getAllActivityTimes(db, new Metric("%Y %m %W %j"), "DESC");
         assertEquals(5, activityTimes.size());
@@ -208,23 +208,23 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-08-09 10:23", "Ran", "kilometers", 5.0);
-        database.logActivity("2021-11-10 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-08-09 10:23", "Ran", "kilometer", 5.0);
+        database.logActivity("2021-11-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("6", "'2021-11-11 10:23'", 2);
         Data data = new Data(database);
         Map<String, DataPoint> activityGroups2020 = Elements.getActivitiesGroupedByExerciseAndTimeFrame(db, new Metric("%Y"), data, "2020");
         assertEquals(2, activityGroups2020.size());
-        assertEquals(2020.0, activityGroups2020.get("Walked (kilometers)").getX(), 0.0001);
-        assertEquals(15.0, activityGroups2020.get("Walked (kilometers)").getY(), 0.0001);
-        assertEquals(2020.0, activityGroups2020.get("Ran (kilometers)").getX(), 0.0001);
-        assertEquals(5.0, activityGroups2020.get("Ran (kilometers)").getY(), 0.0001);
+        assertEquals(2020.0, activityGroups2020.get("Walked (kilometer)").getX(), 0.0001);
+        assertEquals(15.0, activityGroups2020.get("Walked (kilometer)").getY(), 0.0001);
+        assertEquals(2020.0, activityGroups2020.get("Ran (kilometer)").getX(), 0.0001);
+        assertEquals(5.0, activityGroups2020.get("Ran (kilometer)").getY(), 0.0001);
         Map<String, DataPoint> activityGroups2021 = Elements.getActivitiesGroupedByExerciseAndTimeFrame(db, new Metric("%Y"), data, "2021");
         assertEquals(2, activityGroups2021.size());
-        assertEquals(2021.0, activityGroups2021.get("Walked (kilometers)").getX(), 0.0001);
-        assertEquals(5.0, activityGroups2021.get("Walked (kilometers)").getY(), 0.0001);
+        assertEquals(2021.0, activityGroups2021.get("Walked (kilometer)").getX(), 0.0001);
+        assertEquals(5.0, activityGroups2021.get("Walked (kilometer)").getY(), 0.0001);
         assertEquals(2021.0, activityGroups2021.get("Drank (beers)").getX(), 0.0001);
         assertEquals(2.0, activityGroups2021.get("Drank (beers)").getY(), 0.0001);
     }
@@ -243,10 +243,10 @@ public class ElementsInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         database.logBeer("1", "'2020-08-09 10:23'", 1);
-        database.logActivity("2020-10-09 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-10-09 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("3", "'2020-10-10 10:23'", 1);
-        database.logActivity("2020-08-09 10:23", "Ran", "kilometers", 5.0);
-        database.logActivity("2021-11-10 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-08-09 10:23", "Ran", "kilometer", 5.0);
+        database.logActivity("2021-11-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("6", "'2021-11-11 10:23'", 2);
         assertEquals(2, Elements.getBeersDrank(db, new Metric("%Y"), "2020"));
         assertEquals(2, Elements.getBeersDrank(db, new Metric("%Y"), "2021"));
@@ -266,20 +266,76 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.addGoal("Run", "kilometers", 5);
-        database.addGoal("Walk", "kilometers", 1);
-        database.logActivity("2020-08-09 10:23", "Walked", "kilometers", 5.0);
-        database.logActivity("2020-10-09 10:23", "Walked", "kilometers", 5.0);
+        database.addGoal("Run", "kilometer", 5);
+        database.addGoal("Walk", "kilometer", 1);
+        database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
+        database.logActivity("2020-10-09 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("3", "'2020-10-10 10:23'", 1);
-        database.logActivity("2020-08-09 10:23", "Ran", "kilometers", 5.0);
-        database.logActivity("2021-11-10 10:23", "Walked", "kilometers", 5.0);
+        database.logActivity("2020-08-09 10:23", "Ran", "kilometer", 1.0);
+        database.logActivity("2021-11-10 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("6", "'2021-11-11 10:23'", 2);
         Map<String, Integer> activityGroups2020 = Elements.getActivitiesPerformed(db, new Metric("%Y"), "2020");
         assertEquals(2, activityGroups2020.size());
-        assertEquals(1, (int) activityGroups2020.get("Ran for 5.0 kilometers"));
+        assertEquals(0, (int) activityGroups2020.get("Ran for 1.0 kilometer"));
         assertEquals(10, (int) activityGroups2020.get("Walked for 10.0 kilometers"));
         Map<String, Integer> activityGroups2021 = Elements.getActivitiesPerformed(db, new Metric("%Y"), "2021");
         assertEquals(1, activityGroups2021.size());
         assertEquals(5, (int) activityGroups2021.get("Walked for 5.0 kilometers"));
+    }
+
+    @Test
+    public void getSortedMeasurementsDefault() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        List<String> measurements = Elements.getSortedMeasurements(db, 1);
+        assertEquals(7, measurements.size());
+        assertEquals("class", measurements.get(0));
+        assertEquals("repetition", measurements.get(1));
+        assertEquals("mile", measurements.get(2));
+        assertEquals("kilometer", measurements.get(3));
+        assertEquals("hour", measurements.get(4));
+        assertEquals("minute", measurements.get(5));
+        assertEquals("second", measurements.get(6));
+    }
+
+    @Test
+    public void getSortedMeasurementsDefaultPlural() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        List<String> measurements = Elements.getSortedMeasurements(db, 2);
+        assertEquals(7, measurements.size());
+        assertEquals("classes", measurements.get(0));
+        assertEquals("repetitions", measurements.get(1));
+        assertEquals("miles", measurements.get(2));
+        assertEquals("kilometers", measurements.get(3));
+        assertEquals("hours", measurements.get(4));
+        assertEquals("minutes", measurements.get(5));
+        assertEquals("seconds", measurements.get(6));
+    }
+
+    @Test
+    public void getSortedMeasurementNewMeasurement() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertEquals(-1, Elements.getSortedMeasurement(db, 1, new Measurement(db, "feet")));
+    }
+
+    @Test
+    public void getSortedMeasurementSingularMeasurement() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertEquals(3, Elements.getSortedMeasurement(db, 1, new Measurement(db, "kilometer")));
+    }
+
+    @Test
+    public void getSortedMeasurementPluralMeasurement() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertEquals(3, Elements.getSortedMeasurement(db, 2, new Measurement(db, "kilometer")));
     }
 }

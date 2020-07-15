@@ -124,7 +124,7 @@ public class Measures {
         dialog.show();
     }
 
-    public void pickColor(Exercise exercise) {
+    private void pickColor(Exercise exercise) {
         ColorPickerDialogBuilder
                 .with(context)
                 .setTitle(R.string.choose_color)
@@ -139,5 +139,83 @@ public class Measures {
                 .setNegativeButton(R.string.cancel, null)
                 .build()
                 .show();
+    }
+
+    public void editMeasurements() {
+        List<String> allMeasurements = Elements.getSortedMeasurements(sqLiteDatabase, 1);
+        String[] selectMeasurement = allMeasurements.toArray(new String[allMeasurements.size()]);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.modify_measurement);
+        builder.setSingleChoiceItems(selectMeasurement, -1, (dialog, which) -> {
+            selectedOption = selectMeasurement[which];
+            if (new Measurement(sqLiteDatabase, selectedOption).safeToEdit()) {
+                this.dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+            } else {
+                this.dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+            }
+            this.dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+        });
+        builder.setNeutralButton(context.getString(R.string.add_new), (dialog, which) -> addNewMeasurement());
+        builder.setNegativeButton(context.getString(R.string.edit), (dialog, which) -> editMeasurement());
+        builder.setPositiveButton(context.getString(R.string.delete), (dialog, which) -> deleteMeasurement());
+        this.dialog = builder.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+    }
+
+    private void addNewMeasurement() {
+        setupMeasurementModal(new Measurement(sqLiteDatabase), R.string.add_new_measurement);
+    }
+
+    private void editMeasurement() {
+        setupMeasurementModal(new Measurement(sqLiteDatabase, selectedOption), R.string.edit_measurement);
+    }
+
+    private void deleteMeasurement() {
+        Measurement measurement = new Measurement(sqLiteDatabase, selectedOption);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.delete_measurement);
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        if (measurement.safeToDelete()) {
+            builder.setMessage(context.getString(R.string.confirm_measurement_delete, measurement.getUnit()));
+            builder.setPositiveButton(android.R.string.yes, (dialog, whichButton) -> measurement.delete());
+            builder.setNegativeButton(android.R.string.no, null);
+        } else {
+            builder.setMessage(R.string.unable_to_delete_measurement);
+        }
+        builder.show();
+    }
+
+    private void setupMeasurementModal(Measurement measurement, int title) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        LinearLayout editMeasurementModal = (LinearLayout) inflater.inflate(R.layout.modal_edit_measurement, null);
+        ((EditText) editMeasurementModal.findViewById(R.id.editMeasurementName)).setText(measurement.getUnit());
+        builder.setView(editMeasurementModal);
+        builder.setPositiveButton(R.string.save, null);
+        builder.setNegativeButton(R.string.cancel, null);
+        this.dialog = builder.create();
+        dialog.setOnShowListener(dialog -> {
+            Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(view -> {
+                // check to ensure measurement is filled in
+                EditText measurementName = editMeasurementModal.findViewById(R.id.editMeasurementName);
+                if (TextUtils.isEmpty(measurementName.getText())) {
+                    measurementName.setError(context.getString(R.string.measurement_required));
+                }
+                measurement.setUnit(measurementName.getText().toString());
+                // check for uniqueness
+                if (!measurement.isUnique()) {
+                    measurementName.setError(context.getString(R.string.duplicate_measurement_description));
+                }
+                if (!"".equals(measurement.getUnit()) && measurement.isUnique()) {
+                    measurement.save();
+                    dialog.dismiss();
+                }
+            });
+        });
+        dialog.show();
     }
 }

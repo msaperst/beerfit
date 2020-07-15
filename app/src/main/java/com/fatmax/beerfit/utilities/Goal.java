@@ -8,7 +8,7 @@ import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 public class Goal {
 
     private final SQLiteDatabase sqLiteDatabase;
-    private int id = 0;
+    private int id = -1;
     private Exercise exercise = null;
     private Measurement measurement = null;
     private double amount;

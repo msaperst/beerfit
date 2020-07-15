@@ -46,7 +46,8 @@ public class GoalsAppiumTest extends AppiumTestBase {
     public void checkOptionsMenuValuesTest() {
         driver.findElement(By.AccessibilityId("More options")).click();
         List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
-        assertEquals(menuOptions.size(), 1, "Expected to find '1' menu items", "Actually found '" + menuOptions.size() + "' menu items");
+        assertEquals(menuOptions.size(), 2, "Expected to find '2' menu items", "Actually found '" + menuOptions.size() + "' menu items");
         assertElementTextEquals("Edit Exercises", menuOptions.get(0));
+        assertElementTextEquals("Edit Measurements", menuOptions.get(1));
     }
 }

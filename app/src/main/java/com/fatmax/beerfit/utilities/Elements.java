@@ -103,6 +103,29 @@ public class Elements {
         return beersDrank;
     }
 
+    /**
+     * Checks the provided input amount, and pluralizes the string accordingly. If the amount is 1,
+     * the same string is returned, if it's not, the plural form of the string is returned. This is
+     * the string with an s added onto it, unless it already ends with an s, and then it has an es
+     * tacked on
+     *
+     * @param string the string to determine proper pluralization of
+     * @param amount the amount of the string
+     * @return the properly pluralized (or not) version of the input string
+     */
+    public static String getProperStringPluralization(String string, double amount) {
+        if (amount == 1) {
+            return string;
+        }
+        if (string.endsWith("s")) {
+            return string + "es";
+        }
+        if (string.endsWith("y")) {
+            return string.substring(0, string.length() - 1) + "ies";
+        }
+        return string + "s";
+    }
+
     public static Map<String, Integer> getActivitiesPerformed(SQLiteDatabase sqLiteDatabase, Metric metric, String dateMetric) {
         Map<String, Integer> activities = new HashMap<>();
         Cursor activityCursor = sqLiteDatabase.rawQuery("SELECT " + EXERCISES_TABLE + ".past, SUM(amount), " + MEASUREMENTS_TABLE + ".unit, SUM(beers), strftime('" + metric.getDateTimePattern() + TIME_AS_DATE_FROM + ACTIVITIES_TABLE + " LEFT JOIN " + EXERCISES_TABLE + " ON " + ACTIVITIES_TABLE + ".exercise = " + EXERCISES_TABLE + ".id LEFT JOIN " + MEASUREMENTS_TABLE + " ON " + ACTIVITIES_TABLE + ".measurement = " + MEASUREMENTS_TABLE + ".id WHERE date = '" + dateMetric + "' AND " + ACTIVITIES_TABLE + ".exercise != 0 GROUP BY " + EXERCISES_TABLE + ".past, " + MEASUREMENTS_TABLE + ".unit, date", null);
@@ -110,12 +133,33 @@ public class Elements {
             if (activityCursor.getCount() > 0) {
                 activityCursor.moveToFirst();
                 while (!activityCursor.isAfterLast()) {
-                    activities.put(activityCursor.getString(0) + " for " + activityCursor.getDouble(1) + " " + activityCursor.getString(2), activityCursor.getInt(3));
+                    activities.put(activityCursor.getString(0) + " for " + activityCursor.getDouble(1) + " " + getProperStringPluralization(activityCursor.getString(2), activityCursor.getDouble(1)), activityCursor.getInt(3));
                     activityCursor.moveToNext();
                 }
             }
             activityCursor.close();
         }
         return activities;
+    }
+
+    public static List<String> getSortedMeasurements(SQLiteDatabase sqLiteDatabase, int amount) {
+        List<String> measurements = new ArrayList<>();
+        Cursor measurementCursor = sqLiteDatabase.rawQuery("SELECT unit FROM " + MEASUREMENTS_TABLE + " ORDER BY conversion ASC", null);
+        if (measurementCursor != null) {
+            if (measurementCursor.getCount() > 0) {
+                measurementCursor.moveToFirst();
+                while (!measurementCursor.isAfterLast()) {
+                    measurements.add(getProperStringPluralization(measurementCursor.getString(0), amount));
+                    measurementCursor.moveToNext();
+                }
+            }
+            measurementCursor.close();
+        }
+        return measurements;
+    }
+
+    public static int getSortedMeasurement(SQLiteDatabase sqLiteDatabase, int amount, Measurement measurement) {
+        List<String> measurements = getSortedMeasurements(sqLiteDatabase, amount);
+        return measurements.lastIndexOf(getProperStringPluralization(measurement.getUnit(), amount));
     }
 }

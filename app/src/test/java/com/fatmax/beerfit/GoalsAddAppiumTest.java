@@ -78,10 +78,15 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
     public void allGoalDurationsExist() {
         driver.findElement(By.id("goalDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
-        assertEquals(durationList.size(), 3, "Expected to find '3' durations", "Actually found '" + durationList.size() + "' durations");
+        assertEquals(durationList.size(), 8, "Expected to find '8' durations", "Actually found '" + durationList.size() + "' durations");
         assertElementTextEquals("", durationList.get(0));
-        assertElementTextEquals("minutes", durationList.get(1));
-        assertElementTextEquals("kilometers", durationList.get(2));
+        assertElementTextEquals("class", durationList.get(1));
+        assertElementTextEquals("repetition", durationList.get(2));
+        assertElementTextEquals("mile", durationList.get(3));
+        assertElementTextEquals("kilometer", durationList.get(4));
+        assertElementTextEquals("hour", durationList.get(5));
+        assertElementTextEquals("minute", durationList.get(6));
+        assertElementTextEquals("second", durationList.get(7));
     }
 
     @Test
@@ -106,7 +111,7 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("goalDurationInput")).sendKeys("10");
         driver.findElement(By.id("goalDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
-        durationList.get(2).click();
+        durationList.get(4).click();
         driver.findElement(By.id("submitGoal")).click();
         //verify the data is in there
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");

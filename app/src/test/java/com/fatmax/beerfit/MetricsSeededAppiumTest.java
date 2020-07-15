@@ -24,7 +24,7 @@ public class MetricsSeededAppiumTest extends AppiumTestBase {
     public static final String RAN_FOR_5_KILOMETERS = "Ran for 5.0 kilometers";
     public static final String PLAYED_SOCCER_FOR_30_MINUTES = "Played Soccer for 30.0 minutes";
     public static final String LIFTED_FOR_30_MINUTES = "Lifted for 30.0 minutes";
-    public static final String CYCLED_FOR_5_KILOMETERS = "Cycled for 5.0 kilometers";
+    public static final String CYCLED_FOR_1_0_KILOMETER = "Cycled for 1.0 kilometer";
 
     @Before
     public void navigateToAddActivity() {
@@ -35,7 +35,7 @@ public class MetricsSeededAppiumTest extends AppiumTestBase {
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(5,\"2020-01-05 00:00\",2,2,5,1);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(6,\"2020-01-06 00:00\",2,2,5,1);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(7,\"2020-01-07 00:00\",1,2,5,1);");
-        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(8,\"2020-01-08 00:00\",3,2,5,1);");
+        modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(8,\"2020-01-08 00:00\",3,2,1,1);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(9,\"2020-01-09 00:00\",0,0,1,-1);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(10,\"2020-01-10 00:00\",0,0,1,-1);");
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(11,\"2020-02-11 00:00\",4,1,30,1);");
@@ -60,7 +60,7 @@ public class MetricsSeededAppiumTest extends AppiumTestBase {
         assertElementTextEquals("Ran for 20.0 kilometers", tableRows.get(2).findElement(TEXT_VIEW));
         assertElementTextEquals("Walked for 25.0 kilometers", tableRows.get(3).findElement(TEXT_VIEW));
         assertElementTextEquals(PLAYED_SOCCER_FOR_30_MINUTES, tableRows.get(4).findElement(TEXT_VIEW));
-        assertElementTextEquals(CYCLED_FOR_5_KILOMETERS, tableRows.get(5).findElement(TEXT_VIEW));
+        assertElementTextEquals(CYCLED_FOR_1_0_KILOMETER, tableRows.get(5).findElement(TEXT_VIEW));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class MetricsSeededAppiumTest extends AppiumTestBase {
         List<WebElement> tableRows = driver.findElement(METRICS_BODY_TABLE).findElements(TABLE_ROW);
         assertElementTextEquals("Ran for 15.0 kilometers", tableRows.get(6).findElement(TEXT_VIEW));
         assertElementTextEquals("Walked for 20.0 kilometers", tableRows.get(7).findElement(TEXT_VIEW));
-        assertElementTextEquals(CYCLED_FOR_5_KILOMETERS, tableRows.get(8).findElement(TEXT_VIEW));
+        assertElementTextEquals(CYCLED_FOR_1_0_KILOMETER, tableRows.get(8).findElement(TEXT_VIEW));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class MetricsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(METRICS_BODY_TABLE).findElements(TABLE_ROW).get(0).click();
         List<WebElement> tableRows = driver.findElement(METRICS_BODY_TABLE).findElements(TABLE_ROW);
         assertElementTextEquals(WALKED_FOR_5_KILOMETERS, tableRows.get(6).findElement(TEXT_VIEW));
-        assertElementTextEquals(CYCLED_FOR_5_KILOMETERS, tableRows.get(7).findElement(TEXT_VIEW));
+        assertElementTextEquals(CYCLED_FOR_1_0_KILOMETER, tableRows.get(7).findElement(TEXT_VIEW));
         assertElementTextEquals(RAN_FOR_5_KILOMETERS, tableRows.get(8).findElement(TEXT_VIEW));
     }
 
@@ -178,7 +178,7 @@ public class MetricsSeededAppiumTest extends AppiumTestBase {
         assertElementTextEquals(WALKED_FOR_5_KILOMETERS, tableRows.get(3).findElement(TEXT_VIEW));
         assertElementTextEquals(PLAYED_SOCCER_FOR_30_MINUTES, tableRows.get(6).findElement(TEXT_VIEW));
         assertElementTextEquals(LIFTED_FOR_30_MINUTES, tableRows.get(8).findElement(TEXT_VIEW));
-        assertElementTextEquals(CYCLED_FOR_5_KILOMETERS, tableRows.get(12).findElement(TEXT_VIEW));
+        assertElementTextEquals(CYCLED_FOR_1_0_KILOMETER, tableRows.get(12).findElement(TEXT_VIEW));
         assertElementTextEquals(WALKED_FOR_5_KILOMETERS, tableRows.get(14).findElement(TEXT_VIEW));
         assertElementTextEquals(RAN_FOR_5_KILOMETERS, tableRows.get(16).findElement(TEXT_VIEW));
         assertElementTextEquals(RAN_FOR_5_KILOMETERS, tableRows.get(18).findElement(TEXT_VIEW));

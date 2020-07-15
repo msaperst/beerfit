@@ -21,8 +21,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fatmax.beerfit.utilities.Activity;
 import com.fatmax.beerfit.utilities.Database;
+import com.fatmax.beerfit.utilities.Elements;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -49,8 +51,8 @@ public class AddActivityActivity extends AppCompatActivity {
         database = new Database(sqLiteDatabase);
 
         // setup our two spinners
-        createSpinner(EXERCISES_TABLE, "past", R.id.activityExercise);
-        createSpinner(MEASUREMENTS_TABLE, "unit", R.id.activityDurationUnits);
+        createSpinner(EXERCISES_TABLE, "past", R.id.activityExercise, false);
+        createSpinner(MEASUREMENTS_TABLE, "unit", R.id.activityDurationUnits, true);
         //setup our object widths
         findViewById(R.id.activityDate).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
         findViewById(R.id.activityTime).getLayoutParams().width = (int) (getScreenWidth(this) * 0.3);
@@ -73,11 +75,11 @@ public class AddActivityActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.activityDate)).setText(activity.getDate());
             ((TextView) findViewById(R.id.activityTime)).setText(activity.getTime());
             ((TextView) findViewById(R.id.activityDurationInput)).setText(String.valueOf(activity.getAmount()));
-            ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(activity.getMeasurement().getId());
+            ((Spinner) findViewById(R.id.activityDurationUnits)).setSelection(Elements.getSortedMeasurement(sqLiteDatabase, 1, activity.getMeasurement()) + 1);
             ((TextView) findViewById(R.id.activityDateTimeHeader)).setText(R.string.update_time);
 
             //if beer activity
-            if (activity.getExercise().getId() == 0) {
+            if (activity.getExercise().getId() == -1) {
                 ((TextView) findViewById(R.id.activityExerciseHeader)).setText(R.string.activity);
                 ((TextView) findViewById(R.id.activityDurationHeader)).setText(R.string.enter_amount);
                 ((EditText) findViewById(R.id.activityDurationInput)).setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -110,10 +112,18 @@ public class AddActivityActivity extends AppCompatActivity {
         }
     }
 
-    private void createSpinner(String activity, String type, int p) {
-        List<Object> activities = database.getFullColumn(activity, type);
-        activities.add(0, "");
-        ArrayAdapter<Object> activitiesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, activities);
+    private void createSpinner(String activity, String type, int p, boolean sort) {
+        List<String> items = new ArrayList<>();
+        if (sort) {
+            items = Elements.getSortedMeasurements(sqLiteDatabase, 1);
+        } else {
+            List<Object> objects = database.getFullColumn(activity, type);
+            for (Object object : objects) {
+                items.add(object.toString());
+            }
+        }
+        items.add(0, "");
+        ArrayAdapter<String> activitiesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
         activitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner activitySpinner = findViewById(p);
         activitySpinner.setAdapter(activitiesAdapter);

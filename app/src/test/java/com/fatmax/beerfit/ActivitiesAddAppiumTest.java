@@ -156,10 +156,16 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
     public void allActivityDurationsExist() {
         driver.findElement(By.id("activityDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
-        assertEquals(durationList.size(), 3, "Expected to find '3' durations", "Actually found '" + durationList.size() + "' durations");
+        assertEquals(durationList.size(), 8, "Expected to find '8' durations", "Actually found '" + durationList.size() + "' durations");
         assertElementTextEquals("", durationList.get(0));
-        assertElementTextEquals("minutes", durationList.get(1));
-        assertElementTextEquals("kilometers", durationList.get(2));
+        assertElementTextEquals("class", durationList.get(1));
+        assertElementTextEquals("repetition", durationList.get(2));
+        assertElementTextEquals("mile", durationList.get(3));
+        assertElementTextEquals("kilometer", durationList.get(4));
+        assertElementTextEquals("hour", durationList.get(5));
+        assertElementTextEquals("minute", durationList.get(6));
+        assertElementTextEquals("second", durationList.get(7));
+
     }
 
     @Test
@@ -185,7 +191,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("activityDurationInput")).sendKeys("10");
         driver.findElement(By.id("activityDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
-        durationList.get(2).click();
+        durationList.get(4).click();
         driver.findElement(By.id("submitActivity")).click();
         //verify the data is in there
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
@@ -203,7 +209,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("activityDurationInput")).sendKeys("10");
         driver.findElement(By.id("activityDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
-        durationList.get(2).click();
+        durationList.get(4).click();
         //set the date
         driver.findElement(By.id("activityDate")).click();
         Calendar calendar = Calendar.getInstance();
@@ -239,7 +245,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("activityDurationInput")).sendKeys("10");
         driver.findElement(By.id("activityDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
-        durationList.get(2).click();
+        durationList.get(4).click();
         //set the date
         driver.findElement(By.id("activityDate")).click();
         Calendar calendar = Calendar.getInstance();
@@ -264,5 +270,43 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
         resultSet.next();
         assertActivity(resultSet, 1, dateTime, 1, 2, 10, 10);
+    }
+
+    @Test
+    public void newSubmissionCrossGoalKilometer() throws IOException, SQLException, ClassNotFoundException {
+        modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,1);");
+        driver.findElement(By.id("activityExercise")).click();
+        List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        activityList.get(1).click();
+        driver.findElement(By.id("activityDurationInput")).sendKeys("10");
+        driver.findElement(By.id("activityDurationUnits")).click();
+        List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        durationList.get(3).click();
+        Calendar calendar = Calendar.getInstance();
+        String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
+        driver.findElement(By.id("submitActivity")).click();
+        //verify the data is in there
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
+        resultSet.next();
+        assertActivity(resultSet, 1, dateTime, 1, 5, 10, 16.093439798947873);
+    }
+
+    @Test
+    public void newSubmissionCrossGoalMile() throws IOException, SQLException, ClassNotFoundException {
+        modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,5,1);");
+        driver.findElement(By.id("activityExercise")).click();
+        List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        activityList.get(1).click();
+        driver.findElement(By.id("activityDurationInput")).sendKeys("10");
+        driver.findElement(By.id("activityDurationUnits")).click();
+        List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        durationList.get(4).click();
+        Calendar calendar = Calendar.getInstance();
+        String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
+        driver.findElement(By.id("submitActivity")).click();
+        //verify the data is in there
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
+        resultSet.next();
+        assertActivity(resultSet, 1, dateTime, 1, 2, 10, 6.213712);
     }
 }
