@@ -117,6 +117,6 @@ public class ActivitiesEditActivityAppiumTest extends AppiumTestBase {
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '15';");
         resultSet.next();
         // beer changes to none, as no activities are set
-        assertActivity(resultSet, 15, "2020-02-16 13:30", 4, 1, 30, 0);
+        assertActivity(resultSet, 15, "2020-02-16 13:30", 4, 6, 30, 0);
     }
 }

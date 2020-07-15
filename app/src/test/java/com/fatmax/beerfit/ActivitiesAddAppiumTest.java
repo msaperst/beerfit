@@ -283,9 +283,9 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(3).click();
         Calendar calendar = Calendar.getInstance();
+        String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
         driver.findElement(By.id("submitActivity")).click();
         //verify the data is in there
-        String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
         resultSet.next();
         assertActivity(resultSet, 1, dateTime, 1, 5, 10, 16.093439798947873);
