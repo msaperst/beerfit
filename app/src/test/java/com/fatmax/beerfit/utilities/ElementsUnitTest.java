@@ -259,4 +259,29 @@ public class ElementsUnitTest {
         assertEquals("mile", measurements.get(0));
         assertEquals("kilometer", measurements.get(1));
     }
+
+    @Test
+    public void getSortedMeasurementNoMatchTest() {
+        when(mockedCursor.getCount()).thenReturn(2);
+        when(mockedCursor.isAfterLast()).thenReturn(false, false, true);
+        when(mockedCursor.getString(0)).thenReturn("mile", "kilometer");
+        when(mockedSQLiteDatabase.rawQuery("SELECT unit FROM " + MEASUREMENTS_TABLE + " ORDER BY conversion ASC", null)).thenReturn(mockedCursor);
+
+        assertEquals(-1, Elements.getSortedMeasurement(mockedSQLiteDatabase, 1, new Measurement(mockedSQLiteDatabase, "kilometer")));
+    }
+
+    @Test
+    public void getSortedMeasurementMatchTest() {
+        when(mockedCursor.getCount()).thenReturn(1, 2);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance");
+        when(mockedCursor.getString(2)).thenReturn("kilometer");
+        when(mockedCursor.getDouble(3)).thenReturn(1.0);
+        when(mockedCursor.isAfterLast()).thenReturn(false, false, true);
+        when(mockedCursor.getString(0)).thenReturn("mile", "kilometer");
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT unit FROM " + MEASUREMENTS_TABLE + " ORDER BY conversion ASC", null)).thenReturn(mockedCursor);
+
+        assertEquals(1, Elements.getSortedMeasurement(mockedSQLiteDatabase, 1, new Measurement(mockedSQLiteDatabase, "kilometer")));
+    }
 }

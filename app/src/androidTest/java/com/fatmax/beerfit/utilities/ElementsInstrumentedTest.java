@@ -314,4 +314,28 @@ public class ElementsInstrumentedTest {
         assertEquals("minutes", measurements.get(5));
         assertEquals("seconds", measurements.get(6));
     }
+
+    @Test
+    public void getSortedMeasurementNewMeasurement() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertEquals(-1, Elements.getSortedMeasurement(db, 1, new Measurement(db, "feet")));
+    }
+
+    @Test
+    public void getSortedMeasurementSingularMeasurement() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertEquals(3, Elements.getSortedMeasurement(db, 1, new Measurement(db, "kilometer")));
+    }
+
+    @Test
+    public void getSortedMeasurementPluralMeasurement() {
+        SQLiteDatabase db = getDB();
+        Database database = new Database(db);
+        database.setupDatabase();
+        assertEquals(3, Elements.getSortedMeasurement(db, 2, new Measurement(db, "kilometer")));
+    }
 }
