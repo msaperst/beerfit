@@ -19,11 +19,11 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         Navigate navigate = new Navigate(driver);
         // first, we add the goal of 5 km run for one beer
         navigate.toNewGoal();
-        driver.findElement(By.id("goalSelection")).click();
+        driver.findElement(By.id("goalExercise")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(2).click();
-        driver.findElement(By.id("goalDurationInput")).sendKeys("5");
-        driver.findElement(By.id("goalDurationUnits")).click();
+        driver.findElement(By.id("goalAmount")).sendKeys("5");
+        driver.findElement(By.id("goalMeasurement")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(4).click();
         driver.findElement(By.id("android:id/button1")).click();

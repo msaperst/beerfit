@@ -1,13 +1,10 @@
 package com.fatmax.beerfit;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.fatmax.beerfit.utilities.Activity;
 import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.ImportExport;
 
@@ -33,12 +31,6 @@ public class MainActivity extends AppCompatActivity {
     TextView beerCounter;
     Button drankBeer;
     private MenuItem storedMenu;
-
-    public static int getScreenWidth(Context context) {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        return displayMetrics.widthPixels;
-    }
 
     private ActionBarDrawerToggle t;
 
@@ -145,13 +137,14 @@ public class MainActivity extends AppCompatActivity {
      * @param view the view to be used
      */
     public void drinkBeer(View view) {
-        database.logBeer();
+        Activity drankBeer = new Activity(sqLiteDatabase, 0);
+        drankBeer.save();
         setBeersRemaining();
     }
 
     public void addActivity(View view) {
-        Intent intent = new Intent(this, AddActivityActivity.class);
-        startActivity(intent);
+        ActivityModal activityModal = new ActivityModal(this, sqLiteDatabase);
+        activityModal.launch(new Activity(sqLiteDatabase));
     }
 
     public void viewSite(View view) {

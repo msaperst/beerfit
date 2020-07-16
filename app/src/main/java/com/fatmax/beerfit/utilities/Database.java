@@ -19,7 +19,7 @@ public class Database {
     static final String INSERT_INTO = "INSERT INTO ";
     static final String WHERE_ID = " WHERE id = ";
     static final String CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ";
-    private static final String VALUES = " VALUES(";
+    static final String VALUES = " VALUES(";
     private SQLiteDatabase database;
 
     public Database(SQLiteDatabase database) {
@@ -224,29 +224,6 @@ public class Database {
         database.execSQL("COMMIT;");
     }
 
-    public void logActivity(String time, String exercise, String unit, double duration) {
-        logActivity(null, time, exercise, unit, duration);
-    }
-
-    public void logActivity(String id, String time, String past, String unit, double duration) {
-        Exercise exercise = new Exercise(database, past);
-        Measurement measurement = new Measurement(database, unit);
-        database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + VALUES + id + ", '" + time + "', " +
-                exercise.getId() + ", " + measurement.getId() + ", " + duration + ", " + getBeersEarned(exercise, measurement, duration) + ");");
-    }
-
-    public void logBeer() {
-        logBeer(null, "datetime('now', 'localtime')", 1);
-    }
-
-    public void logBeer(String id, String time, int beers) {
-        database.execSQL(INSERT_INTO + ACTIVITIES_TABLE + VALUES + id + ", " + time + ", 0, 0, " + beers + ", -" + beers + ");");
-    }
-
-    public void removeActivity(int id) {
-        database.execSQL("DELETE FROM " + ACTIVITIES_TABLE + WHERE_ID + id);
-    }
-
     public String getActivityTime(int id) {
         String time = "Unknown";
         Cursor cursor = database.rawQuery("SELECT time FROM " + ACTIVITIES_TABLE + WHERE_ID + id, null);
@@ -293,7 +270,7 @@ public class Database {
         return measurements;
     }
 
-    Goal getMatchingGoals(Exercise exercise, Measurement measurement) {
+    public Goal getMatchingGoals(Exercise exercise, Measurement measurement) {
         Goal goal = null;
         // get all matching measurements
         List<Measurement> measurements = getMatchingMeasurements(measurement);
@@ -311,14 +288,6 @@ public class Database {
             }
         }
         return goal;
-    }
-
-    double getBeersEarned(Exercise exercise, Measurement measurement, double duration) {
-        Goal goal = getMatchingGoals(exercise, measurement);
-        if (goal == null) {
-            return 0;
-        }
-        return duration / goal.getAmount() * goal.getMeasurement().getConversion() / measurement.getConversion();
     }
 
     double getTotalBeersEarned() {
