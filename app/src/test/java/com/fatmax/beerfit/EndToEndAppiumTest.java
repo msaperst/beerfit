@@ -26,7 +26,7 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("goalDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(4).click();
-        driver.findElement(By.id("submitGoal")).click();
+        driver.findElement(By.id("android:id/button1")).click();
         //verify the goal is displayed there
         List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
         assertEquals(tableRows.size(), 1, "Expected to find '1' goals", "Actually found '" + tableRows.size() + "'");

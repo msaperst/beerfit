@@ -23,38 +23,32 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
 
     @Test
     public void goalTitleExists() {
-        assertElementTextEquals("Add A Goal", By.className("android.widget.TextView"));
+        assertElementTextEquals("To Earn A Beer…", By.id("android:id/alertTitle"));
     }
 
     @Test
-    public void goalHeaderExists() {
-        assertElementTextEquals("To Earn A Beer…", By.id("viewGoalsSubtitle"));
+    public void goalViewContentExists() {
+        assertElementDisplayed(By.id("goalSelection"));
+        assertElementTextEquals("for", By.id("_for_"));
+        assertElementDisplayed(By.id("goalDurationInput"));
+        assertElementDisplayed(By.id("goalDurationUnits"));
     }
 
     @Test
-    public void goalSubHeaderExists() {
-        assertElementTextEquals("Select Exercise", By.id("goalSelectionHeader"));
+    public void checkAddGoalButtons() {
+        List<WebElement> addGoalButtons = driver.findElements(By.className("android.widget.Button"));
+        assertEquals(addGoalButtons.size(), 1, "Expected to find '1' add goal button", "Actually found '" + addGoalButtons.size() + "'");
     }
 
     @Test
-    public void goalDurationHeaderExists() {
-        assertElementTextEquals("Enter Duration", By.id("goalDurationHeader"));
-    }
-
-    @Test
-    public void addGoalButton() {
-        assertElementTextEquals("ADD GOAL", By.id("submitGoal"));
-    }
-
-    @Test
-    public void backGoesToGoals() {
-        new Navigate(driver).goBack();
-        assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
+    public void checkAddGoalAddGoalButton() {
+        assertElementTextEquals("ADD NEW", By.id("android:id/button1"));
+        assertElementEnabled(By.id("android:id/button1"));
     }
 
     @Test
     public void addEmptyGoal() {
-        driver.findElement(By.id("submitGoal")).click();
+        driver.findElement(By.id("android:id/button1")).click();
         assertElementTextEquals("You need to indicate some exercise", driver.findElement(By.id("goalSelection")).findElement(By.className("android.widget.TextView")));
         assertElementTextEquals("", By.id("goalDurationInput"));
         assertElementTextEquals("", driver.findElement(By.id("goalDurationUnits")).findElement(By.className("android.widget.TextView")));
@@ -97,7 +91,7 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("goalDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(2).click();
-        driver.findElement(By.id("submitGoal")).click();
+        driver.findElement(By.id("android:id/button1")).click();
         // verify we're back on main page
         assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
     }
@@ -111,7 +105,7 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("goalDurationUnits")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(4).click();
-        driver.findElement(By.id("submitGoal")).click();
+        driver.findElement(By.id("android:id/button1")).click();
         //verify the data is in there
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
         resultSet.next();

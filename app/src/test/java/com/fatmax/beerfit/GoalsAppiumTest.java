@@ -44,6 +44,6 @@ public class GoalsAppiumTest extends AppiumTestBase {
         assertEquals(menuOptions.size(), 3, "Expected to find '3' menu items", "Actually found '" + menuOptions.size() + "' menu items");
         assertElementTextEquals("Add A Goal", menuOptions.get(0));
         assertElementTextEquals("Edit Exercises", menuOptions.get(1));
-        assertElementTextEquals("Edit Measurements", menuOptions.get(3));
+        assertElementTextEquals("Edit Measurements", menuOptions.get(2));
     }
 }

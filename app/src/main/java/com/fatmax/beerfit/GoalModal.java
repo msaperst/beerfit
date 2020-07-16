@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ public class GoalModal {
 
     Context context;
     SQLiteDatabase sqLiteDatabase;
+    private AlertDialog dialog;
 
     public GoalModal(Context context, SQLiteDatabase sqLiteDatabase) {
         this.context = context;
@@ -46,12 +48,24 @@ public class GoalModal {
             ((TextView) goalView.findViewById(R.id.goalDurationInput)).setText(String.valueOf(goal.getAmount()));
             ((Spinner) goalView.findViewById(R.id.goalDurationUnits)).setSelection(Elements.getSortedMeasurement(sqLiteDatabase, 1, goal.getMeasurement()) + 1);
             builder.setPositiveButton(R.string.delete, (dialog, id) -> deleteGoal(goal));
-            builder.setNegativeButton(R.string.update, (dialog, id) -> viewGoal(goalView, goal));
+            builder.setNegativeButton(R.string.update, null);
         } else {
-            builder.setPositiveButton(R.string.add_new, (dialog, id) -> viewGoal(goalView, goal));
+            builder.setPositiveButton(R.string.add_new, null);
         }
         builder.setView(goalView);
-        builder.show();
+        this.dialog = builder.create();
+        if (goal.getId() != -1) {
+            dialog.setOnShowListener(dialog -> {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                button.setOnClickListener(view -> viewGoal(goalView, goal));
+            });
+        } else {
+            dialog.setOnShowListener(dialog -> {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(view -> viewGoal(goalView, goal));
+            });
+        }
+        dialog.show();
     }
 
     private void viewGoal(View goalView, Goal goal) {
@@ -62,7 +76,9 @@ public class GoalModal {
 
         goal.setExercise(new Exercise(sqLiteDatabase, exercise.getSelectedItem().toString()));
         goal.setMeasurement(new Measurement(sqLiteDatabase, unit.getSelectedItem().toString()));
-        goal.setAmount(Double.parseDouble(duration.getText().toString()));
+        if( !"".equals(duration.getText().toString())) {
+            goal.setAmount(Double.parseDouble(duration.getText().toString()));
+        }
 
         if (goal.getExercise().getId() == -1) {
             TextView errorText = (TextView) exercise.getSelectedView();
@@ -85,6 +101,7 @@ public class GoalModal {
         }
         goal.save();
         GoalsActivity.populateGoals(context, sqLiteDatabase);
+        dialog.dismiss();
     }
 
     private void deleteGoal(Goal goal) {
