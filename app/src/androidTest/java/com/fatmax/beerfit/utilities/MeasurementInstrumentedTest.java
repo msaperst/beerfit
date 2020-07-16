@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import org.junit.After;
 import org.junit.Test;
 
+import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.getDB;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.wipeOutDB;
@@ -145,7 +146,7 @@ public class MeasurementInstrumentedTest {
         Measurement measurement = new Measurement(db, "minute");
         measurement.setUnit("ssseccconnnnd");
         measurement.save();
-        Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE, null);
         assertEquals(7, res.getCount());
         res.moveToFirst();
         assertEquals(1, res.getInt(0));
@@ -162,7 +163,7 @@ public class MeasurementInstrumentedTest {
         Measurement measurement = new Measurement(db, "repetition");
         measurement.setUnit("reppp");
         measurement.save();
-        Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE, null);
         assertEquals(7, res.getCount());
         res.moveToLast();
         assertEquals(7, res.getInt(0));
@@ -179,7 +180,7 @@ public class MeasurementInstrumentedTest {
         Measurement measurement = new Measurement(db);
         measurement.setUnit("repppp");
         measurement.save();
-        Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE, null);
         assertEquals(8, res.getCount());
         res.moveToLast();
         assertEquals(8, res.getInt(0));
@@ -222,7 +223,7 @@ public class MeasurementInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.addGoal("Walk", "kilometer", 5);
+        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,5);");
         Measurement measurement = new Measurement(db, "kilometer");
         assertFalse(measurement.safeToDelete());
     }
@@ -234,7 +235,7 @@ public class MeasurementInstrumentedTest {
         database.setupDatabase();
         Measurement measurement = new Measurement(db, "minute");
         measurement.delete();
-        Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE, null);
         assertEquals(6, res.getCount());
         res.moveToFirst();
         assertEquals(2, res.getInt(0));
@@ -248,7 +249,7 @@ public class MeasurementInstrumentedTest {
         database.logActivity("2020-01-01 00:00", "Walked", "second", 5);
         Measurement measurement = new Measurement(db, "second");
         measurement.delete();
-        Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE, null);
         assertEquals(7, res.getCount());
         res.moveToFirst();
         assertEquals(1, res.getInt(0));

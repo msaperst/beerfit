@@ -218,9 +218,9 @@ public class Database {
         }
         database.execSQL("BEGIN TRANSACTION;");
         database.execSQL("CREATE TABLE TMP(" + tableStructure.toString() + ");");
-        database.execSQL("INSERT INTO TMP(" + columns + ") SELECT " + String.join(",", getColumns(table)) + " FROM " + table + ";");
-        database.execSQL("DROP TABLE " + table + ";");
-        database.execSQL("ALTER TABLE TMP RENAME TO " + table + ";");
+        database.execSQL("INSERT INTO TMP(" + columns + ") SELECT " + String.join(",", getColumns(table)) + " FROM " + table);
+        database.execSQL("DROP TABLE " + table);
+        database.execSQL("ALTER TABLE TMP RENAME TO " + table);
         database.execSQL("COMMIT;");
     }
 
@@ -336,20 +336,5 @@ public class Database {
 
     public int getBeersRemaining() {
         return (int) getTotalBeersEarned() - getBeersDrank();
-    }
-
-    public void addGoal(String past, String unit, double duration) {
-        addGoal(null, past, unit, duration);
-    }
-
-    public void addGoal(String id, String past, String unit, double duration) {
-        Exercise exercise = new Exercise(database, past);
-        Measurement measurement = new Measurement(database, unit);
-        database.execSQL(INSERT_INTO + GOALS_TABLE + VALUES + id + ", " +
-                exercise.getId() + ", " + measurement.getId() + ", " + duration + ");");
-    }
-
-    public void removeGoal(int id) {
-        database.execSQL("DELETE FROM " + GOALS_TABLE + WHERE_ID + id);
     }
 }

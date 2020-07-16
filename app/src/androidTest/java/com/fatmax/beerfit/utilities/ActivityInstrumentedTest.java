@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.text.ParseException;
 
 import static com.fatmax.beerfit.utilities.Activity.DATE_TIME_FORMAT;
+import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.getDB;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.wipeOutDB;
 import static org.junit.Assert.assertEquals;
@@ -42,7 +43,7 @@ public class ActivityInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.addGoal("Walk", "kilometer", 5.0);
+        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,5);");
         database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
         Activity activity = new Activity(db, 1);
         assertEquals(1, activity.getId());

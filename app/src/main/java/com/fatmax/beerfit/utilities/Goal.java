@@ -3,7 +3,6 @@ package com.fatmax.beerfit.utilities;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.Database.INSERT_INTO;
 import static com.fatmax.beerfit.utilities.Database.WHERE_ID;

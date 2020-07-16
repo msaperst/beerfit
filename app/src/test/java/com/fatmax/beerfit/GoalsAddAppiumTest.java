@@ -113,7 +113,7 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
         durationList.get(4).click();
         driver.findElement(By.id("submitGoal")).click();
         //verify the data is in there
-        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
         resultSet.next();
         assertGoal(resultSet, 1, 1, 2, 10);
     }

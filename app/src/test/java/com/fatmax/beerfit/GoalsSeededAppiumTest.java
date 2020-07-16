@@ -38,7 +38,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.AccessibilityId("Delete Activity")).click();
         driver.findElement(By.id("android:id/button2")).click();
         //verify the goal is still there
-        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
         resultSet.next();
         assertGoal(resultSet, 1, 1, 2, 5);
     }
@@ -48,7 +48,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.AccessibilityId("Delete Activity")).click();
         driver.findElement(By.id("android:id/button1")).click();
         //verify the goal is gone
-        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
         resultSet.next();
         assertGoal(resultSet, 2, 2, 1, 1);
         assertEquals(false, resultSet.next(), "Expected only 1 result", "");
@@ -67,7 +67,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.AccessibilityId("Edit Activity")).click();
         new Navigate(driver).goBack();
         //verify the goal is not changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
         resultSet.next();
         assertGoal(resultSet, 1, 1, 2, 5);
     }
@@ -97,7 +97,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.AccessibilityId("Edit Activity")).click();
         driver.findElement(By.id("submitGoal")).click();
         //verify the goal is not changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
         resultSet.next();
         assertGoal(resultSet, 1, 1, 2, 5);
     }
@@ -115,7 +115,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         durationList.get(1).click();
         driver.findElement(By.id("submitGoal")).click();
         //verify the goal is changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
         resultSet.next();
         assertGoal(resultSet, 1, 2, 6, 30);
     }

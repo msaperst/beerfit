@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.getDB;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.wipeOutDB;
 import static org.junit.Assert.assertEquals;
@@ -177,7 +178,7 @@ public class ExerciseInstrumentedTest {
         Exercise exercise = new Exercise(db, "Walk");
         exercise.setColor(Color.BLACK);
         exercise.save();
-        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE, null);
         assertEquals(5, res.getCount());
         res.moveToFirst();
         assertEquals(1, res.getInt(0));
@@ -196,7 +197,7 @@ public class ExerciseInstrumentedTest {
         exercise.setPast("Wulked");
         exercise.setColor(Color.BLACK);
         exercise.save();
-        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE, null);
         assertEquals(6, res.getCount());
         res.moveToLast();
         assertEquals(6, res.getInt(0));
@@ -241,7 +242,7 @@ public class ExerciseInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.addGoal("Walk", "kilometer", 5);
+        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,5);");
         Exercise exercise = new Exercise(db, "Walk");
         assertFalse(exercise.safeToDelete());
     }
@@ -253,7 +254,7 @@ public class ExerciseInstrumentedTest {
         database.setupDatabase();
         Exercise exercise = new Exercise(db, "Walk");
         exercise.delete();
-        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE, null);
         assertEquals(4, res.getCount());
         res.moveToFirst();
         assertEquals(2, res.getInt(0));
@@ -267,7 +268,7 @@ public class ExerciseInstrumentedTest {
         database.logActivity("2020-01-01 00:00", "Walked", "kilometer", 5);
         Exercise exercise = new Exercise(db, "Walk");
         exercise.delete();
-        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE + ";", null);
+        Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE, null);
         assertEquals(5, res.getCount());
         res.moveToFirst();
         assertEquals(1, res.getInt(0));
