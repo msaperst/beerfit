@@ -1,4 +1,4 @@
-package com.fatmax.beerfit.utilities;
+package com.fatmax.beerfit.views;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,6 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fatmax.beerfit.R;
+import com.fatmax.beerfit.utilities.Database;
+import com.fatmax.beerfit.utilities.Elements;
+import com.fatmax.beerfit.utilities.Exercise;
+import com.fatmax.beerfit.utilities.Measurement;
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 

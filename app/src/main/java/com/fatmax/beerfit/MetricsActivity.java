@@ -15,7 +15,7 @@ import com.fatmax.beerfit.utilities.Data;
 import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.Metric;
-import com.fatmax.beerfit.utilities.TableBuilder;
+import com.fatmax.beerfit.views.TableBuilder;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;

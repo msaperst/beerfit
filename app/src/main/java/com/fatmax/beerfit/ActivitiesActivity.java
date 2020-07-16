@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fatmax.beerfit.utilities.Activity;
 import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Elements;
-import com.fatmax.beerfit.utilities.TableBuilder;
+import com.fatmax.beerfit.views.TableBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;

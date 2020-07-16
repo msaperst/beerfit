@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.getDB;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.wipeOutDB;
@@ -33,8 +34,8 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-10-10 10:23", "Walked", "kilometer", 5.0);
-        database.logBeer();
+        db.execSQL("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,'2020-10-10 10:23',1,2,5,0);");
+        db.execSQL("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(2,'2020-10-10 10:23',0,0,1,-1);");
         assertEquals(2, Elements.getAllActivities(db).size());
     }
 

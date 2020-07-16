@@ -7,6 +7,7 @@ import android.graphics.Color;
 import org.junit.After;
 import org.junit.Test;
 
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.getDB;
@@ -232,7 +233,7 @@ public class ExerciseInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-01-01 00:00", "Walked", "kilometer", 5);
+        db.execSQL("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,'2020-10-10 10:23',1,2,5,0);");
         Exercise exercise = new Exercise(db, "Walk");
         assertFalse(exercise.safeToDelete());
     }
@@ -265,7 +266,7 @@ public class ExerciseInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-01-01 00:00", "Walked", "kilometer", 5);
+        db.execSQL("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,'2020-10-10 10:23',1,2,5,0);");
         Exercise exercise = new Exercise(db, "Walk");
         exercise.delete();
         Cursor res = db.rawQuery("SELECT * FROM " + EXERCISES_TABLE, null);

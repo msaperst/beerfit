@@ -17,8 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.Goal;
-import com.fatmax.beerfit.utilities.Measures;
-import com.fatmax.beerfit.utilities.TableBuilder;
+import com.fatmax.beerfit.views.Measures;
+import com.fatmax.beerfit.views.TableBuilder;
 
 import java.util.Collections;
 import java.util.List;

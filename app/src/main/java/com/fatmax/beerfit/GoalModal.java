@@ -15,7 +15,7 @@ import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.Exercise;
 import com.fatmax.beerfit.utilities.Goal;
 import com.fatmax.beerfit.utilities.Measurement;
-import com.fatmax.beerfit.utilities.Modal;
+import com.fatmax.beerfit.views.Modal;
 
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;

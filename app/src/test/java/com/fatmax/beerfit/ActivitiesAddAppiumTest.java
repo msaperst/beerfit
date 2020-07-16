@@ -15,8 +15,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import static com.fatmax.beerfit.AddActivityActivity.DATE_FORMAT;
-import static com.fatmax.beerfit.AddActivityActivity.TIME_FORMAT;
+import static com.fatmax.beerfit.utilities.Activity.DATE_FORMAT;
+import static com.fatmax.beerfit.utilities.Activity.TIME_FORMAT;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 

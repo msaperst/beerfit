@@ -1,10 +1,13 @@
-package com.fatmax.beerfit.utilities;
+package com.fatmax.beerfit.views;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
+import com.fatmax.beerfit.utilities.Database;
+import com.fatmax.beerfit.utilities.Elements;
 
 import java.util.ArrayList;
 import java.util.List;

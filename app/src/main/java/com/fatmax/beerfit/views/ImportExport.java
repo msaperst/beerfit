@@ -1,4 +1,4 @@
-package com.fatmax.beerfit.utilities;
+package com.fatmax.beerfit.views;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,6 +9,10 @@ import android.os.Environment;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+
+import com.fatmax.beerfit.utilities.CSVReader;
+import com.fatmax.beerfit.utilities.CSVWriter;
+import com.fatmax.beerfit.utilities.Database;
 
 import java.io.File;
 import java.io.FileOutputStream;

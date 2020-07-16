@@ -122,7 +122,11 @@ public class Activity {
     }
 
     public String getString() {
-        return exercise.getPast() + " for " + amount + " " + Elements.getProperStringPluralization(measurement.getUnit(), amount);
+        String conjunction = " ";
+        if( exercise.getId() != 0 ) {
+            conjunction = " for ";
+        }
+        return exercise.getPast() + conjunction + amount + " " + Elements.getProperStringPluralization(measurement.getUnit(), amount);
     }
 
     public void calculateBeers() {
@@ -136,7 +140,7 @@ public class Activity {
 
     public void save() {
         if (id == -1) { // create a new one
-            sqLiteDatabase.execSQL(INSERT_INTO + ACTIVITIES_TABLE + VALUES + id + ", '" + DATE_TIME_FORMAT.format(time) + "', " +
+            sqLiteDatabase.execSQL(INSERT_INTO + ACTIVITIES_TABLE + VALUES + "null, '" + DATE_TIME_FORMAT.format(time) + "', " +
                     exercise.getId() + ", " + measurement.getId() + ", " + amount + ", " + beers + ");");
         } else {
             sqLiteDatabase.execSQL("UPDATE " + ACTIVITIES_TABLE + " SET time = '" + DATE_TIME_FORMAT.format(time) + "', exercise = " +

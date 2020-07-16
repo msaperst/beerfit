@@ -21,7 +21,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.fatmax.beerfit.utilities.Activity;
 import com.fatmax.beerfit.utilities.Database;
-import com.fatmax.beerfit.utilities.ImportExport;
+import com.fatmax.beerfit.views.ImportExport;
 
 public class MainActivity extends AppCompatActivity {
 

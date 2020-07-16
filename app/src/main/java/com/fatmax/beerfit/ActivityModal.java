@@ -14,11 +14,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.fatmax.beerfit.utilities.Activity;
-import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.Exercise;
 import com.fatmax.beerfit.utilities.Measurement;
-import com.fatmax.beerfit.utilities.Modal;
+import com.fatmax.beerfit.views.Modal;
 
 import java.text.ParseException;
 import java.util.Calendar;

@@ -126,7 +126,7 @@ public class Database {
         return isExist;
     }
 
-    boolean doesDataExist(String tableName, int id) {
+    public boolean doesDataExist(String tableName, int id) {
         boolean isExist = false;
         if (isTableMissing(tableName)) {
             return false;
@@ -141,7 +141,7 @@ public class Database {
         return isExist;
     }
 
-    String getColumnType(String table, String column) {
+    public String getColumnType(String table, String column) {
         Cursor cursor = database.rawQuery("PRAGMA table_info(" + table + ")", null);
         if (cursor != null) {
             String columnType = null;

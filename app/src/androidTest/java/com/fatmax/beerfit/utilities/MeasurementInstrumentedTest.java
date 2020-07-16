@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import org.junit.After;
 import org.junit.Test;
 
+import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.getDB;
@@ -213,7 +214,7 @@ public class MeasurementInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-01-01 00:00", "Walked", "kilometer", 5);
+        db.execSQL("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,'2020-10-10 10:23',1,2,5,0);");
         Measurement measurement = new Measurement(db, "kilometer");
         assertFalse(measurement.safeToDelete());
     }
@@ -246,7 +247,7 @@ public class MeasurementInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.logActivity("2020-01-01 00:00", "Walked", "second", 5);
+        db.execSQL("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,'2020-10-10 10:23',1,2,5,0);");
         Measurement measurement = new Measurement(db, "second");
         measurement.delete();
         Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE, null);
