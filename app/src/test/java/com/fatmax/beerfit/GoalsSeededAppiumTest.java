@@ -17,7 +17,6 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.touch.offset.PointOption;
 
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
-import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class GoalsSeededAppiumTest extends AppiumTestBase {
 
@@ -46,18 +45,6 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
         resultSet.next();
         assertGoal(resultSet, 1, 1, 2, 5);
-    }
-
-    @Test
-    public void deleteGoal() throws SQLException, IOException, ClassNotFoundException {
-        List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
-        tableRows.get(0).click();
-        driver.findElement(By.id("android:id/button1")).click();
-        //verify the goal is gone
-        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
-        resultSet.next();
-        assertGoal(resultSet, 2, 2, 1, 1);
-        assertEquals(false, resultSet.next(), "Expected only 1 result", "");
     }
 
     @Test
@@ -117,7 +104,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("android:id/button2")).click();
         assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
         //verify the measurements are not changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + MEASUREMENTS_TABLE);
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
         resultSet.next();
         assertGoal(resultSet, 1, 1, 2, 5);
         resultSet.next();
@@ -133,7 +120,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("android:id/button1")).click();
         assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
         //verify the measurements are not changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + MEASUREMENTS_TABLE);
+        ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
         resultSet.next();
         assertGoal(resultSet, 2, 2, 1, 1);
         assertEquals(false, resultSet.next(), "Expected to find '1' goal", "There are more goals present");

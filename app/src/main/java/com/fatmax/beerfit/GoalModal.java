@@ -108,7 +108,7 @@ public class GoalModal {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.delete_goal);
         builder.setIcon(android.R.drawable.ic_dialog_alert);
-        builder.setMessage(context.getString(R.string.confirm_measurement_delete, goal.getString()));
+        builder.setMessage(context.getString(R.string.confirm_goal_delete, goal.getString()));
         builder.setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
             goal.delete();
             GoalsActivity.populateGoals(context, sqLiteDatabase);
