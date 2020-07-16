@@ -13,16 +13,12 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import static com.fatmax.beerfit.utilities.Activity.DATE_FORMAT;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.CREATE_TABLE_IF_NOT_EXISTS;
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;

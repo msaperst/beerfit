@@ -248,7 +248,7 @@ public class MeasurementInstrumentedTest {
         Database database = new Database(db);
         database.setupDatabase();
         db.execSQL("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,'2020-10-10 10:23',1,2,5,0);");
-        Measurement measurement = new Measurement(db, "second");
+        Measurement measurement = new Measurement(db, "kilometer");
         measurement.delete();
         Cursor res = db.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE, null);
         assertEquals(7, res.getCount());
