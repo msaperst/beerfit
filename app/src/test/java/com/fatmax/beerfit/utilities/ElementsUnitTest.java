@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import java.util.List;
 import java.util.Map;
 
-import static com.fatmax.beerfit.ViewMetricsActivity.TIME_AS_DATE_FROM;
+import static com.fatmax.beerfit.MetricsActivity.TIME_AS_DATE_FROM;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;

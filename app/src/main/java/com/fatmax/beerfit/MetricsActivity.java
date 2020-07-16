@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ViewMetricsActivity extends AppCompatActivity {
+public class MetricsActivity extends AppCompatActivity {
     public static final String TIME_AS_DATE_FROM = "',time) AS date FROM ";
 
     //TODO
@@ -44,7 +44,7 @@ public class ViewMetricsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_metrics);
+        setContentView(R.layout.activity_metrics);
 
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);

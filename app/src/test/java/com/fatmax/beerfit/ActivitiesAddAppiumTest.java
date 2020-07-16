@@ -195,7 +195,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("submitActivity")).click();
         //verify the data is in there
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
         resultSet.next();
         assertActivity(resultSet, 1, dateTime, 1, 2, 10, 0);
     }
@@ -231,7 +231,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("submitActivity")).click();
         //verify the data is in there
         String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(calendar.getTime()) + " 01:30";
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
         resultSet.next();
         assertActivity(resultSet, 1, dateTime, 1, 2, 10, 2);
     }
@@ -267,7 +267,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("submitActivity")).click();
         //verify the data is in there
         String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(calendar.getTime()) + " 13:30";
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
         resultSet.next();
         assertActivity(resultSet, 1, dateTime, 1, 2, 10, 10);
     }
@@ -286,7 +286,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
         driver.findElement(By.id("submitActivity")).click();
         //verify the data is in there
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
         resultSet.next();
         assertActivity(resultSet, 1, dateTime, 1, 5, 10, 16.093439798947873);
     }
@@ -305,7 +305,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
         driver.findElement(By.id("submitActivity")).click();
         //verify the data is in there
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + ";");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
         resultSet.next();
         assertActivity(resultSet, 1, dateTime, 1, 2, 10, 6.213712);
     }

@@ -103,7 +103,7 @@ public class Exercise {
 
     private boolean isUnique(String query, Object object) {
         boolean isUnique = true;
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE " + query + " = '" + object + "' AND id != " + id + ";", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE " + query + " = '" + object + "' AND id != " + id, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 isUnique = false;
@@ -117,20 +117,20 @@ public class Exercise {
         if (id == -1) { // create a new one
             sqLiteDatabase.execSQL(INSERT_INTO + EXERCISES_TABLE + " VALUES(null,'" + past + "','" + current + "'," + color + ");");
         } else {
-            sqLiteDatabase.execSQL("UPDATE " + EXERCISES_TABLE + " SET past = '" + past + "', current = '" + current + "', color = '" + color + "' WHERE id = " + id + ";");
+            sqLiteDatabase.execSQL("UPDATE " + EXERCISES_TABLE + " SET past = '" + past + "', current = '" + current + "', color = '" + color + "' WHERE id = " + id);
         }
     }
 
     public boolean safeToDelete() {
         boolean isSafe = true;
-        Cursor goalsCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = " + id + ";", null);
+        Cursor goalsCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = " + id, null);
         if (goalsCheck != null) {
             if (goalsCheck.getCount() > 0) {
                 isSafe = false;
             }
             goalsCheck.close();
         }
-        Cursor activitiesCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = " + id + ";", null);
+        Cursor activitiesCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = " + id, null);
         if (activitiesCheck != null) {
             if (activitiesCheck.getCount() > 0) {
                 isSafe = false;
@@ -144,6 +144,6 @@ public class Exercise {
         if (!safeToDelete()) {
             return;
         }
-        sqLiteDatabase.execSQL("DELETE FROM " + EXERCISES_TABLE + WHERE_ID + id + "';");
+        sqLiteDatabase.execSQL("DELETE FROM " + EXERCISES_TABLE + WHERE_ID + id);
     }
 }

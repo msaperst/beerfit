@@ -137,7 +137,7 @@ public class ExerciseUnitTest {
 
     @Test
     public void newExerciseCurrentBadUnique() {
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Wulk' AND id != -1;", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Wulk' AND id != -1", null)).thenReturn(null);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase);
         exercise.setCurrent("Wulk");
@@ -147,7 +147,7 @@ public class ExerciseUnitTest {
     @Test
     public void newExerciseCurrentUnique() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Wulk' AND id != -1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Wulk' AND id != -1", null)).thenReturn(mockedCursor);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase);
         exercise.setCurrent("Wulk");
@@ -157,7 +157,7 @@ public class ExerciseUnitTest {
     @Test
     public void newExerciseCurrentNotUnique() {
         when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' AND id != -1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' AND id != -1", null)).thenReturn(mockedCursor);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase);
         exercise.setCurrent("Walk");
@@ -179,7 +179,7 @@ public class ExerciseUnitTest {
 
     @Test
     public void newExercisePastBadUnique() {
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE past = 'Wulked' AND id != -1;", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE past = 'Wulked' AND id != -1", null)).thenReturn(null);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase);
         exercise.setPast("Wulked");
@@ -189,7 +189,7 @@ public class ExerciseUnitTest {
     @Test
     public void newExercisePastUnique() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE past = 'Wulked' AND id != -1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE past = 'Wulked' AND id != -1", null)).thenReturn(mockedCursor);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase);
         exercise.setPast("Wulked");
@@ -199,7 +199,7 @@ public class ExerciseUnitTest {
     @Test
     public void newExercisePastNotUnique() {
         when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE past = 'Walked' AND id != -1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE past = 'Walked' AND id != -1", null)).thenReturn(mockedCursor);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase);
         exercise.setPast("Walked");
@@ -214,7 +214,7 @@ public class ExerciseUnitTest {
         when(mockedCursor.getString(2)).thenReturn("Walk");
         when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE color = '" + Color.GREEN + "' AND id != 1;", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE color = '" + Color.GREEN + "' AND id != 1", null)).thenReturn(null);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
         assertTrue(exercise.isColorUnique());
@@ -228,7 +228,7 @@ public class ExerciseUnitTest {
         when(mockedCursor.getString(2)).thenReturn("Walk");
         when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE color = '" + Color.GREEN + "' AND id != 1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE color = '" + Color.GREEN + "' AND id != 1", null)).thenReturn(mockedCursor);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
         assertTrue(exercise.isColorUnique());
@@ -237,7 +237,7 @@ public class ExerciseUnitTest {
     @Test
     public void newColorUnique() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE color = '1234' AND id != -1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE color = '1234' AND id != -1", null)).thenReturn(mockedCursor);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase);
         exercise.setColor(1234);
@@ -247,7 +247,7 @@ public class ExerciseUnitTest {
     @Test
     public void newColorNotUnique() {
         when(mockedCursor.getCount()).thenReturn(1);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE color = '" + Color.GREEN + "' AND id != -1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE color = '" + Color.GREEN + "' AND id != -1", null)).thenReturn(mockedCursor);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase);
         exercise.setColor(Color.GREEN);
@@ -256,8 +256,8 @@ public class ExerciseUnitTest {
 
     @Test
     public void safeToDeleteNull() {
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = 0;", null)).thenReturn(null);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = 0;", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = 0", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = 0", null)).thenReturn(null);
 
         Exercise exercise = new Exercise(mockedSQLiteDatabase);
         assertTrue(exercise.safeToDelete());
@@ -271,8 +271,8 @@ public class ExerciseUnitTest {
         when(mockedCursor.getString(2)).thenReturn("Walk");
         when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = 1;", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = 1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = 1", null)).thenReturn(mockedCursor);
         Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
         assertTrue(exercise.safeToDelete());
     }
@@ -285,8 +285,8 @@ public class ExerciseUnitTest {
         when(mockedCursor.getString(2)).thenReturn("Walk");
         when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = 1;", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = 1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE exercise = 1", null)).thenReturn(mockedCursor);
         Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
         assertFalse(exercise.safeToDelete());
     }
@@ -299,7 +299,7 @@ public class ExerciseUnitTest {
         when(mockedCursor.getString(2)).thenReturn("Walk");
         when(mockedCursor.getInt(3)).thenReturn(Color.GREEN);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = 1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE exercise = 1", null)).thenReturn(mockedCursor);
         Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
         assertFalse(exercise.safeToDelete());
     }

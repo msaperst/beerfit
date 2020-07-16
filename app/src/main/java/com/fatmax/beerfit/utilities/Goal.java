@@ -4,6 +4,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
+import static com.fatmax.beerfit.utilities.Database.INSERT_INTO;
+import static com.fatmax.beerfit.utilities.Database.WHERE_ID;
 
 public class Goal {
 
@@ -28,6 +30,10 @@ public class Goal {
         }
     }
 
+    public Goal(SQLiteDatabase sqLiteDatabase) {
+        this.sqLiteDatabase = sqLiteDatabase;
+    }
+
     public int getId() {
         return id;
     }
@@ -36,11 +42,39 @@ public class Goal {
         return exercise;
     }
 
+    public void setExercise(Exercise exercise) {
+        this.exercise = exercise;
+    }
+
     public Measurement getMeasurement() {
         return measurement;
     }
 
+    public void setMeasurement(Measurement measurement) {
+        this.measurement = measurement;
+    }
+
     public double getAmount() {
         return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public String getString() {
+        return exercise.getCurrent() + " for " + amount + " " + Elements.getProperStringPluralization(measurement.getUnit(), amount);
+    }
+
+    public void save() {
+        if (id == -1) { // create a new one
+            sqLiteDatabase.execSQL(INSERT_INTO + GOALS_TABLE + " VALUES(null," + exercise.getId() + "," + measurement.getId() + "," + amount + ");");
+        } else {
+            sqLiteDatabase.execSQL("UPDATE " + GOALS_TABLE + " SET exercise = " + exercise.getId() + ", measurement = " + measurement.getId() + ", amount = " + amount + " WHERE id = " + id);
+        }
+    }
+
+    public void delete() {
+        sqLiteDatabase.execSQL("DELETE FROM " + GOALS_TABLE + WHERE_ID + id);
     }
 }

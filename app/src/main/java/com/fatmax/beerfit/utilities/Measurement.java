@@ -78,7 +78,7 @@ public class Measurement {
 
     boolean isUnique() {
         boolean isUnique = true;
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = '" + unit + "' AND id != " + id + ";", null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = '" + unit + "' AND id != " + id, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 isUnique = false;
@@ -96,20 +96,20 @@ public class Measurement {
         if (id == -1) { // create a new one
             sqLiteDatabase.execSQL(INSERT_INTO + MEASUREMENTS_TABLE + " VALUES(null, null,'" + unit + "', -1);");
         } else if (safeToEdit()) {
-            sqLiteDatabase.execSQL("UPDATE " + MEASUREMENTS_TABLE + " SET unit = '" + unit + "' WHERE id = " + id + ";");
+            sqLiteDatabase.execSQL("UPDATE " + MEASUREMENTS_TABLE + " SET unit = '" + unit + "' WHERE id = " + id);
         }
     }
 
     public boolean safeToDelete() {
         boolean isSafe = true;
-        Cursor goalsCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE measurement = " + id + ";", null);
+        Cursor goalsCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE measurement = " + id, null);
         if (goalsCheck != null) {
             if (goalsCheck.getCount() > 0) {
                 isSafe = false;
             }
             goalsCheck.close();
         }
-        Cursor activitiesCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE measurement = " + id + ";", null);
+        Cursor activitiesCheck = sqLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE measurement = " + id, null);
         if (activitiesCheck != null) {
             if (activitiesCheck.getCount() > 0) {
                 isSafe = false;
@@ -123,6 +123,6 @@ public class Measurement {
         if (!safeToDelete()) {
             return;
         }
-        sqLiteDatabase.execSQL("DELETE FROM " + MEASUREMENTS_TABLE + WHERE_ID + id + "';");
+        sqLiteDatabase.execSQL("DELETE FROM " + MEASUREMENTS_TABLE + WHERE_ID + id);
     }
 }

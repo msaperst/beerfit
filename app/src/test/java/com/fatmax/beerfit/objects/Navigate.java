@@ -32,6 +32,27 @@ public class Navigate {
         getMainMenu().get(1).click();
     }
 
+    public void toNewGoal() {
+        toGoals();
+        driver.findElement(By.AccessibilityId("More options")).click();
+        List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
+        menuOptions.get(0).click();
+    }
+
+    public void toEditExercise() {
+        toGoals();
+        driver.findElement(By.AccessibilityId("More options")).click();
+        List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
+        menuOptions.get(1).click();
+    }
+
+    public void toEditMeasurement() {
+        toGoals();
+        driver.findElement(By.AccessibilityId("More options")).click();
+        List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
+        menuOptions.get(2).click();
+    }
+
     public void toMetrics() {
         getMainMenu().get(2).click();
     }

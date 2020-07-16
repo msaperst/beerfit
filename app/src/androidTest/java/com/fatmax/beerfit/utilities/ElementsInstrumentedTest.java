@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 
+import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.getDB;
 import static com.fatmax.beerfit.utilities.DatabaseInstrumentedTest.wipeOutDB;
 import static org.junit.Assert.assertEquals;
@@ -67,8 +68,8 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.addGoal("Run", "kilometer", 5);
-        database.addGoal("Walk", "minute", 30);
+        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(1,2,2,5);");
+        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(2,1,1,30);");
         List<Goal> goals = Elements.getAllGoals(db);
         assertEquals(2, goals.size());
         assertEquals(1, goals.get(0).getId());
@@ -265,8 +266,8 @@ public class ElementsInstrumentedTest {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
         database.setupDatabase();
-        database.addGoal("Run", "kilometer", 5);
-        database.addGoal("Walk", "kilometer", 1);
+        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(1,2,2,5);");
+        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(2,1,2,1);");
         database.logActivity("2020-08-09 10:23", "Walked", "kilometer", 5.0);
         database.logActivity("2020-10-09 10:23", "Walked", "kilometer", 5.0);
         database.logBeer("3", "'2020-10-10 10:23'", 1);

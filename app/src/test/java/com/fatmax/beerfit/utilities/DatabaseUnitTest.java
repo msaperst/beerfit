@@ -316,7 +316,7 @@ public class DatabaseUnitTest {
     @Test
     public void getActivityTimeNoMatchTest() {
         when(mockedCursor.getCount()).thenReturn(0);
-        when(mockedSQLiteDatabase.rawQuery("SELECT time FROM " + ACTIVITIES_TABLE + " WHERE id = '1';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT time FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals("Unknown", database.getActivityTime(1));
@@ -326,7 +326,7 @@ public class DatabaseUnitTest {
     public void getActivityTimeMatchTest() {
         when(mockedCursor.getCount()).thenReturn(1);
         when(mockedCursor.getString(0)).thenReturn("2020-03-02 00:00");
-        when(mockedSQLiteDatabase.rawQuery("SELECT time FROM " + ACTIVITIES_TABLE + " WHERE id = '1';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT time FROM " + ACTIVITIES_TABLE + " WHERE id = 1", null)).thenReturn(mockedCursor);
 
         Database database = new Database(mockedSQLiteDatabase);
         assertEquals("2020-03-02 00:00", database.getActivityTime(1));

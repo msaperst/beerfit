@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ViewGoalsActivity">
+    tools:context=".GoalsActivity">
 
     <TextView
         android:id="@+id/viewGoalsSubtitle"
@@ -22,30 +22,12 @@
         android:id="@+id/goalsTable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="25dp"
         android:stretchColumns="0"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewGoalsSubtitle">
+        app:layout_constraintTop_toBottomOf="@+id/viewGoalsSubtitle" />
 
-        <TableRow
-            android:id="@+id/viewGoalsHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDark">
-        </TableRow>
-    </TableLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addGoalButton"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_margin="30dp"
-        android:clickable="true"
-        android:onClick="addGoal"
-        android:backgroundTint="@color/colorPrimaryDark"
-        app:srcCompat="@android:drawable/ic_menu_add"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

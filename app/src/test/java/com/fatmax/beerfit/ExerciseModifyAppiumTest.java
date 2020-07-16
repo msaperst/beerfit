@@ -21,9 +21,7 @@ public class ExerciseModifyAppiumTest extends AppiumTestBase {
 
     @Before
     public void navigateToGoals() {
-        new Navigate(driver).toGoals();
-        driver.findElement(By.AccessibilityId("More options")).click();
-        driver.findElements(By.className("android.widget.TextView")).get(0).click();
+        new Navigate(driver).toEditExercise();
     }
 
     @Test

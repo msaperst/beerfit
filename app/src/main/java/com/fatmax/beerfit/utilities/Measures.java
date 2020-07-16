@@ -79,7 +79,7 @@ public class Measures {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         LayoutInflater inflater = LayoutInflater.from(context);
-        LinearLayout editExerciseModal = (LinearLayout) inflater.inflate(R.layout.modal_edit_exercise, null);
+        LinearLayout editExerciseModal = (LinearLayout) inflater.inflate(R.layout.modal_exercise, null);
         exerciseColorView = editExerciseModal.findViewById(R.id.editExerciseColor);
         ((EditText) editExerciseModal.findViewById(R.id.editExerciseName)).setText(exercise.getCurrent());
         ((EditText) editExerciseModal.findViewById(R.id.editExercisePastName)).setText(exercise.getPast());
@@ -191,7 +191,7 @@ public class Measures {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         LayoutInflater inflater = LayoutInflater.from(context);
-        LinearLayout editMeasurementModal = (LinearLayout) inflater.inflate(R.layout.modal_edit_measurement, null);
+        LinearLayout editMeasurementModal = (LinearLayout) inflater.inflate(R.layout.modal_measurement, null);
         ((EditText) editMeasurementModal.findViewById(R.id.editMeasurementName)).setText(measurement.getUnit());
         builder.setView(editMeasurementModal);
         builder.setPositiveButton(R.string.save, null);

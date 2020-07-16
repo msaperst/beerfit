@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-public class ViewActivitiesActivity extends AppCompatActivity {
+public class ActivitiesActivity extends AppCompatActivity {
 
     final SimpleDateFormat datetimeFormat = new SimpleDateFormat("EEE, MMM d yyyy, kk:mm", Locale.US);
     SQLiteDatabase sqLiteDatabase;
@@ -33,7 +33,7 @@ public class ViewActivitiesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_activities);
+        setContentView(R.layout.activity_activities);
 
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
@@ -48,7 +48,7 @@ public class ViewActivitiesActivity extends AppCompatActivity {
             TextView timeView = tableBuilder.createTextView(datetimeFormat.format(activity.getDateTime()));
             // setup our activity cell
             TextView activityView;
-            if (activity.getExercise().getId() == -1 && activity.getMeasurement().getId() == -1) {    // if it's beer
+            if (activity.getExercise().getId() == 0 && activity.getMeasurement().getId() == 0) {    // if it's beer
                 activityView = tableBuilder.createTextView("Drank " + (int) activity.getAmount() + " beer");
                 if (activity.getAmount() != 1) {
                     activityView.setText(getString(R.string.plural, activityView.getText()));
