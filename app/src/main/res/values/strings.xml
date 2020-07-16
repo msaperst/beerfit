@@ -28,7 +28,7 @@
     <string name="update_time">Update Time</string>
     <string name="enter_amount">Enter Amount</string>
     <string name="drank_beer">Drank Beer</string>
-    <string name="beers">beers</string>
+    <string name="beer">beer</string>
     <string name="indicate_exercise">You need to indicate some exercise</string>
     <string name="indicate_duration">You need to indicate some duration</string>
     <string name="export_data">Export Data</string>

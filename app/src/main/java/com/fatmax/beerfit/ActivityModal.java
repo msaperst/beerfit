@@ -6,8 +6,10 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -59,6 +61,9 @@ public class ActivityModal {
             builder.setPositiveButton(R.string.delete, (dialog, id) -> delete(activity));
             builder.setNegativeButton(R.string.update, null);
             calendar.setTime(activity.getDateTime());
+            if( activity.isDrankBeer() ) {
+                setAsBeer(activityView);
+            }
         } else {
             builder.setTitle(R.string.add_an_activity);
             builder.setPositiveButton(R.string.add_new, null);
@@ -104,6 +109,34 @@ public class ActivityModal {
             ((TextView) view).setText(TIME_FORMAT.format(calendar.getTime()));
         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
         timePickerDialog.show();
+    }
+
+    private void setAsBeer(View activityView) {
+        // setup the beer exercise
+        Spinner exerciseSpinner = activityView.findViewById(R.id.activityExercise);
+        ViewGroup.LayoutParams exerciseLayoutParams = exerciseSpinner.getLayoutParams();
+        TextView exerciseView = new TextView(context);
+        exerciseView.setId(exerciseSpinner.getId());
+        exerciseView.setText(R.string.drank_beer);
+        exerciseView.setTextAlignment(exerciseView.TEXT_ALIGNMENT_CENTER);
+        exerciseView.setLayoutParams(exerciseLayoutParams);
+        exerciseView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+        exerciseView.setTextColor(Color.BLACK);
+        ViewGroup rootLayout = (ViewGroup) exerciseSpinner.getParent();
+        rootLayout.removeView(exerciseSpinner);
+        rootLayout.addView(exerciseView);
+
+        // setup the units
+        Spinner measurementSpinner = activityView.findViewById(R.id.activityMeasurement);
+        ViewGroup.LayoutParams measurementLayoutParams = measurementSpinner.getLayoutParams();
+        TextView measurement = new TextView(context);
+        measurement.setId(measurementSpinner.getId());
+        measurement.setText(R.string.beer);
+        measurement.setLayoutParams(measurementLayoutParams);
+        measurement.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+        measurement.setTextColor(Color.BLACK);
+        rootLayout.removeView(measurementSpinner);
+        rootLayout.addView(measurement);
     }
 
     private void save(View activityView, Activity activity) {

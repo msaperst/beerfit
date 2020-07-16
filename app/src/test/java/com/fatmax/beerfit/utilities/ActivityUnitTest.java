@@ -16,7 +16,9 @@ import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -122,6 +124,68 @@ public class ActivityUnitTest {
         assertNull(activity.getMeasurement());
         assertEquals(0, activity.getAmount(), 0.0001);
         assertEquals(0, activity.getBeers(), 0.0001);
+    }
+
+    @Test
+    public void isBeerDrankBeers() {
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, 0);
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, 0);
+        Activity activity = new Activity(mockedSQLiteDatabase);
+        activity.setMeasurement(measurement);
+        activity.setExercise(exercise);
+        assertTrue(activity.isDrankBeer());
+    }
+
+    @Test
+    public void isBeerDrankExerciseMeasurement() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance", "Walked");
+        when(mockedCursor.getString(2)).thenReturn("kilometer", "Walk");
+        when(mockedCursor.isAfterLast()).thenReturn(false, true, false, true);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
+        Activity activity = new Activity(mockedSQLiteDatabase);
+        activity.setMeasurement(measurement);
+        activity.setExercise(exercise);
+        assertFalse(activity.isDrankBeer());
+    }
+
+    @Test
+    public void isBeerDrankMeasurement() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance");
+        when(mockedCursor.getString(2)).thenReturn("kilometer");
+        when(mockedCursor.isAfterLast()).thenReturn(false, true);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, 0);
+        Activity activity = new Activity(mockedSQLiteDatabase);
+        activity.setMeasurement(measurement);
+        activity.setExercise(exercise);
+        assertFalse(activity.isDrankBeer());
+    }
+
+    @Test
+    public void isBeerDrankExercise() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("Walked");
+        when(mockedCursor.getString(2)).thenReturn("Walk");
+        when(mockedCursor.isAfterLast()).thenReturn(false, true);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, 0);
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
+        Activity activity = new Activity(mockedSQLiteDatabase);
+        activity.setMeasurement(measurement);
+        activity.setExercise(exercise);
+        assertFalse(activity.isDrankBeer());
     }
 
     @Test

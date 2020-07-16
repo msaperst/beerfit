@@ -60,8 +60,6 @@ public class ActivitiesSeededAppiumTest extends AppiumTestBase {
         List<WebElement> tableRows = driver.findElement(By.id("activityBodyTable")).findElements(By.className("android.widget.TableRow"));
         assertElementTextEquals("Sat, Feb 15 2020, 23:59", getTime(tableRows, 0));
         assertElementTextEquals(RAN_FOR_5_KILOMETERS, getActivity(tableRows, 0));
-        assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Edit Activity")));
-        assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Delete Activity")));
     }
 
     @Test

@@ -121,9 +121,13 @@ public class Activity {
         this.beers = beers;
     }
 
+    public boolean isDrankBeer() {
+        return exercise.getId() == 0 && measurement.getId() == 0;
+    }
+
     public String getString() {
         String conjunction = " ";
-        if( exercise.getId() != 0 ) {
+        if( !isDrankBeer() ) {
             conjunction = " for ";
         }
         return exercise.getPast() + conjunction + amount + " " + Elements.getProperStringPluralization(measurement.getUnit(), amount);
