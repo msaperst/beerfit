@@ -76,7 +76,7 @@ public class GoalModal {
 
         goal.setExercise(new Exercise(sqLiteDatabase, exercise.getSelectedItem().toString()));
         goal.setMeasurement(new Measurement(sqLiteDatabase, unit.getSelectedItem().toString()));
-        if( !"".equals(duration.getText().toString())) {
+        if (!"".equals(duration.getText().toString())) {
             goal.setAmount(Double.parseDouble(duration.getText().toString()));
         }
 

@@ -197,7 +197,7 @@ public class GoalsSeededAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void viewGoalEmptyUpdate() throws SQLException, IOException, ClassNotFoundException {
+    public void viewGoalEmptyUpdate() {
         List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
         tableRows.get(0).click();
         driver.findElement(By.id("goalSelection")).click();

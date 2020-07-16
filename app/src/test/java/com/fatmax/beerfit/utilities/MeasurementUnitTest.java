@@ -173,8 +173,8 @@ public class MeasurementUnitTest {
 
     @Test
     public void safeToDeleteNull() {
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE measurement = 0;", null)).thenReturn(null);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE measurement = 0;", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE measurement = 0", null)).thenReturn(null);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE measurement = 0", null)).thenReturn(null);
 
         Measurement measurement = new Measurement(mockedSQLiteDatabase);
         assertTrue(measurement.safeToDelete());
@@ -188,8 +188,8 @@ public class MeasurementUnitTest {
         when(mockedCursor.getString(2)).thenReturn("kilometer");
         when(mockedCursor.getDouble(3)).thenReturn(1.0);
         when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE measurement = 1;", null)).thenReturn(mockedCursor);
-        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE measurement = 1;", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + GOALS_TABLE + " WHERE measurement = 1", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE measurement = 1", null)).thenReturn(mockedCursor);
         Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
         assertTrue(measurement.safeToDelete());
     }
