@@ -340,7 +340,7 @@ public class ActivityUnitTest {
         Date now = new Date();
         activity.setDateTime(now);
         now.setTime(1234567890);
-        assertEquals("01:56", activity.getTime());
+        assertTrue(activity.getTime().endsWith(":56")); //ignoring hour due to timezone issues
     }
 
     @Test
@@ -355,6 +355,8 @@ public class ActivityUnitTest {
         Date now = new Date();
         activity.setDateTime(now);
         now.setTime(1234567890);
-        assertEquals("Thu, Jan 15 1970, 01:56", activity.getStringDateTime());
+        //ignoring hour due to timezone issues
+        assertTrue(activity.getStringDateTime().startsWith("Thu, Jan 15 1970, "));
+        assertTrue(activity.getStringDateTime().endsWith(":56"));
     }
 }
