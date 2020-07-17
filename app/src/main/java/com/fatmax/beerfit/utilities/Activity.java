@@ -18,6 +18,8 @@ public class Activity {
     public static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm", Locale.US);
+    public static final SimpleDateFormat FULL_DATE_TIME_FORMAT = new SimpleDateFormat("EEE, MMM d yyyy, kk:mm", Locale.US);
+
 
     private final SQLiteDatabase sqLiteDatabase;
     private int id = -1;
@@ -89,6 +91,14 @@ public class Activity {
         }
     }
 
+    public String getStringDateTime() {
+        if (time == null) {
+            return null;
+        } else {
+            return FULL_DATE_TIME_FORMAT.format(time);
+        }
+    }
+
     public Exercise getExercise() {
         return exercise;
     }
@@ -134,6 +144,10 @@ public class Activity {
     }
 
     public void calculateBeers() {
+        if( isDrankBeer() ) {
+            beers = amount * -1;
+            return;
+        }
         Goal goal = new Database(sqLiteDatabase).getMatchingGoals(exercise, measurement);
         if (goal == null) {
             beers = 0;

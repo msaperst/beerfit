@@ -142,7 +142,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
 
     @Test
     public void verifyAddedBeerActivitiesExportTest() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String date = format.format(new Date());
         driver.findElement(By.id("drankABeer")).click();
         new Navigate(driver).export();

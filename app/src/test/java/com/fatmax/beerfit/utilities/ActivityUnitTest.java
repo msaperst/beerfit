@@ -249,16 +249,36 @@ public class ActivityUnitTest {
     }
 
     @Test
-    public void getBeersEarnedNullTest() {
+    public void getBeersEarnedOverrideBeersTest() {
         Activity activity = new Activity(mockedSQLiteDatabase, 0);
-        assertEquals(-1, activity.getBeers(), 0);
+        activity.setBeers(10.0);
         activity.calculateBeers();
-        assertEquals(0, activity.getBeers(), 0);
+        assertEquals(-1, activity.getBeers(), 0);
     }
 
     @Test
-    public void getBeersEarnedOverrideBeersTest() {
+    public void getBeersEarnedReverseAmountTest() {
         Activity activity = new Activity(mockedSQLiteDatabase, 0);
+        activity.setAmount(10.0);
+        activity.calculateBeers();
+        assertEquals(-10, activity.getBeers(), 0);
+    }
+
+    @Test
+    public void getBeersEarnedNullGoalTest() {
+        when(mockedCursor.getCount()).thenReturn(1);
+        when(mockedCursor.getInt(0)).thenReturn(1);
+        when(mockedCursor.getString(1)).thenReturn("distance", "Walked");
+        when(mockedCursor.getString(2)).thenReturn("kilometer", "Walk");
+        when(mockedCursor.isAfterLast()).thenReturn(false, true, false, true);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = 'kilometer';", null)).thenReturn(mockedCursor);
+        when(mockedSQLiteDatabase.rawQuery("SELECT * FROM " + EXERCISES_TABLE + " WHERE current = 'Walk' OR past = 'Walk';", null)).thenReturn(mockedCursor);
+
+        Measurement measurement = new Measurement(mockedSQLiteDatabase, "kilometer");
+        Exercise exercise = new Exercise(mockedSQLiteDatabase, "Walk");
+        Activity activity = new Activity(mockedSQLiteDatabase);
+        activity.setMeasurement(measurement);
+        activity.setExercise(exercise);
         activity.setBeers(10.0);
         activity.calculateBeers();
         assertEquals(0, activity.getBeers(), 0);
@@ -321,5 +341,20 @@ public class ActivityUnitTest {
         activity.setDateTime(now);
         now.setTime(1234567890);
         assertEquals("01:56", activity.getTime());
+    }
+
+    @Test
+    public void getStringDateTimeNullTest() {
+        Activity activity = new Activity(mockedSQLiteDatabase);
+        assertNull(activity.getStringDateTime());
+    }
+
+    @Test
+    public void getStringDateTimeTest() {
+        Activity activity = new Activity(mockedSQLiteDatabase);
+        Date now = new Date();
+        activity.setDateTime(now);
+        now.setTime(1234567890);
+        assertEquals("Thu, Jan 15 1970, 01:56", activity.getStringDateTime());
     }
 }

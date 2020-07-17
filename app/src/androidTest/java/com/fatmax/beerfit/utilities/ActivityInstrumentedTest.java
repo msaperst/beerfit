@@ -36,6 +36,7 @@ public class ActivityInstrumentedTest {
         assertEquals(DATE_TIME_FORMAT.parse("2020-10-10 10:23"), activity.getDateTime());
         assertEquals("2020-10-10", activity.getDate());
         assertEquals("10:23", activity.getTime());
+        assertEquals("Sat, Oct 10 2020, 10:23", activity.getStringDateTime());
         assertEquals(new Exercise(db, 1).getId(), activity.getExercise().getId());
         assertEquals(new Measurement(db, 2).getId(), activity.getMeasurement().getId());
         assertEquals(5, activity.getAmount(), 0.0001);
@@ -54,6 +55,7 @@ public class ActivityInstrumentedTest {
         assertEquals(DATE_TIME_FORMAT.parse("2020-10-10 10:23"), activity.getDateTime());
         assertEquals("2020-10-10", activity.getDate());
         assertEquals("10:23", activity.getTime());
+        assertEquals("Sat, Oct 10 2020, 10:23", activity.getStringDateTime());
         assertEquals(new Exercise(db, 1).getId(), activity.getExercise().getId());
         assertEquals(new Measurement(db, 2).getId(), activity.getMeasurement().getId());
         assertEquals(5, activity.getAmount(), 0.0001);
@@ -70,6 +72,7 @@ public class ActivityInstrumentedTest {
         assertNull(activity.getDateTime());
         assertNull(activity.getDate());
         assertNull(activity.getTime());
+        assertNull(activity.getStringDateTime());
         assertNull(activity.getExercise());
         assertNull(activity.getMeasurement());
         assertEquals(0, activity.getAmount(), 0.0001);

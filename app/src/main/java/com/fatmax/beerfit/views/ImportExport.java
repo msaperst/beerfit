@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
+import com.fatmax.beerfit.MainActivity;
 import com.fatmax.beerfit.utilities.CSVReader;
 import com.fatmax.beerfit.utilities.CSVWriter;
 import com.fatmax.beerfit.utilities.Database;
@@ -127,6 +128,7 @@ public class ImportExport {
         } catch (IOException e) {
             Log.e("bad import", e.getMessage());
         }
+        MainActivity.setBeersRemaining(context,sqLiteDatabase);
     }
 
     //TODO - verify data from imports

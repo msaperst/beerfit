@@ -1,6 +1,5 @@
 package com.fatmax.beerfit;
 
-import com.fatmax.beerfit.objects.Navigate;
 import com.testpros.fast.By;
 import com.testpros.fast.WebElement;
 
@@ -29,41 +28,40 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
 
     @Test
     public void addActivityTitleExists() {
-        assertElementTextEquals("Add An Activity", By.className("android.widget.TextView"));
+        assertElementTextEquals("Add An Activity", By.id("android:id/alertTitle"));
     }
 
     @Test
-    public void activityHeaderExists() {
-        assertElementTextEquals("Select Exercise", By.id("activityExerciseHeader"));
+    public void addActivityViewContentExists() {
+        Calendar calendar = Calendar.getInstance();
+        assertElementTextEquals("On", driver.findElement(By.id("on")));
+        assertElementTextEquals(DATE_FORMAT.format(calendar.getTime()), By.id("activityDate"));
+        assertElementTextEquals("at", driver.findElement(By.id("at")));
+        assertElementTextEquals(TIME_FORMAT.format(calendar.getTime()), By.id("activityTime"));
+        assertElementTextEquals("", driver.findElement(By.id("activityExercise")));
+        assertElementTextEquals("for", driver.findElement(By.id("_for_")));
+        assertElementTextEquals("", By.id("activityAmount"));
+        assertElementTextEquals("", driver.findElement(By.id("activityMeasurement")));
     }
 
     @Test
-    public void timeHeaderExists() {
-        assertElementTextEquals("Select Time", By.id("activityDateTimeHeader"));
+    public void checkAddActivityButtons() {
+        List<WebElement> editBeerButtons = driver.findElements(By.className("android.widget.Button"));
+        assertEquals(editBeerButtons.size(), 1, "Expected to find '1' add activity button", "Actually found '" + editBeerButtons.size() + "'");
     }
 
     @Test
-    public void activityDurationHeaderExists() {
-        assertElementTextEquals("Enter Duration", By.id("activityDurationHeader"));
-    }
-
-    @Test
-    public void addActivityButton() {
-        assertElementTextEquals("ADD ACTIVITY", By.id("submitActivity"));
-    }
-
-    @Test
-    public void backGoesToMain() {
-        new Navigate(driver).goBack();
-        assertElementTextEquals("BeerFit", By.className("android.widget.TextView"));
+    public void checkAddActivityUpdateButton() {
+        assertElementTextEquals("ADD NEW", By.id("android:id/button1"));
+        assertElementEnabled(By.id("android:id/button1"));
     }
 
     @Test
     public void addEmptyActivity() {
-        driver.findElement(By.id("submitActivity")).click();
+        driver.findElement(By.id("android:id/button1")).click();
         assertElementTextEquals("You need to indicate some exercise", driver.findElement(By.id("activityExercise")).findElement(By.className("android.widget.TextView")));
-        assertElementTextEquals("", By.id("activityDurationInput"));
-        assertElementTextEquals("", driver.findElement(By.id("activityDurationUnits")).findElement(By.className("android.widget.TextView")));
+        assertElementTextEquals("", By.id("activityAmount"));
+        assertElementTextEquals("", driver.findElement(By.id("activityMeasurement")).findElement(By.className("android.widget.TextView")));
     }
 
     @Test
@@ -77,12 +75,6 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         assertElementTextEquals("Cycled", activityList.get(3));
         assertElementTextEquals("Lifted", activityList.get(4));
         assertElementTextEquals("Played Soccer", activityList.get(5));
-    }
-
-    @Test
-    public void currentDateDisplayed() {
-        Calendar calendar = Calendar.getInstance();
-        assertElementTextEquals(DATE_FORMAT.format(calendar.getTime()), By.id("activityDate"));
     }
 
     @Test
@@ -106,12 +98,6 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.AccessibilityId(new SimpleDateFormat("dd MMMM yyyy", Locale.US).format(calendar.getTime()))).click();
         driver.findElement(By.id("android:id/button1")).click();
         assertElementTextEquals(DATE_FORMAT.format(calendar.getTime()), By.id("activityDate"));
-    }
-
-    @Test
-    public void currentTimeDisplayed() {
-        Calendar calendar = Calendar.getInstance();
-        assertElementTextEquals(TIME_FORMAT.format(calendar.getTime()), By.id("activityTime"));
     }
 
     @Test
@@ -154,7 +140,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
 
     @Test
     public void allActivityDurationsExist() {
-        driver.findElement(By.id("activityDurationUnits")).click();
+        driver.findElement(By.id("activityMeasurement")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         assertEquals(durationList.size(), 8, "Expected to find '8' durations", "Actually found '" + durationList.size() + "' durations");
         assertElementTextEquals("", durationList.get(0));
@@ -169,30 +155,16 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
     }
 
     @Test
-    public void addingActivityGoesToMainPage() {
-        driver.findElement(By.id("activityExercise")).click();
-        List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
-        activityList.get(1).click();
-        driver.findElement(By.id("activityDurationInput")).sendKeys("10");
-        driver.findElement(By.id("activityDurationUnits")).click();
-        List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
-        durationList.get(2).click();
-        driver.findElement(By.id("submitActivity")).click();
-        // verify we're back on main page
-        assertElementTextEquals("BeerFit", By.className("android.widget.TextView"));
-    }
-
-    @Test
     public void defaultActivitySubmissionPossible() throws IOException, ClassNotFoundException, SQLException {
         driver.findElement(By.id("activityExercise")).click();
         Calendar calendar = Calendar.getInstance();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(1).click();
-        driver.findElement(By.id("activityDurationInput")).sendKeys("10");
-        driver.findElement(By.id("activityDurationUnits")).click();
+        driver.findElement(By.id("activityAmount")).sendKeys("10");
+        driver.findElement(By.id("activityMeasurement")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(4).click();
-        driver.findElement(By.id("submitActivity")).click();
+        driver.findElement(By.id("android:id/button1")).click();
         //verify the data is in there
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
@@ -206,8 +178,8 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("activityExercise")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(1).click();
-        driver.findElement(By.id("activityDurationInput")).sendKeys("10");
-        driver.findElement(By.id("activityDurationUnits")).click();
+        driver.findElement(By.id("activityAmount")).sendKeys("10");
+        driver.findElement(By.id("activityMeasurement")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(4).click();
         //set the date
@@ -228,7 +200,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("android:id/am_label")).click();
         driver.findElement(By.id("android:id/button1")).click();
         // submit it
-        driver.findElement(By.id("submitActivity")).click();
+        driver.findElement(By.id("android:id/button1")).click();
         //verify the data is in there
         String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(calendar.getTime()) + " 01:30";
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
@@ -242,8 +214,8 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("activityExercise")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(1).click();
-        driver.findElement(By.id("activityDurationInput")).sendKeys("10");
-        driver.findElement(By.id("activityDurationUnits")).click();
+        driver.findElement(By.id("activityAmount")).sendKeys("10");
+        driver.findElement(By.id("activityMeasurement")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(4).click();
         //set the date
@@ -264,7 +236,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("android:id/pm_label")).click();
         driver.findElement(By.id("android:id/button1")).click();
         // submit it
-        driver.findElement(By.id("submitActivity")).click();
+        driver.findElement(By.id("android:id/button1")).click();
         //verify the data is in there
         String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(calendar.getTime()) + " 13:30";
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
@@ -278,13 +250,13 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("activityExercise")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(1).click();
-        driver.findElement(By.id("activityDurationInput")).sendKeys("10");
-        driver.findElement(By.id("activityDurationUnits")).click();
+        driver.findElement(By.id("activityAmount")).sendKeys("10");
+        driver.findElement(By.id("activityMeasurement")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(3).click();
         Calendar calendar = Calendar.getInstance();
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
-        driver.findElement(By.id("submitActivity")).click();
+        driver.findElement(By.id("android:id/button1")).click();
         //verify the data is in there
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
         resultSet.next();
@@ -297,13 +269,13 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("activityExercise")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(1).click();
-        driver.findElement(By.id("activityDurationInput")).sendKeys("10");
-        driver.findElement(By.id("activityDurationUnits")).click();
+        driver.findElement(By.id("activityAmount")).sendKeys("10");
+        driver.findElement(By.id("activityMeasurement")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(4).click();
         Calendar calendar = Calendar.getInstance();
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
-        driver.findElement(By.id("submitActivity")).click();
+        driver.findElement(By.id("android:id/button1")).click();
         //verify the data is in there
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
         resultSet.next();

@@ -141,47 +141,56 @@ public class ActivityModal {
 
     private void save(View activityView, Activity activity) {
         boolean isFilledOut = true;
+        // set the date, if there is an error, just use the current time
         TextView date = activityView.findViewById(R.id.activityDate);
         TextView time = activityView.findViewById(R.id.activityTime);
-        Spinner exercise = activityView.findViewById(R.id.activityExercise);
-        Spinner unit = activityView.findViewById(R.id.activityMeasurement);
-        EditText amount = activityView.findViewById(R.id.activityAmount);
-
-        // set the date, if there is an error, just use the current time
         try {
             activity.setDateTime(DATE_TIME_FORMAT.parse(date.getText() + " " + time.getText()));
         } catch (ParseException e) {
             activity.setDateTime(new Date());
         }
-        // grab the rest of the content
-        activity.setExercise(new Exercise(sqLiteDatabase, exercise.getSelectedItem().toString()));
-        activity.setMeasurement(new Measurement(sqLiteDatabase, unit.getSelectedItem().toString()));
+
+        // get activity information
+        if( activity.getExercise() == null || !activity.isDrankBeer() ) {  // if it's not a beer activity
+            Spinner exercise = activityView.findViewById(R.id.activityExercise);
+            Spinner unit = activityView.findViewById(R.id.activityMeasurement);
+            activity.setExercise(new Exercise(sqLiteDatabase, exercise.getSelectedItem().toString()));
+            activity.setMeasurement(new Measurement(sqLiteDatabase, unit.getSelectedItem().toString()));
+            // check for our errors
+            if (activity.getExercise().getId() == -1) {
+                TextView errorText = (TextView) exercise.getSelectedView();
+                errorText.setError("");
+                errorText.setTextColor(Color.RED);
+                errorText.setText(R.string.indicate_exercise);
+                isFilledOut = false;
+            }
+            if (activity.getMeasurement().getId() == -1) {
+                TextView errorText = (TextView) unit.getSelectedView();
+                errorText.setError("");
+                isFilledOut = false;
+            }
+        }
+        // check our amount, empty/zero is no good, just delete it instead
+        EditText amount = activityView.findViewById(R.id.activityAmount);
         if (!"".equals(amount.getText().toString())) {
             activity.setAmount(Double.parseDouble(amount.getText().toString()));
-        }
-        activity.calculateBeers();
-        // check for our errors
-        if (activity.getExercise().getId() == -1) {
-            TextView errorText = (TextView) exercise.getSelectedView();
-            errorText.setError("");
-            errorText.setTextColor(Color.RED);
-            errorText.setText(R.string.indicate_exercise);
-            isFilledOut = false;
-        }
-        if (activity.getMeasurement().getId() == -1) {
-            TextView errorText = (TextView) unit.getSelectedView();
-            errorText.setError("");
-            isFilledOut = false;
         }
         if (activity.getAmount() == 0) {
             amount.setError(context.getString(R.string.indicate_duration));
             isFilledOut = false;
         }
+        // if we have any errors, just stop
         if (!isFilledOut) {
             return;
         }
+
+        // finally, calculate the earned beers
+        activity.calculateBeers();
+
+
         activity.save();
         ActivitiesActivity.populateActivities(context, sqLiteDatabase);
+        MainActivity.setBeersRemaining(context, sqLiteDatabase);
         dialog.dismiss();
     }
 
@@ -189,7 +198,7 @@ public class ActivityModal {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.delete_activity);
         builder.setIcon(android.R.drawable.ic_dialog_alert);
-        builder.setMessage(context.getString(R.string.confirm_activity_delete, activity.getString()));
+        builder.setMessage(context.getString(R.string.confirm_activity_delete, activity.getString(), activity.getStringDateTime()));
         builder.setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
             activity.delete();
             ActivitiesActivity.populateActivities(context, sqLiteDatabase);

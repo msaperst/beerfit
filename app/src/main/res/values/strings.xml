@@ -78,5 +78,5 @@
     <string name="delete_goal">Delete Goal</string>
     <string name="confirm_goal_delete">Do you really want to delete the goal \'%1$s\'?</string>
     <string name="delete_activity">Delete Activity</string>
-    <string name="confirm_activity_delete">Do you really want to delete the activity \'%1$s\'?</string>
+    <string name="confirm_activity_delete">Do you really want to delete the activity \'%1$s\' on %2$s?</string>
 </resources>

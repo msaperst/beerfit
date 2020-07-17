@@ -15,35 +15,41 @@ import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.views.TableBuilder;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
+
+import static com.fatmax.beerfit.utilities.Activity.FULL_DATE_TIME_FORMAT;
 
 public class ActivitiesActivity extends AppCompatActivity {
 
-    static final SimpleDateFormat datetimeFormat = new SimpleDateFormat("EEE, MMM d yyyy, kk:mm", Locale.US);
     SQLiteDatabase sqLiteDatabase;
     Database database;
 
     public static void populateActivities(Context context, SQLiteDatabase sqLiteDatabase) {
         TableBuilder tableBuilder = new TableBuilder(context);
-        TableLayout tableLayout = ((android.app.Activity) context).findViewById(R.id.activityBodyTable);
-        if( tableLayout == null ) {
+        TableLayout tableLayout = ((android.app.Activity) context).findViewById(R.id.activitiesTable);
+        if (tableLayout == null) {
             return;
         }
         tableLayout.removeAllViews();
         List<Activity> activities = Elements.getAllActivities(sqLiteDatabase);
         for (Activity activity : activities) {
             // setup our time cell
-            TextView timeView = tableBuilder.createTextView(datetimeFormat.format(activity.getDateTime()));
+            TextView timeView = tableBuilder.createTextView(FULL_DATE_TIME_FORMAT.format(activity.getDateTime()));
+            timeView.setOnClickListener(view -> editActivity(context, sqLiteDatabase, view));
             // setup our activity cell
-            TextView activityView;
-            activityView = tableBuilder.createTextView(activity.getString());
+            TextView activityView = tableBuilder.createTextView(activity.getString());
             activityView.setOnClickListener(view -> editActivity(context, sqLiteDatabase, view));
             tableLayout.addView(tableBuilder.createTableRow(String.valueOf(activity.getId()),
                     Arrays.asList(timeView, activityView)));
         }
+    }
+
+    static void editActivity(Context context, SQLiteDatabase sqLiteDatabase, View view) {
+        TableRow row = (TableRow) view.getParent();
+        Activity activity = new Activity(sqLiteDatabase, Integer.parseInt(row.getTag().toString()));
+        ActivityModal activityModal = new ActivityModal(context, sqLiteDatabase);
+        activityModal.launch(activity);
     }
 
     @Override
@@ -57,12 +63,5 @@ public class ActivitiesActivity extends AppCompatActivity {
 
         // dynamically build our table
         populateActivities(this, sqLiteDatabase);
-    }
-
-    static void editActivity(Context context, SQLiteDatabase sqLiteDatabase, View view) {
-        TableRow row = (TableRow) view.getParent();
-        Activity activity = new Activity(sqLiteDatabase, Integer.parseInt(row.getTag().toString()));
-        ActivityModal activityModal = new ActivityModal(context, sqLiteDatabase);
-        activityModal.launch(activity);
     }
 }

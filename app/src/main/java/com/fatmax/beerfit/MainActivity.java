@@ -1,5 +1,6 @@
 package com.fatmax.beerfit;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,24 +27,36 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST = 112;
     SQLiteDatabase sqLiteDatabase;
-    Database database;
-    TextView beerCounter;
-    Button drankBeer;
     private MenuItem storedMenu;
 
     private ActionBarDrawerToggle t;
+
+    /**
+     * Calculates the number of beers remaining. Looks at the goals identified activities logged
+     * against them and calculates the total number of beers earned.
+     * Then subtracts all beers drank from the drank log.
+     */
+    public static void setBeersRemaining(Context context, SQLiteDatabase sqLiteDatabase) {
+        int beersLeft = new Database(sqLiteDatabase).getBeersRemaining();
+        TextView beerCounter = ((android.app.Activity) context).findViewById(R.id.beersLeft);
+        if (beerCounter == null) {
+            return;
+        }
+        if (beersLeft == 1) {
+            beerCounter.setText(context.getString(R.string.one_beer_left));
+        } else {
+            beerCounter.setText(context.getString(R.string.beers_left, beersLeft));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        beerCounter = findViewById(R.id.beersLeft);
-        drankBeer = findViewById(R.id.drankABeer);
-
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
-        database = new Database(sqLiteDatabase);
-        database.setupDatabase();
+        new Database(sqLiteDatabase).setupDatabase();
+        setBeersRemaining(this, sqLiteDatabase);
 
         // setup our nav menu
         DrawerLayout dl = findViewById(R.id.activity_main);
@@ -52,12 +64,6 @@ public class MainActivity extends AppCompatActivity {
         dl.addDrawerListener(t);
         t.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setBeersRemaining();
     }
 
     @Override
@@ -108,24 +114,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.importData:
                 importExport.importData();
-                beerCounter.invalidate();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /**
-     * Calculates the number of beers remaining. Looks at the goals identified activities logged
-     * against them and calculates the total number of beers earned.
-     * Then subtracts all beers drank from the drank log.
-     */
-    void setBeersRemaining() {
-        int beersLeft = database.getBeersRemaining();
-        if (beersLeft == 1) {
-            beerCounter.setText(getString(R.string.one_beer_left));
-        } else {
-            beerCounter.setText(getString(R.string.beers_left, beersLeft));
         }
     }
 
@@ -139,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
     public void drinkBeer(View view) {
         Activity drankBeer = new Activity(sqLiteDatabase, 0);
         drankBeer.save();
-        setBeersRemaining();
+        setBeersRemaining(this, sqLiteDatabase);
     }
 
     public void addActivity(View view) {
