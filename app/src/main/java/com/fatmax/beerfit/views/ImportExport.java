@@ -128,7 +128,7 @@ public class ImportExport {
         } catch (IOException e) {
             Log.e("bad import", e.getMessage());
         }
-        MainActivity.setBeersRemaining(context,sqLiteDatabase);
+        MainActivity.setBeersRemaining(context, sqLiteDatabase);
     }
 
     //TODO - verify data from imports

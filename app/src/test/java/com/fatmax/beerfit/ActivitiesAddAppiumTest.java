@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.fatmax.beerfit.utilities.Activity.DATE_FORMAT;
+import static com.fatmax.beerfit.utilities.Activity.DATE_TIME_FORMAT;
 import static com.fatmax.beerfit.utilities.Activity.TIME_FORMAT;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
@@ -166,7 +167,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         durationList.get(4).click();
         driver.findElement(By.id("android:id/button1")).click();
         //verify the data is in there
-        String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
+        String dateTime = DATE_TIME_FORMAT.format(calendar.getTime());
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
         resultSet.next();
         assertActivity(resultSet, 1, dateTime, 1, 2, 10, 0);
@@ -255,7 +256,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(3).click();
         Calendar calendar = Calendar.getInstance();
-        String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
+        String dateTime = DATE_TIME_FORMAT.format(calendar.getTime());
         driver.findElement(By.id("android:id/button1")).click();
         //verify the data is in there
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
@@ -274,7 +275,7 @@ public class ActivitiesAddAppiumTest extends AppiumTestBase {
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(4).click();
         Calendar calendar = Calendar.getInstance();
-        String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(calendar.getTime());
+        String dateTime = DATE_TIME_FORMAT.format(calendar.getTime());
         driver.findElement(By.id("android:id/button1")).click();
         //verify the data is in there
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);

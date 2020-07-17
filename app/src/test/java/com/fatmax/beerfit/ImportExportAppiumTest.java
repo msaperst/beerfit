@@ -11,7 +11,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +18,7 @@ import java.util.Map;
 
 import io.appium.java_client.android.AndroidDriver;
 
+import static com.fatmax.beerfit.utilities.Activity.DATE_TIME_FORMAT;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 
@@ -142,8 +142,7 @@ public class ImportExportAppiumTest extends AppiumTestBase {
 
     @Test
     public void verifyAddedBeerActivitiesExportTest() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String date = format.format(new Date());
+        String date = DATE_TIME_FORMAT.format(new Date());
         driver.findElement(By.id("drankABeer")).click();
         new Navigate(driver).export();
 

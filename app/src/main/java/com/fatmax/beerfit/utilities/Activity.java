@@ -137,14 +137,14 @@ public class Activity {
 
     public String getString() {
         String conjunction = " ";
-        if( !isDrankBeer() ) {
+        if (!isDrankBeer()) {
             conjunction = " for ";
         }
         return exercise.getPast() + conjunction + amount + " " + Elements.getProperStringPluralization(measurement.getUnit(), amount);
     }
 
     public void calculateBeers() {
-        if( isDrankBeer() ) {
+        if (isDrankBeer()) {
             beers = amount * -1;
             return;
         }

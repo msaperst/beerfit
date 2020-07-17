@@ -61,7 +61,7 @@ public class ActivityModal {
             builder.setPositiveButton(R.string.delete, (dialog, id) -> delete(activity));
             builder.setNegativeButton(R.string.update, null);
             calendar.setTime(activity.getDateTime());
-            if( activity.isDrankBeer() ) {
+            if (activity.isDrankBeer()) {
                 setAsBeer(activityView);
             }
         } else {
@@ -151,7 +151,7 @@ public class ActivityModal {
         }
 
         // get activity information
-        if( activity.getExercise() == null || !activity.isDrankBeer() ) {  // if it's not a beer activity
+        if (activity.getExercise() == null || !activity.isDrankBeer()) {  // if it's not a beer activity
             Spinner exercise = activityView.findViewById(R.id.activityExercise);
             Spinner unit = activityView.findViewById(R.id.activityMeasurement);
             activity.setExercise(new Exercise(sqLiteDatabase, exercise.getSelectedItem().toString()));
