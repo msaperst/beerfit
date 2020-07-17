@@ -28,7 +28,7 @@
     <string name="update_time">Update Time</string>
     <string name="enter_amount">Enter Amount</string>
     <string name="drank_beer">Drank Beer</string>
-    <string name="beers">beers</string>
+    <string name="beer">beer</string>
     <string name="indicate_exercise">You need to indicate some exercise</string>
     <string name="indicate_duration">You need to indicate some duration</string>
     <string name="export_data">Export Data</string>
@@ -72,6 +72,11 @@
     <string name="unable_to_delete_measurement">Unable to delete this measurement, as you have goals and/or activities utilizing this measurement!</string>
 
     <string name="_for_">for</string>
+    <string name="on">On</string>
+    <string name="at">at</string>
+
     <string name="delete_goal">Delete Goal</string>
     <string name="confirm_goal_delete">Do you really want to delete the goal \'%1$s\'?</string>
+    <string name="delete_activity">Delete Activity</string>
+    <string name="confirm_activity_delete">Do you really want to delete the activity \'%1$s\' on %2$s?</string>
 </resources>

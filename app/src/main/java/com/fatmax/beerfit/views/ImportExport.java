@@ -1,4 +1,4 @@
-package com.fatmax.beerfit.utilities;
+package com.fatmax.beerfit.views;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,6 +9,11 @@ import android.os.Environment;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+
+import com.fatmax.beerfit.MainActivity;
+import com.fatmax.beerfit.utilities.CSVReader;
+import com.fatmax.beerfit.utilities.CSVWriter;
+import com.fatmax.beerfit.utilities.Database;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -123,6 +128,7 @@ public class ImportExport {
         } catch (IOException e) {
             Log.e("bad import", e.getMessage());
         }
+        MainActivity.setBeersRemaining(context, sqLiteDatabase);
     }
 
     //TODO - verify data from imports

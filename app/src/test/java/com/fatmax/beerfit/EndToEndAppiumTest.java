@@ -19,11 +19,11 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         Navigate navigate = new Navigate(driver);
         // first, we add the goal of 5 km run for one beer
         navigate.toNewGoal();
-        driver.findElement(By.id("goalSelection")).click();
+        driver.findElement(By.id("goalExercise")).click();
         List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(2).click();
-        driver.findElement(By.id("goalDurationInput")).sendKeys("5");
-        driver.findElement(By.id("goalDurationUnits")).click();
+        driver.findElement(By.id("goalAmount")).sendKeys("5");
+        driver.findElement(By.id("goalMeasurement")).click();
         List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(4).click();
         driver.findElement(By.id("android:id/button1")).click();
@@ -38,11 +38,11 @@ public class EndToEndAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("activityExercise")).click();
         activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(2).click();
-        driver.findElement(By.id("activityDurationInput")).sendKeys("10");
-        driver.findElement(By.id("activityDurationUnits")).click();
+        driver.findElement(By.id("activityAmount")).sendKeys("10");
+        driver.findElement(By.id("activityMeasurement")).click();
         durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(4).click();
-        driver.findElement(By.id("submitActivity")).click();
+        driver.findElement(By.id("android:id/button1")).click();
         //verify the run counted for beers
         assertElementTextEquals("2 Beers Left", BEERS_LEFT);
         // drink our beer

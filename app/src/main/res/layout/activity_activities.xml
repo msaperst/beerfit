@@ -6,23 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".ActivitiesActivity">
 
-    <LinearLayout
-        android:id="@+id/activitiesTable"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <ScrollView
+        <TableLayout
+            android:id="@+id/activitiesTable"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TableLayout
-                android:id="@+id/activityBodyTable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="0"
-                android:padding="10dp" />
-        </ScrollView>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:stretchColumns="0"
+            android:padding="10dp" />
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

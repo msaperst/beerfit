@@ -21,14 +21,6 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".AddGoalActivity"
-            android:label="@string/add_a_goal"
-            android:parentActivityName=".GoalsActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GoalsActivity" />
-        </activity>
-        <activity
             android:name=".GoalsActivity"
             android:label="@string/beerfit_goals"
             android:parentActivityName=".MainActivity">
@@ -39,14 +31,6 @@
         <activity
             android:name=".ActivitiesActivity"
             android:label="@string/beerfit_activities"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
-            android:name=".AddActivityActivity"
-            android:label="@string/add_an_activity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

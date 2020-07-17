@@ -6,33 +6,31 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.Exercise;
 import com.fatmax.beerfit.utilities.Goal;
 import com.fatmax.beerfit.utilities.Measurement;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.fatmax.beerfit.views.Modal;
 
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class GoalModal {
 
-    Context context;
-    SQLiteDatabase sqLiteDatabase;
+    private final Context context;
+    private final SQLiteDatabase sqLiteDatabase;
     private AlertDialog dialog;
+    private Modal modal;
 
     public GoalModal(Context context, SQLiteDatabase sqLiteDatabase) {
         this.context = context;
         this.sqLiteDatabase = sqLiteDatabase;
+        this.modal = new Modal(context, sqLiteDatabase);
     }
 
     public void launch(Goal goal) {
@@ -40,14 +38,14 @@ public class GoalModal {
         LayoutInflater inflater = LayoutInflater.from(context);
         builder.setTitle(R.string.to_earn_a_beer);
         View goalView = inflater.inflate(R.layout.modal_goal, null);
-        createSpinner(goalView, EXERCISES_TABLE, "current", R.id.goalSelection, false);
-        createSpinner(goalView, MEASUREMENTS_TABLE, "unit", R.id.goalDurationUnits, true);
+        modal.createSpinner(goalView, EXERCISES_TABLE, "current", R.id.goalExercise, false);
+        modal.createSpinner(goalView, MEASUREMENTS_TABLE, "unit", R.id.goalMeasurement, true);
         // customization for edit or add
         if (goal.getId() != -1) {
-            ((Spinner) goalView.findViewById(R.id.goalSelection)).setSelection(goal.getExercise().getId());
-            ((TextView) goalView.findViewById(R.id.goalDurationInput)).setText(String.valueOf(goal.getAmount()));
-            ((Spinner) goalView.findViewById(R.id.goalDurationUnits)).setSelection(Elements.getSortedMeasurement(sqLiteDatabase, 1, goal.getMeasurement()) + 1);
-            builder.setPositiveButton(R.string.delete, (dialog, id) -> deleteGoal(goal));
+            ((Spinner) goalView.findViewById(R.id.goalExercise)).setSelection(goal.getExercise().getId());
+            ((TextView) goalView.findViewById(R.id.goalAmount)).setText(String.valueOf(goal.getAmount()));
+            ((Spinner) goalView.findViewById(R.id.goalMeasurement)).setSelection(Elements.getSortedMeasurement(sqLiteDatabase, 1, goal.getMeasurement()) + 1);
+            builder.setPositiveButton(R.string.delete, (dialog, id) -> delete(goal));
             builder.setNegativeButton(R.string.update, null);
         } else {
             builder.setPositiveButton(R.string.add_new, null);
@@ -57,27 +55,27 @@ public class GoalModal {
         if (goal.getId() != -1) {
             dialog.setOnShowListener(dialog -> {
                 Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                button.setOnClickListener(view -> viewGoal(goalView, goal));
+                button.setOnClickListener(view -> save(goalView, goal));
             });
         } else {
             dialog.setOnShowListener(dialog -> {
                 Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(view -> viewGoal(goalView, goal));
+                button.setOnClickListener(view -> save(goalView, goal));
             });
         }
         dialog.show();
     }
 
-    private void viewGoal(View goalView, Goal goal) {
+    private void save(View goalView, Goal goal) {
         boolean isFilledOut = true;
-        Spinner exercise = goalView.findViewById(R.id.goalSelection);
-        Spinner unit = goalView.findViewById(R.id.goalDurationUnits);
-        EditText duration = goalView.findViewById(R.id.goalDurationInput);
+        Spinner exercise = goalView.findViewById(R.id.goalExercise);
+        Spinner unit = goalView.findViewById(R.id.goalMeasurement);
+        EditText amount = goalView.findViewById(R.id.goalAmount);
 
         goal.setExercise(new Exercise(sqLiteDatabase, exercise.getSelectedItem().toString()));
         goal.setMeasurement(new Measurement(sqLiteDatabase, unit.getSelectedItem().toString()));
-        if (!"".equals(duration.getText().toString())) {
-            goal.setAmount(Double.parseDouble(duration.getText().toString()));
+        if (!"".equals(amount.getText().toString())) {
+            goal.setAmount(Double.parseDouble(amount.getText().toString()));
         }
 
         if (goal.getExercise().getId() == -1) {
@@ -93,7 +91,7 @@ public class GoalModal {
             isFilledOut = false;
         }
         if (goal.getAmount() == 0) {
-            duration.setError(context.getString(R.string.indicate_duration));
+            amount.setError(context.getString(R.string.indicate_duration));
             isFilledOut = false;
         }
         if (!isFilledOut) {
@@ -104,7 +102,7 @@ public class GoalModal {
         dialog.dismiss();
     }
 
-    private void deleteGoal(Goal goal) {
+    private void delete(Goal goal) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.delete_goal);
         builder.setIcon(android.R.drawable.ic_dialog_alert);
@@ -115,23 +113,5 @@ public class GoalModal {
         });
         builder.setNegativeButton(android.R.string.no, null);
         builder.show();
-    }
-
-    private void createSpinner(View goalView, String activity, String type, int p, boolean sort) {
-        Database database = new Database(sqLiteDatabase);
-        List<String> items = new ArrayList<>();
-        if (sort) {
-            items = Elements.getSortedMeasurements(sqLiteDatabase, 1);
-        } else {
-            List<Object> objects = database.getFullColumn(activity, type);
-            for (Object object : objects) {
-                items.add(object.toString());
-            }
-        }
-        items.add(0, "");
-        ArrayAdapter<String> activitiesAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, items);
-        activitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner activitySpinner = goalView.findViewById(p);
-        activitySpinner.setAdapter(activitiesAdapter);
     }
 }

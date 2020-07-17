@@ -76,7 +76,7 @@ public class Measurement {
         return conversion;
     }
 
-    boolean isUnique() {
+    public boolean isUnique() {
         boolean isUnique = true;
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + MEASUREMENTS_TABLE + " WHERE unit = '" + unit + "' AND id != " + id, null);
         if (cursor != null) {

@@ -99,10 +99,6 @@ public class DataInstrumentedTest {
         data.addDataPoint(lifting);
         List<LineGraphSeries<DataPoint>> seriesData = data.getSeriesData();
         assertEquals(2, seriesData.size());
-        assertEquals("Lifted (minutes)", seriesData.get(0).getTitle());
-        assertEquals(Color.MAGENTA, seriesData.get(0).getColor());
-        assertEquals("Walked (kilometers)", seriesData.get(1).getTitle());
-        assertEquals(Color.GREEN, seriesData.get(1).getColor());
     }
 
     @Test

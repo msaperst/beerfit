@@ -2,6 +2,7 @@ package com.fatmax.beerfit;
 
 import com.fatmax.beerfit.objects.Navigate;
 import com.testpros.fast.By;
+import com.testpros.fast.WebElement;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +10,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 
@@ -18,45 +20,44 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
     public void seedAndNavigateToActivities() {
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(9,\"2020-01-09 08:00\",0,0,1,-1);");
         new Navigate(driver).toActivities();
-        driver.findElement(By.AccessibilityId("Edit Activity")).click();
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(0).findElements(By.className("android.widget.TextView"));
+        tableCell.get(1).click();
     }
 
     @Test
-    public void editBeerGoBack() throws SQLException, IOException, ClassNotFoundException {
-        new Navigate(driver).goBack();
-        //verify the activity is not changed
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '9';");
-        resultSet.next();
-        assertActivity(resultSet, 9, "2020-01-09 08:00", 0, 0, 1, -1);
+    public void editBeerTitleExists() {
+        assertElementTextEquals("Edit Your Activity", By.id("android:id/alertTitle"));
     }
 
     @Test
-    public void editBeerTitle() {
-        assertElementTextEquals("Edit Your Activity", By.className("android.widget.TextView"));
-    }
-
-    @Test
-    public void editBeerActivityHeader() {
-        assertElementTextEquals("Activity", By.id("activityExerciseHeader"));
-    }
-
-    @Test
-    public void editBeerTime() {
-        assertElementTextEquals("Update Time", By.id("activityDateTimeHeader"));
-    }
-
-    @Test
-    public void editBeerButton() {
-        assertElementTextEquals("UPDATE ACTIVITY", By.id("submitActivity"));
-    }
-
-    @Test
-    public void editBeerAllData() {
-        assertElementTextEquals("Drank Beer", driver.findElement(By.id("activityExercise")));
+    public void editBeerViewContentExists() {
+        assertElementTextEquals("On", driver.findElement(By.id("on")));
         assertElementTextEquals("2020-01-09", By.id("activityDate"));
+        assertElementTextEquals("at", driver.findElement(By.id("at")));
         assertElementTextEquals("08:00", By.id("activityTime"));
-        assertElementTextEquals("1.0", By.id("activityDurationInput"));
-        assertElementTextEquals("beers", driver.findElement(By.id("activityDurationUnits")));
+        assertElementTextEquals("Drank Beer", driver.findElement(By.id("activityExercise")));
+        assertElementTextEquals("for", driver.findElement(By.id("_for_")));
+        assertElementTextEquals("1.0", By.id("activityAmount"));
+        assertElementTextEquals("beer", driver.findElement(By.id("activityMeasurement")));
+    }
+
+    @Test
+    public void checkEditBeerButtons() {
+        List<WebElement> editBeerButtons = driver.findElements(By.className("android.widget.Button"));
+        assertEquals(editBeerButtons.size(), 2, "Expected to find '2' edit goal buttons", "Actually found '" + editBeerButtons.size() + "'");
+    }
+
+    @Test
+    public void checkEditBeerUpdateButton() {
+        assertElementTextEquals("UPDATE", By.id("android:id/button2"));
+        assertElementEnabled(By.id("android:id/button2"));
+    }
+
+    @Test
+    public void checkEditBeerDeleteButton() {
+        assertElementTextEquals("DELETE", By.id("android:id/button1"));
+        assertElementEnabled(By.id("android:id/button1"));
     }
 
     @Test
@@ -79,7 +80,7 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
 
     @Test
     public void editBeerNoChanges() throws SQLException, IOException, ClassNotFoundException {
-        driver.findElement(By.id("submitActivity")).click();
+        driver.findElement(By.id("android:id/button2")).click();
         //verify the activity is not changed
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '9';");
         resultSet.next();
@@ -88,8 +89,8 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
 
     @Test
     public void editBeerChange() throws SQLException, IOException, ClassNotFoundException {
-        driver.findElement(By.id("activityDurationInput")).clear();
-        driver.findElement(By.id("activityDurationInput")).sendKeys("2");
+        driver.findElement(By.id("activityAmount")).clear();
+        driver.findElement(By.id("activityAmount")).sendKeys("2");
         //set the date
         driver.findElement(By.id("activityDate")).click();
         driver.findElement(By.AccessibilityId("16 January 2020")).click();
@@ -101,7 +102,7 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
         driver.findElement(By.id("android:id/pm_label")).click();
         driver.findElement(By.id("android:id/button1")).click();
         // submit it
-        driver.findElement(By.id("submitActivity")).click();
+        driver.findElement(By.id("android:id/button2")).click();
         //verify the activity is changed
         ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '9';");
         resultSet.next();

@@ -13,16 +13,12 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import static com.fatmax.beerfit.AddActivityActivity.DATE_FORMAT;
 import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
 import static com.fatmax.beerfit.utilities.Database.CREATE_TABLE_IF_NOT_EXISTS;
 import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
@@ -39,7 +35,6 @@ import static org.junit.Assert.fail;
 public class DatabaseInstrumentedTest {
 
     private static final String DATABASE_NAME = "testDB";
-    private static final String DATETIME_FORMAT = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}";
 
     static void wipeOutDB() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
@@ -342,117 +337,6 @@ public class DatabaseInstrumentedTest {
     }
 
     @Test
-    public void logActivityTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        database.logActivity("2000-01-01 10:10", "Running", "seconds", 12.2);
-        database.logActivity("2000-01-01 10:10", "Ran", "minute", 30);
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null);
-        res.moveToFirst();
-        assertEquals(1, res.getInt(0));
-        assertEquals("2000-01-01 10:10", res.getString(1));
-        assertEquals(-1, res.getInt(2));
-        assertEquals(-1, res.getInt(3));
-        assertEquals(12.2, res.getDouble(4), 0);
-        res.moveToNext();
-        assertEquals(2, res.getInt(0));
-        assertEquals("2000-01-01 10:10", res.getString(1));
-        assertEquals(2, res.getInt(2));
-        assertEquals(1, res.getInt(3));
-        assertEquals(30, res.getDouble(4), 0);
-        res.moveToNext();
-        assertTrue(res.isAfterLast());
-        res.close();
-        wipeOutDB();
-    }
-
-    @Test
-    public void logActivityFullTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        database.logActivity("3", "2000-01-01 10:10", "Running", "seconds", 12.2);
-        database.logActivity("2000-01-01 10:10", "Ran", "minute", 30);
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null);
-        res.moveToFirst();
-        assertEquals(3, res.getInt(0));
-        assertEquals("2000-01-01 10:10", res.getString(1));
-        assertEquals(-1, res.getInt(2));
-        assertEquals(-1, res.getInt(3));
-        assertEquals(12.2, res.getDouble(4), 0);
-        res.moveToNext();
-        assertEquals(4, res.getInt(0));
-        assertEquals("2000-01-01 10:10", res.getString(1));
-        assertEquals(2, res.getInt(2));
-        assertEquals(1, res.getInt(3));
-        assertEquals(30, res.getDouble(4), 0);
-        res.moveToNext();
-        assertTrue(res.isAfterLast());
-        res.close();
-        wipeOutDB();
-    }
-
-    @Test
-    public void logBeerTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        database.logBeer();
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null);
-        res.moveToFirst();
-        assertEquals(1, res.getInt(0));
-        assertTrue(res.getString(1).matches(DATETIME_FORMAT + ":\\d{2}"));
-        assertEquals(0, res.getInt(2));
-        assertEquals(0, res.getInt(3));
-        assertEquals(1, res.getDouble(4), 0);
-        res.moveToNext();
-        assertTrue(res.isAfterLast());
-        res.close();
-        wipeOutDB();
-    }
-
-    @Test
-    public void logBeersTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        database.logBeer("1", "'2000-01-01 10:10'", 2);
-        Cursor res = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null);
-        res.moveToFirst();
-        assertEquals(1, res.getInt(0));
-        assertEquals("2000-01-01 10:10", res.getString(1));
-        assertEquals(0, res.getInt(2));
-        assertEquals(0, res.getInt(3));
-        assertEquals(2, res.getDouble(4), 0);
-        res.moveToNext();
-        assertTrue(res.isAfterLast());
-        res.close();
-        wipeOutDB();
-    }
-
-    @Test
-    public void getBeersDrankTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        assertEquals(0, database.getBeersDrank());
-        database.logBeer();
-        assertEquals(1, database.getBeersDrank());
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        assertEquals(10, database.getBeersDrank());
-        wipeOutDB();
-    }
-
-    @Test
     public void getMatchingMeasurementsNoMatch() {
         SQLiteDatabase db = getDB();
         Database database = new Database(db);
@@ -508,146 +392,12 @@ public class DatabaseInstrumentedTest {
         assertEquals(1, database.getMatchingGoals(new Exercise(db, "Ran"), new Measurement(db, "mile")).getId());
     }
 
-    @Test
-    public void getBeersEarnedTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        addGoals(db);
-        assertEquals(1, database.getBeersEarned(new Exercise(db, "Ran"), new Measurement(db, "kilometer"), 5), 0);
-        assertEquals(0, database.getBeersEarned(new Exercise(db, "Ran"), new Measurement(db, "kilometer"), 0), 0);
-        assertEquals(1, database.getBeersEarned(new Exercise(db, "Walked"), new Measurement(db, "kilometer"), 5), 0);
-        assertEquals(0.5, database.getBeersEarned(new Exercise(db, "Played Soccer"), new Measurement(db, "minute"), 15), 0);
-        assertEquals(0, database.getBeersEarned(new Exercise(db, "Played Soccer"), new Measurement(db, "kilometer"), 5), 0);
-        wipeOutDB();
-    }
-
-    @Test
-    public void getBeersEarnedSwapTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(1,2,2,5);");
-        db.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(2,1,1,10);");
-        assertEquals(1, database.getBeersEarned(new Exercise(db, "Ran"), new Measurement(db, "kilometer"), 5), 0);
-        assertEquals(0.9656063879, database.getBeersEarned(new Exercise(db, "Ran"), new Measurement(db, "mile"), 3), 0.00001);
-        assertEquals(3, database.getBeersEarned(new Exercise(db, "Walk"), new Measurement(db, "minute"), 30), 0);
-        assertEquals(2, database.getBeersEarned(new Exercise(db, "Walk"), new Measurement(db, "second"), 1200), 0);
-        assertEquals(1.5, database.getBeersEarned(new Exercise(db, "Walk"), new Measurement(db, "hour"), 0.25), 0);
-        wipeOutDB();
-    }
-
-    @Test
-    public void getTotalBeersEarnedTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        addGoals(db);
-        assertEquals(0, database.getTotalBeersEarned(), 0);
-        database.logActivity(getDateTime(), "Ran", "kilometer", 5);
-        assertEquals(1, database.getTotalBeersEarned(), 0);
-        database.logActivity(getDateTime(), "Walked", "kilometer", 32);
-        assertEquals(7.4, database.getTotalBeersEarned(), 0);
-        database.logActivity(getDateTime(), "Played Soccer", "kilometer", 32);
-        assertEquals(7.4, database.getTotalBeersEarned(), 0);
-        database.logActivity(getDateTime(), "Soccered", "minute", 30);
-        assertEquals(7.4, database.getTotalBeersEarned(), 0);
-        database.logActivity(getDateTime(), "Played Soccer", "minute", 33);
-        assertEquals(8.5, database.getTotalBeersEarned(), 0);
-        database.logActivity(getDateTime(), "Lifted", "minute", 15);
-        assertEquals(9.0, database.getTotalBeersEarned(), 0);
-        database.logActivity(getDateTime(), "Cycled", "minute", 15);
-        assertEquals(9.0, database.getTotalBeersEarned(), 0);
-        database.logActivity(getDateTime(), "Cycled", "kilometer", 15);
-        assertEquals(10.5, database.getTotalBeersEarned(), 0);
-        wipeOutDB();
-    }
-
-    @Test
-    public void getBeersRemainingTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        addGoals(db);
-        assertEquals(0, database.getBeersRemaining(), 0);
-        database.logActivity(getDateTime(), "Ran", "kilometer", 5);
-        assertEquals(1, database.getBeersRemaining(), 0);
-        database.logActivity(getDateTime(), "Walked", "kilometer", 32);
-        assertEquals(7, database.getBeersRemaining(), 0);
-        database.logActivity(getDateTime(), "Played Soccer", "kilometer", 32);
-        assertEquals(7, database.getBeersRemaining(), 0);
-        database.logActivity(getDateTime(), "Soccered", "minute", 30);
-        assertEquals(7, database.getBeersRemaining(), 0);
-        database.logActivity(getDateTime(), "Played Soccer", "minute", 33);
-        database.logBeer();
-        assertEquals(7, database.getBeersRemaining(), 0);
-        database.logActivity(getDateTime(), "Lifted", "minute", 15);
-        database.logBeer();
-        database.logBeer();
-        assertEquals(6.0, database.getBeersRemaining(), 0);
-        database.logActivity(getDateTime(), "Cycled", "minute", 15);
-        assertEquals(6.0, database.getBeersRemaining(), 0);
-        database.logActivity(getDateTime(), "Cycled", "kilometer", 15);
-        assertEquals(7, database.getBeersRemaining(), 0);
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        database.logBeer();
-        assertEquals(-1, database.getBeersRemaining(), 0);
-        wipeOutDB();
-    }
-
-    @Test
-    public void removeActivityTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        database.logActivity(getDateTime(), "Running", "seconds", 12.2);
-        database.logActivity(getDateTime(), "Ran", "minute", 30);
-        database.removeActivity(1);
-        Cursor cursor = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null);
-        assertEquals(1, cursor.getCount());
-        cursor.close();
-        database.removeActivity(1);
-        cursor = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null);
-        assertEquals(1, cursor.getCount());
-        cursor.close();
-        database.removeActivity(2);
-        cursor = db.rawQuery("SELECT * FROM " + ACTIVITIES_TABLE, null);
-        assertEquals(0, cursor.getCount());
-        cursor.close();
-        wipeOutDB();
-    }
-
-    @Test
-    public void getActivityTimeTest() {
-        SQLiteDatabase db = getDB();
-        Database database = new Database(db);
-        database.setupDatabase();
-        database.logActivity("2000-01-01 10:10", "Running", "seconds", 12.2);
-        assertEquals("2000-01-01 10:10", database.getActivityTime(1));
-        assertEquals("Unknown", database.getActivityTime(0));
-        wipeOutDB();
-    }
-
     private void addGoals(SQLiteDatabase database) {
         database.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,5);");
         database.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(2,2,2,5);");
         database.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(3,3,2,10);");
         database.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(4,4,1,30);");
         database.execSQL("INSERT INTO " + GOALS_TABLE + " VALUES(5,5,1,30);");
-    }
-
-    private String getDateTime() {
-        Date date = new Date();
-        // purposefully adding in seconds, when the app doesn't provide it, as this speeds up testing.
-        // otherwise, i'd have to wait a minute for accurate results
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
-        return DATE_FORMAT.format(date) + " " + timeFormat.format(date);
     }
 
     //////////////////////////////////////////////////////////////

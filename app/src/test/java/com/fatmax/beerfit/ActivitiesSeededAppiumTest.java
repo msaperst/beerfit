@@ -57,17 +57,15 @@ public class ActivitiesSeededAppiumTest extends AppiumTestBase {
 
     @Test
     public void addedActivityDisplayedProperly() {
-        List<WebElement> tableRows = driver.findElement(By.id("activityBodyTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
         assertElementTextEquals("Sat, Feb 15 2020, 23:59", getTime(tableRows, 0));
         assertElementTextEquals(RAN_FOR_5_KILOMETERS, getActivity(tableRows, 0));
-        assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Edit Activity")));
-        assertElementDisplayed(tableRows.get(0).findElement(By.AccessibilityId("Delete Activity")));
     }
 
     @Test
     public void addedActivitiesDisplayed() {
-        List<WebElement> tableRows = driver.findElement(By.id("activityBodyTable")).findElements(By.className("android.widget.TableRow"));
-        assertEquals(tableRows.size(), 14, "Expected to find '14' activities", "Actually found '" + tableRows.size() + "'");
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        assertEquals(tableRows.size(), 15, "Expected to find '14' activities", "Actually found '" + tableRows.size() + "'");
         assertElementTextEquals("Sat, Feb 15 2020, 23:59", getTime(tableRows, 0));
         assertElementTextEquals(RAN_FOR_5_KILOMETERS, getActivity(tableRows, 0));
         assertElementTextEquals("Fri, Feb 14 2020, 13:00", getTime(tableRows, 1));
@@ -96,38 +94,121 @@ public class ActivitiesSeededAppiumTest extends AppiumTestBase {
         assertElementTextEquals(WALKED_FOR_5_KILOMETERS, getActivity(tableRows, 12));
         assertElementTextEquals("Thu, Jan 2 2020, 01:00", getTime(tableRows, 13));
         assertElementTextEquals(WALKED_FOR_5_KILOMETERS, getActivity(tableRows, 13));
+        assertElementTextEquals("Wed, Jan 1 2020, 00:00", getTime(tableRows, 14));
+        assertElementTextEquals(WALKED_FOR_5_KILOMETERS, getActivity(tableRows, 14));
+    }
+
+    //TODO - verify scroll
+
+    @Test
+    public void clickingOnTimeAllowsEditing() {
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(0).findElements(By.className("android.widget.TextView"));
+        tableCell.get(0).click();
+        assertElementTextEquals("Edit Your Activity", By.id("android:id/alertTitle"));
     }
 
     @Test
-    public void addedActivitiesScrolledDisplayed() {
-        TouchAction action = new TouchAction((AndroidDriver) driver.getDriver());
-        action.press(PointOption.point(100, 500)).moveTo(PointOption.point(100, 100)).release().perform();
-        List<WebElement> tableRows = driver.findElement(By.id("activityBodyTable")).findElements(By.className("android.widget.TableRow"));
-        assertEquals(tableRows.size(), 14, "Expected to find '14' activities", "Actually found '" + tableRows.size() + "'");
-        assertElementTextEquals("Fri, Jan 3 2020, 02:00", getTime(tableRows, 11));
-        assertElementTextEquals(WALKED_FOR_5_KILOMETERS, getActivity(tableRows, 11));
-        assertElementTextEquals("Thu, Jan 2 2020, 01:00", getTime(tableRows, 12));
-        assertElementTextEquals(WALKED_FOR_5_KILOMETERS, getActivity(tableRows, 12));
-        assertElementTextEquals("Wed, Jan 1 2020, 00:00", getTime(tableRows, 13));
-        assertElementTextEquals(WALKED_FOR_5_KILOMETERS, getActivity(tableRows, 13));
+    public void clickingOnActivityAllowsEditing() {
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(0).findElements(By.className("android.widget.TextView"));
+        tableCell.get(1).click();
+        assertElementTextEquals("Edit Your Activity", By.id("android:id/alertTitle"));
     }
 
     @Test
     public void dontDeleteActivity() throws SQLException, IOException, ClassNotFoundException {
-        driver.findElement(By.AccessibilityId("Delete Activity")).click();
-        driver.findElement(By.id("android:id/button2")).click();
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(0).findElements(By.className("android.widget.TextView"));
+        tableCell.get(1).click();
+        TouchAction action = new TouchAction((AndroidDriver) driver.getDriver());
+        action.press(PointOption.point(100, 100)).release().perform();
         //verify the activity is still there
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '15';");
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
         resultSet.next();
-        assertActivity(resultSet, 15, "2020-02-15 23:59", 2, 2, 5, 1);
+        assertActivity(resultSet, 1, "2020-01-01 00:00", 1, 2, 5, 1);
     }
 
     @Test
-    public void deleteActivity() throws SQLException, IOException, ClassNotFoundException {
-        driver.findElement(By.AccessibilityId("Delete Activity")).click();
+    public void checkDeleteActivityTitle() {
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(0).findElements(By.className("android.widget.TextView"));
+        tableCell.get(1).click();
         driver.findElement(By.id("android:id/button1")).click();
-        //verify the activity is gone
-        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE + " WHERE id = '15';");
-        assertEquals(false, resultSet.next(), "Expected no results", "");
+        assertElementTextEquals("Delete Activity", By.id("android:id/alertTitle"));
+    }
+
+    @Test
+    public void checkDeleteActivityContent() {
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(0).findElements(By.className("android.widget.TextView"));
+        tableCell.get(1).click();
+        driver.findElement(By.id("android:id/button1")).click();
+        assertElementTextEquals("Do you really want to delete the activity 'Ran for 5.0 kilometers' on Sat, Feb 15 2020, 23:59?", By.id("android:id/message"));
+    }
+
+    @Test
+    public void checkDeleteActivityIcon() {
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(0).findElements(By.className("android.widget.TextView"));
+        tableCell.get(1).click();
+        driver.findElement(By.id("android:id/button1")).click();
+        assertElementDisplayed(By.id("android:id/icon"));
+    }
+
+    @Test
+    public void checkDeleteActivityButtons() {
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(0).findElements(By.className("android.widget.TextView"));
+        tableCell.get(1).click();
+        driver.findElement(By.id("android:id/button1")).click();
+        List<WebElement> measurementButtons = driver.findElements(By.className("android.widget.Button"));
+        assertEquals(measurementButtons.size(), 2, "Expected to find '2' delete measurement buttons", "Actually found '" + measurementButtons.size() + "'");
+    }
+
+    @Test
+    public void checkDeleteActivityButtonCancel() {
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(0).findElements(By.className("android.widget.TextView"));
+        tableCell.get(1).click();
+        driver.findElement(By.id("android:id/button1")).click();
+        assertElementEnabled(By.id("android:id/button2"));
+    }
+
+    @Test
+    public void checkDeleteActivityButtonOk() {
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(0).findElements(By.className("android.widget.TextView"));
+        tableCell.get(1).click();
+        driver.findElement(By.id("android:id/button1")).click();
+        assertElementEnabled(By.id("android:id/button1"));
+    }
+
+    @Test
+    public void checkDeleteActivityCancelCancels() throws SQLException, IOException, ClassNotFoundException {
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(0).findElements(By.className("android.widget.TextView"));
+        tableCell.get(1).click();
+        driver.findElement(By.id("android:id/button1")).click();
+        driver.findElement(By.id("android:id/button2")).click();
+        assertElementTextEquals("BeerFit Activities", By.className("android.widget.TextView"));
+        //verify the measurements are not changed
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
+        resultSet.next();
+        assertActivity(resultSet, 1, "2020-01-01 00:00", 1, 2, 5, 1);
+    }
+
+    @Test
+    public void checkDeleteActivityOkDeletes() throws SQLException, IOException, ClassNotFoundException {
+        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableCell = tableRows.get(14).findElements(By.className("android.widget.TextView"));
+        tableCell.get(1).click();
+        driver.findElement(By.id("android:id/button1")).click();
+        driver.findElement(By.id("android:id/button1")).click();
+        assertElementTextEquals("BeerFit Activities", By.className("android.widget.TextView"));
+        //verify the measurements are changed
+        ResultSet resultSet = queryDB("SELECT * FROM " + ACTIVITIES_TABLE);
+        resultSet.next();
+        assertActivity(resultSet, 2, "2020-01-02 01:00", 1, 2, 5, 1);
     }
 }

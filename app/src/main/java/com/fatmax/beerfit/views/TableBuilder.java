@@ -1,4 +1,4 @@
-package com.fatmax.beerfit.utilities;
+package com.fatmax.beerfit.views;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
