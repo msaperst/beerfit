@@ -18,7 +18,7 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
 
     @Before
     public void navigateToAddGoals() {
-        new Navigate(driver).toNewGoal();
+        new Navigate(drivers.get()).toNewGoal();
     }
 
     @Test
@@ -36,7 +36,7 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
 
     @Test
     public void checkAddGoalButtons() {
-        List<WebElement> addGoalButtons = driver.findElements(By.className("android.widget.Button"));
+        List<WebElement> addGoalButtons = drivers.get().findElements(By.className("android.widget.Button"));
         assertEquals(addGoalButtons.size(), 1, "Expected to find '1' add goal button", "Actually found '" + addGoalButtons.size() + "'");
     }
 
@@ -48,16 +48,16 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
 
     @Test
     public void addEmptyGoal() {
-        driver.findElement(By.id("android:id/button1")).click();
-        assertElementTextEquals("You need to indicate some exercise", driver.findElement(By.id("goalExercise")).findElement(By.className("android.widget.TextView")));
+        drivers.get().findElement(By.id("android:id/button1")).click();
+        assertElementTextEquals("You need to indicate some exercise", drivers.get().findElement(By.id("goalExercise")).findElement(By.className("android.widget.TextView")));
         assertElementTextEquals("", By.id("goalAmount"));
-        assertElementTextEquals("", driver.findElement(By.id("goalMeasurement")).findElement(By.className("android.widget.TextView")));
+        assertElementTextEquals("", drivers.get().findElement(By.id("goalMeasurement")).findElement(By.className("android.widget.TextView")));
     }
 
     @Test
     public void allGoalActivitiesExist() {
-        driver.findElement(By.id("goalExercise")).click();
-        List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        drivers.get().findElement(By.id("goalExercise")).click();
+        List<WebElement> activityList = drivers.get().findElements(By.className("android.widget.CheckedTextView"));
         assertEquals(activityList.size(), 6, "Expected to find '6' activities", "Actually found '" + activityList.size() + "' activities");
         assertElementTextEquals("", activityList.get(0));
         assertElementTextEquals("Walk", activityList.get(1));
@@ -69,8 +69,8 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
 
     @Test
     public void allGoalDurationsExist() {
-        driver.findElement(By.id("goalMeasurement")).click();
-        List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        drivers.get().findElement(By.id("goalMeasurement")).click();
+        List<WebElement> durationList = drivers.get().findElements(By.className("android.widget.CheckedTextView"));
         assertEquals(durationList.size(), 8, "Expected to find '8' durations", "Actually found '" + durationList.size() + "' durations");
         assertElementTextEquals("", durationList.get(0));
         assertElementTextEquals("class", durationList.get(1));
@@ -84,28 +84,28 @@ public class GoalsAddAppiumTest extends AppiumTestBase {
 
     @Test
     public void addingGoalGoesToGoalsPage() {
-        driver.findElement(By.id("goalExercise")).click();
-        List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        drivers.get().findElement(By.id("goalExercise")).click();
+        List<WebElement> activityList = drivers.get().findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(1).click();
-        driver.findElement(By.id("goalAmount")).sendKeys("10");
-        driver.findElement(By.id("goalMeasurement")).click();
-        List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        drivers.get().findElement(By.id("goalAmount")).sendKeys("10");
+        drivers.get().findElement(By.id("goalMeasurement")).click();
+        List<WebElement> durationList = drivers.get().findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(2).click();
-        driver.findElement(By.id("android:id/button1")).click();
+        drivers.get().findElement(By.id("android:id/button1")).click();
         // verify we're back on main page
         assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
     }
 
     @Test
     public void defaultGoalSubmissionPossible() throws IOException, ClassNotFoundException, SQLException {
-        driver.findElement(By.id("goalExercise")).click();
-        List<WebElement> activityList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        drivers.get().findElement(By.id("goalExercise")).click();
+        List<WebElement> activityList = drivers.get().findElements(By.className("android.widget.CheckedTextView"));
         activityList.get(1).click();
-        driver.findElement(By.id("goalAmount")).sendKeys("10");
-        driver.findElement(By.id("goalMeasurement")).click();
-        List<WebElement> durationList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        drivers.get().findElement(By.id("goalAmount")).sendKeys("10");
+        drivers.get().findElement(By.id("goalMeasurement")).click();
+        List<WebElement> durationList = drivers.get().findElements(By.className("android.widget.CheckedTextView"));
         durationList.get(4).click();
-        driver.findElement(By.id("android:id/button1")).click();
+        drivers.get().findElement(By.id("android:id/button1")).click();
         //verify the data is in there
         ResultSet resultSet = queryDB("SELECT * FROM " + GOALS_TABLE);
         resultSet.next();

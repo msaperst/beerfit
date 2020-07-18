@@ -13,7 +13,7 @@ public class MetricsAppiumTest extends AppiumTestBase {
 
     @Before
     public void navigateToAddActivity() {
-        new Navigate(driver).toMetrics();
+        new Navigate(drivers.get()).toMetrics();
     }
 
     @Test
@@ -33,7 +33,7 @@ public class MetricsAppiumTest extends AppiumTestBase {
 
     @Test
     public void metricsTableEmpty() {
-        List<WebElement> tableRows = driver.findElement(By.id("metricsBodyTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableRows = drivers.get().findElement(By.id("metricsBodyTable")).findElements(By.className("android.widget.TableRow"));
         assertEquals(tableRows.size(), 1, "Expected to find '1' row", "Actually found '" + tableRows.size() + "'");
         assertElementTextEquals("No Data Present", tableRows.get(0).findElement(By.className("android.widget.TextView")));
     }

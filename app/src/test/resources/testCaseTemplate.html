@@ -14,10 +14,22 @@
 </head>
 <body>
 <h1>$testCaseName</h1>
-<h2 class='$testCaseStatus'>
-    <span>$testCaseStatus</span>
-    <span>$testCaseTime</span>
-</h2>
+<table>
+    <tr class='title'>
+        <th>Total Steps Run</th>
+        <th>Passed</th>
+        <th>Failed</th>
+        <th>To Check</th>
+        <th>Total Time</th>
+    </tr>
+    <tr class='$testCaseStatus'>
+        <td>$totalSteps</td>
+        <td>$stepsPassed</td>
+        <td>$stepsFailed</td>
+        <td>$stepsChecked</td>
+        <td>$testCaseTime</td>
+    </tr>
+</table>
 <table>
     <tr>
         <th>Step</th>

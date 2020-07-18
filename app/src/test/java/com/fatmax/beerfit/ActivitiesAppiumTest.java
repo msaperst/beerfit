@@ -13,7 +13,7 @@ public class ActivitiesAppiumTest extends AppiumTestBase {
 
     @Before
     public void navigateToActivity() {
-        new Navigate(driver).toActivities();
+        new Navigate(drivers.get()).toActivities();
     }
 
     @Test
@@ -28,7 +28,7 @@ public class ActivitiesAppiumTest extends AppiumTestBase {
 
     @Test
     public void noActivitiesInTable() {
-        List<WebElement> tableRows = driver.findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableRows = drivers.get().findElement(By.id("activitiesTable")).findElements(By.className("android.widget.TableRow"));
         assertEquals(tableRows.size(), 0, "Expected to find '0' activities", "Actually found '" + tableRows.size() + "'");
     }
 }

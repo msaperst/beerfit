@@ -60,9 +60,23 @@ public class Report {
     }
 
     public static void writeTestReport(WebDriver driver, String methodName) throws IOException {
-        // write out my report
         StringBuilder steps = new StringBuilder();
+        int passed = 0;
+        int failed = 0;
+        int checked = 0;
         for (Step step : driver.getReporter().getSteps()) {
+            Status status = step.getStatus();
+            switch (status) {
+                case PASS:
+                    passed++;
+                    break;
+                case FAIL:
+                    failed++;
+                    break;
+                case CHECK:
+                    checked++;
+                    break;
+            }
             steps.append("<tr>");
             steps.append("<td>").append(step.getNumber()).append("</td>");
             steps.append("<td>").append(step.getAction()).append("</td>");
@@ -74,15 +88,19 @@ public class Report {
             } else {
                 steps.append("<td></td>");
             }
-            steps.append("<td class='").append(step.getStatus()).append("'>").append(step.getStatus()).append("</td>");
+            steps.append("<td class='").append(status).append("'>").append(status).append("</td>");
             steps.append("<td>").append(step.getTime()).append("</td>");
             steps.append("</tr>");
         }
         String report = getContent(new URL(testCaseTemplate)).replace("$testCaseName", methodName)
                 .replace("$testCaseStatus", driver.getReporter().getStatus().toString())
+                .replace("$totalSteps", String.valueOf(driver.getReporter().getSteps().size()))
+                .replace("$stepsPassed", String.valueOf(passed))
+                .replace("$stepsFailed", String.valueOf(failed))
+                .replace("$stepsChecked", String.valueOf(checked))
                 .replace("$testCaseTime", driver.getReporter().getRunTime() + " ms")
                 .replace("$rows", steps.toString());
-        File reportFile = new File(testResults, methodName + ".webdriver.html");
+        File reportFile = new File(testResults, methodName + ".webdrivers.get().html");
         FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());
     }
 
@@ -93,7 +111,7 @@ public class Report {
         int checked = 0;
         int ignored = 0;    // TODO - need to add capability
         for (Map.Entry<String, Reporter> testCase : testsExecuted.entrySet()) {
-            Step.Status status = testCase.getValue().getStatus();
+            Status status = testCase.getValue().getStatus();
             switch (status) {
                 case PASS:
                     passed++;
@@ -112,7 +130,7 @@ public class Report {
             testCaseList.append("<td>").append(status.toString()).append("</td>");
             testCaseList.append("<td>").append(testCase.getValue().getRunTime()).append(" ms</td>");
             testCaseList.append("<td>");
-            testCaseList.append("<a href='").append(testCase.getKey()).append(".webdriver.html'>WebDriver</a> ");
+            testCaseList.append("<a href='").append(testCase.getKey()).append(".webdrivers.get().html'>WebDriver</a> ");
             testCaseList.append("<a href='").append(testCase.getKey()).append(".appium.log'>Appium</a>");
             testCaseList.append("</td>");
             testCaseList.append("</tr>");

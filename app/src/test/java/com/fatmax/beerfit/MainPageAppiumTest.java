@@ -15,7 +15,6 @@ public class MainPageAppiumTest extends AppiumTestBase {
     private final By drankABeer = By.id("drankABeer");
     private final By beersLeft = By.id("beersLeft");
 
-
     @Test
     public void mainTitleExists() {
         assertElementTextEquals("BeerFit", By.className("android.widget.TextView"));
@@ -28,15 +27,15 @@ public class MainPageAppiumTest extends AppiumTestBase {
 
     @Test
     public void drinkABeer() {
-        driver.findElement(drankABeer).click();
+        drivers.get().findElement(drankABeer).click();
         assertElementTextEquals("-1 Beers Left", beersLeft);
     }
 
     @Test
     public void drinkThreeBeers() {
-        driver.findElement(drankABeer).click();
-        driver.findElement(drankABeer).click();
-        driver.findElement(drankABeer).click();
+        drivers.get().findElement(drankABeer).click();
+        drivers.get().findElement(drankABeer).click();
+        drivers.get().findElement(drankABeer).click();
         assertElementTextEquals("-3 Beers Left", beersLeft);
     }
 
@@ -44,7 +43,7 @@ public class MainPageAppiumTest extends AppiumTestBase {
     public void oneBeerIsSingular() {
         //kludge to have it redraw
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,2);");
-        driver.findElement(drankABeer).click();
+        drivers.get().findElement(drankABeer).click();
         assertElementTextEquals("1 Beer Left", beersLeft);
     }
 
@@ -52,23 +51,23 @@ public class MainPageAppiumTest extends AppiumTestBase {
     public void twoBeersArePlural() {
         //kludge to have it redraw
         modifyDB("INSERT INTO " + ACTIVITIES_TABLE + " VALUES(1,\"2020-01-01 00:00\",1,2,5,3);");
-        driver.findElement(drankABeer).click();
+        drivers.get().findElement(drankABeer).click();
         assertElementTextEquals("2 Beers Left", beersLeft);
     }
 
     @Test
     public void earnBeer() {
-        driver.findElement(By.id("earnedABeer")).click();
+        drivers.get().findElement(By.id("earnedABeer")).click();
         assertElementTextEquals("Add An Activity", By.className("android.widget.TextView"));
     }
 
     @Test
     public void checkMainMenu() {
-        driver.findElement(By.AccessibilityId("Open")).click();
+        drivers.get().findElement(By.AccessibilityId("Open")).click();
         assertElementDisplayed(By.id("nav_header_image"));
         assertElementTextEquals("BeerFit", By.id("nav_header_title"));
         // menu items
-        List<WebElement> menuList = driver.findElements(By.className("android.widget.CheckedTextView"));
+        List<WebElement> menuList = drivers.get().findElements(By.className("android.widget.CheckedTextView"));
         assertEquals(menuList.size(), 3, "Expected to find '3' menu items", "Actually found '" + menuList.size() + "' items");
         assertElementTextEquals("Activities", menuList.get(0));
         assertElementTextEquals("Goals", menuList.get(1));
@@ -77,25 +76,25 @@ public class MainPageAppiumTest extends AppiumTestBase {
 
     @Test
     public void viewSite() {
-        new Navigate(driver).toSite();
+        new Navigate(drivers.get()).toSite();
         assertElementTextEquals("https://beerfit.app", By.className("android.widget.EditText"));
     }
 
     @Test
     public void viewActivities() {
-        new Navigate(driver).toActivities();
+        new Navigate(drivers.get()).toActivities();
         assertElementTextEquals("BeerFit Activities", By.className("android.widget.TextView"));
     }
 
     @Test
     public void viewMetrics() {
-        new Navigate(driver).toMetrics();
+        new Navigate(drivers.get()).toMetrics();
         assertElementTextEquals("BeerFit Metrics", By.className("android.widget.TextView"));
     }
 
     @Test
     public void viewGoals() {
-        new Navigate(driver).toGoals();
+        new Navigate(drivers.get()).toGoals();
         assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
     }
 }

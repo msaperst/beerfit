@@ -12,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.AssumptionViolatedException;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.junit.rules.TestWatcher;
@@ -27,8 +28,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.appium.java_client.remote.MobileCapabilityType;
@@ -47,11 +50,8 @@ public class AppiumTestBase {
     static long startTime = new Date().getTime();
     @Rule
     public TestName name = new TestName();
-    File sqliteDatabase = new File("beerfit");
     File app = new File("build/outputs/apk/debug/app-debug.apk");
     String beerfitDatabase = "/data/data/com.fatmax.beerfit/databases/beerfit";
-    AndroidDriver driver;
-    AppiumDriverLocalService service;
     @Rule(order = Integer.MIN_VALUE)
     public TestWatcher watchman = new TestWatcher() {
         @Override
@@ -60,7 +60,7 @@ public class AppiumTestBase {
             if (!(e instanceof FailedStepException)) {
                 Step step = new Step("", "Didn't expected any errors to be thrown, however, one was.");
                 step.setFailed(e.getClass() + ": " + e.getMessage() + "<br/>\n" + convertStackTrace(e));
-                driver.getReporter().addStep(step);
+                drivers.get().getReporter().addStep(step);
             }
         }
 
@@ -71,14 +71,15 @@ public class AppiumTestBase {
 
         @Override
         protected void finished(Description description) {
-            driver.quit();
-            service.stop();
-            sqliteDatabase.delete();
+            drivers.get().quit();
+            services.get().stop();
+            sqliteDatabases.get().delete();
+            deviceUdids.add(udids.get());
 
-            Report.addTestCase(testsExecuted, driver, name.getMethodName());
-            overallStatus = Report.updateOverallStatus(overallStatus, driver);
+            Report.addTestCase(testsExecuted, drivers.get(), name.getMethodName());
+            overallStatus = Report.updateOverallStatus(overallStatus, drivers.get());
             try {
-                Report.writeTestReport(driver, name.getMethodName());
+                Report.writeTestReport(drivers.get(), name.getMethodName());
             } catch (IOException e) {
                 log.error("Unable to create test report");
             }
@@ -87,6 +88,21 @@ public class AppiumTestBase {
     WebDriverWait wait;
     long waitTime = 5;
     long pollTime = 50;
+    static List<String> deviceUdids = new ArrayList<>();
+
+    // our threaded values
+    ThreadLocal<AndroidDriver> drivers = new ThreadLocal<>();
+    ThreadLocal<AppiumDriverLocalService> services = new ThreadLocal<>();
+    ThreadLocal<File> sqliteDatabases = new ThreadLocal<>();
+    ThreadLocal<String> udids = new ThreadLocal<>();
+
+    @BeforeClass
+    public static void getDevices() {
+        //TODO - determine how to determine this automagically
+        deviceUdids.add("emulator-5554");
+        deviceUdids.add("emulator-5556");
+        deviceUdids.add("emulator-5558");
+    }
 
     @AfterClass
     public static void allDone() throws IOException {
@@ -95,15 +111,18 @@ public class AppiumTestBase {
 
     @Before
     public void setupDriver() throws IOException {
-        service = AppiumDriverLocalService.buildService(
+        udids.set(deviceUdids.remove(0));
+        sqliteDatabases.set(new File("beerfit-" + udids.get()));
+        services.set(AppiumDriverLocalService.buildService(
                 new AppiumServiceBuilder().usingAnyFreePort()
                         .withArgument(GeneralServerFlag.RELAXED_SECURITY)
                         .withLogFile(new File(testResults, name.getMethodName() + ".appium.log"))
-                        .withArgument(GeneralServerFlag.LOG_LEVEL, "error:debug"));
-        service.start();
+                        .withArgument(GeneralServerFlag.LOG_LEVEL, "error:debug")));
+        services.get().start();
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
+        capabilities.setCapability(MobileCapabilityType.UDID, udids.get());
         capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 60);
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
         capabilities.setCapability("appPackage", "com.fatmax.beerfit");
@@ -111,19 +130,19 @@ public class AppiumTestBase {
         if (app.exists()) {
             capabilities.setCapability("app", app.getCanonicalPath());
         }
-        driver = new AndroidDriver<>(service, capabilities);
-        wait = new WebDriverWait(driver, waitTime, pollTime);
+        drivers.set(new AndroidDriver<>(services.get(), capabilities));
+        wait = new WebDriverWait(drivers.get(), waitTime, pollTime);
     }
 
     void modifyDB(String statement) {
         Map<String, Object> args = new HashMap<>();
         args.put("command", "sqlite3 " + beerfitDatabase + " '" + statement + "'");
-        ((io.appium.java_client.android.AndroidDriver) driver.getDriver()).executeScript("mobile: shell", args);
+        ((io.appium.java_client.android.AndroidDriver) drivers.get().getDriver()).executeScript("mobile: shell", args);
     }
 
     ResultSet queryDB(String query) throws IOException, ClassNotFoundException, SQLException {
-        byte[] sqldatabase = ((io.appium.java_client.android.AndroidDriver) driver.getDriver()).pullFile(beerfitDatabase);
-        FileUtils.writeByteArrayToFile(sqliteDatabase, sqldatabase);
+        byte[] sqldatabase = ((io.appium.java_client.android.AndroidDriver) drivers.get().getDriver()).pullFile(beerfitDatabase);
+        FileUtils.writeByteArrayToFile(sqliteDatabases.get(), sqldatabase);
         Class.forName("org.sqlite.JDBC");
         String url = "jdbc:sqlite:beerfit";
         Connection conn = DriverManager.getConnection(url);
@@ -188,7 +207,7 @@ public class AppiumTestBase {
             throw e;
         } finally {
             step.setActual(actualString);
-            driver.getReporter().addStep(step);
+            drivers.get().getReporter().addStep(step);
         }
     }
 
@@ -199,7 +218,7 @@ public class AppiumTestBase {
     }
 
     void assertElementTextEquals(String expected, By element) {
-        String actual = driver.findElement(element).getText();
+        String actual = drivers.get().findElement(element).getText();
         assertEquals(actual, expected, "Expected element '" + element.getBy() + "' to have text '" + expected + "'",
                 "Element '" + element.getBy() + "' has text '" + actual + "'");
     }
@@ -210,8 +229,8 @@ public class AppiumTestBase {
     }
 
     void assertElementDisplayed(By element) {
-        assertEquals(true, driver.findElement(element).isDisplayed(), "Expected element '" + element.getBy() + "' to be displayed",
-                "Element '" + element.getBy() + "' visibility is set to '" + driver.findElement(element).isDisplayed() + "'");
+        assertEquals(true, drivers.get().findElement(element).isDisplayed(), "Expected element '" + element.getBy() + "' to be displayed",
+                "Element '" + element.getBy() + "' visibility is set to '" + drivers.get().findElement(element).isDisplayed() + "'");
     }
 
     void assertElementEnabled(WebElement element) {
@@ -220,8 +239,8 @@ public class AppiumTestBase {
     }
 
     void assertElementEnabled(By element) {
-        assertEquals(true, driver.findElement(element).isEnabled(), "Expected element '" + element.getBy() + "' to be enabled",
-                "Element '" + element.getBy() + "' enablement is set to '" + driver.findElement(element).isEnabled() + "'");
+        assertEquals(true, drivers.get().findElement(element).isEnabled(), "Expected element '" + element.getBy() + "' to be enabled",
+                "Element '" + element.getBy() + "' enablement is set to '" + drivers.get().findElement(element).isEnabled() + "'");
     }
 
     void assertElementDisabled(WebElement element) {
@@ -230,7 +249,7 @@ public class AppiumTestBase {
     }
 
     void assertElementDisabled(By element) {
-        assertEquals(false, driver.findElement(element).isEnabled(), "Expected element '" + element.getBy() + "' to be disabled",
-                "Element '" + element.getBy() + "' enablement is set to '" + driver.findElement(element).isEnabled() + "'");
+        assertEquals(false, drivers.get().findElement(element).isEnabled(), "Expected element '" + element.getBy() + "' to be disabled",
+                "Element '" + element.getBy() + "' enablement is set to '" + drivers.get().findElement(element).isEnabled() + "'");
     }
 }

@@ -13,7 +13,7 @@ public class GoalsAppiumTest extends AppiumTestBase {
 
     @Before
     public void navigateToGoals() {
-        new Navigate(driver).toGoals();
+        new Navigate(drivers.get()).toGoals();
     }
 
     @Test
@@ -28,7 +28,7 @@ public class GoalsAppiumTest extends AppiumTestBase {
 
     @Test
     public void noGoalsInTable() {
-        List<WebElement> tableRows = driver.findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
+        List<WebElement> tableRows = drivers.get().findElement(By.id("goalsTable")).findElements(By.className("android.widget.TableRow"));
         assertEquals(tableRows.size(), 0, "Expected to find '0' goals", "Actually found '" + tableRows.size() + "'");
     }
 
@@ -39,8 +39,8 @@ public class GoalsAppiumTest extends AppiumTestBase {
 
     @Test
     public void checkOptionsMenuValuesTest() {
-        driver.findElement(By.AccessibilityId("More options")).click();
-        List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
+        drivers.get().findElement(By.AccessibilityId("More options")).click();
+        List<WebElement> menuOptions = drivers.get().findElements(By.className("android.widget.TextView"));
         assertEquals(menuOptions.size(), 3, "Expected to find '3' menu items", "Actually found '" + menuOptions.size() + "' menu items");
         assertElementTextEquals("Add A Goal", menuOptions.get(0));
         assertElementTextEquals("Edit Exercises", menuOptions.get(1));
