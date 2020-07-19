@@ -108,7 +108,7 @@ public class Report {
                 .replace("$testCaseTime", driver.getReporter().getRunTime() + " ms")
                 .replace("$capabilities", caps.toString())
                 .replace("$rows", steps.toString());
-        File reportFile = new File(testResults, methodName + ".webdrivers.get().html");
+        File reportFile = new File(testResults, methodName + ".webdriver.html");
         FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());
     }
 
@@ -138,7 +138,7 @@ public class Report {
             testCaseList.append("<td>").append(status.toString()).append("</td>");
             testCaseList.append("<td>").append(testCase.getValue().getRunTime()).append(" ms</td>");
             testCaseList.append("<td>");
-            testCaseList.append("<a href='").append(testCase.getKey()).append(".webdrivers.get().html'>WebDriver</a> ");
+            testCaseList.append("<a href='").append(testCase.getKey()).append(".webdriver.html'>WebDriver</a> ");
             testCaseList.append("<a href='").append(testCase.getKey()).append(".appium.log'>Appium</a>");
             testCaseList.append("</td>");
             testCaseList.append("</tr>");
