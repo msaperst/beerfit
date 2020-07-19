@@ -6,6 +6,7 @@ import com.testpros.fast.reporter.Step;
 import com.testpros.fast.reporter.Step.Status;
 
 import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.Capabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +25,8 @@ public class Report {
 
     private static final Logger log = LoggerFactory.getLogger(Report.class);
 
-    final static String testCaseTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/master/app/src/test/resources/testCaseTemplate.html";
-    final static String testResultTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/master/app/src/test/resources/testResultTemplate.html";
+    final static String testCaseTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/feature/parallelTesting/app/src/test/resources/testCaseTemplate.html";
+    final static String testResultTemplate = "https://raw.githubusercontent.com/msaperst/beerfit/feature/parallelTesting/app/src/test/resources/testResultTemplate.html";
     public final static File testResults = new File("build/reports/tests");
 
     public static void addTestCase(Map<String, Reporter> testsExecuted, WebDriver driver, String methodName) {
@@ -92,6 +93,12 @@ public class Report {
             steps.append("<td>").append(step.getTime()).append("</td>");
             steps.append("</tr>");
         }
+        StringBuilder caps = new StringBuilder();
+        Capabilities capabilities = driver.getCapabilities();
+        for( String capability : capabilities.getCapabilityNames() ) {
+            caps.append("<tr><th class='title'>").append(capability).append("</th><td>")
+                    .append(capabilities.getCapability(capability)).append("</td></tr>");
+        }
         String report = getContent(new URL(testCaseTemplate)).replace("$testCaseName", methodName)
                 .replace("$testCaseStatus", driver.getReporter().getStatus().toString())
                 .replace("$totalSteps", String.valueOf(driver.getReporter().getSteps().size()))
@@ -99,6 +106,7 @@ public class Report {
                 .replace("$stepsFailed", String.valueOf(failed))
                 .replace("$stepsChecked", String.valueOf(checked))
                 .replace("$testCaseTime", driver.getReporter().getRunTime() + " ms")
+                .replace("$capabilities", caps.toString())
                 .replace("$rows", steps.toString());
         File reportFile = new File(testResults, methodName + ".webdrivers.get().html");
         FileUtils.writeStringToFile(reportFile, report, Charset.defaultCharset());

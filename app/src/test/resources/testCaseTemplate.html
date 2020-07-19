@@ -4,18 +4,19 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <style>
-        .PASS { color:green; }
-        .FAIL { color:red; }
-        .CHECK { color:orange; }
+        .title { background:lightgrey; }
+        .PASS { background:darkseagreen; }
+        .FAIL { background:lightcoral; }
+        .CHECK { background:orange; }
         table { border:2px solid darkgrey; border-collapse:collapse; }
-        td,th { border:1px solid grey; }
+        td,th { border:1px solid grey; padding:10px; }
     </style>
     <title>$testCaseName</title>
 </head>
 <body>
-<h1>$testCaseName</h1>
 <table>
     <tr class='title'>
+        <th colspan=5><h1>$testCaseName</h1></th>
         <th>Total Steps Run</th>
         <th>Passed</th>
         <th>Failed</th>
@@ -30,8 +31,14 @@
         <td>$testCaseTime</td>
     </tr>
 </table>
+<h2>&nbsp;</h2>
 <table>
-    <tr>
+    <tr class='title'>
+        $capabilities
+    </tr>
+</table>
+<table>
+    <tr class='title'>
         <th>Step</th>
         <th>Action</th>
         <th>Expected</th>
