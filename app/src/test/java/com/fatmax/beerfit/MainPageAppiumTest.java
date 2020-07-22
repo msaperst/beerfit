@@ -123,7 +123,7 @@ public class MainPageAppiumTest extends AppiumTestBase {
     @Test
     public void noGoalsAlertContentExists() {
         driver.findElement(By.id("noGoalsAlert")).click();
-        assertElementTextEquals("You don't have any goals created. You should set a goal before doing anything else.", driver.findElement(By.id("android:id/message")));
+        assertElementTextEquals("You don't have any goals created. You won't earn any beers until you add at least one goal.", driver.findElement(By.id("android:id/message")));
     }
 
     @Test

@@ -81,6 +81,6 @@
     <string name="confirm_activity_delete">Do you really want to delete the activity \'%1$s\' on %2$s?</string>
 
     <string name="no_goals_present">No Goals Present</string>
-    <string name="no_goals_set">You don\'t have any goals created. You should set a goal before doing anything else.</string>
+    <string name="no_goals_set">You don\'t have any goals created. You won\'t earn any beers until you add at least one goal.</string>
     <string name="no_store_access">The app was not allowed to read your store.</string>
 </resources>
