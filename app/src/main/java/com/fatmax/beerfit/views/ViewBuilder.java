@@ -1,11 +1,12 @@
 package com.fatmax.beerfit.views;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -16,11 +17,11 @@ import com.fatmax.beerfit.R;
 
 import java.util.List;
 
-public class TableBuilder {
+public class ViewBuilder {
 
     private Context context;
 
-    public TableBuilder(Context context) {
+    public ViewBuilder(Context context) {
         this.context = context;
     }
 
@@ -61,23 +62,22 @@ public class TableBuilder {
         return view;
     }
 
-    public ImageButton createEditButton() {
+    public ImageButton noGoalsAlert() {
         ImageButton button = new ImageButton(context);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(80, 80);
+        button.setId(R.id.noGoalsAlert);
+        button.setLayoutParams(layoutParams);
+        button.setContentDescription(context.getString(R.string.no_goals_present));
+        button.setImageResource(android.R.drawable.ic_dialog_alert);
+        button.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorAccent)));
         button.setBackground(ContextCompat.getDrawable(context, android.R.color.transparent));
-        button.setContentDescription("Edit Activity");
-        button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        button.setImageResource(android.R.drawable.ic_menu_edit);
-        button.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(context, android.R.color.holo_orange_light)));
-        return button;
-    }
-
-    public ImageButton createDeleteButton() {
-        ImageButton button = new ImageButton(context);
-        button.setBackground(ContextCompat.getDrawable(context, android.R.color.transparent));
-        button.setContentDescription("Delete Activity");
-        button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        button.setImageResource(android.R.drawable.ic_menu_delete);
-        button.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(context, android.R.color.holo_red_dark)));
+        button.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(R.string.no_goals_present);
+            builder.setIcon(android.R.drawable.ic_dialog_alert);
+            builder.setMessage(R.string.no_goals_set);
+            builder.show();
+        });
         return button;
     }
 }

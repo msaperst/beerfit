@@ -10,25 +10,31 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.fatmax.beerfit.utilities.Activity;
 import com.fatmax.beerfit.utilities.Database;
+import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.views.ImportExport;
+import com.fatmax.beerfit.views.ViewBuilder;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST = 112;
     SQLiteDatabase sqLiteDatabase;
     private MenuItem storedMenu;
-
     private ActionBarDrawerToggle t;
 
     /**
@@ -63,7 +69,19 @@ public class MainActivity extends AppCompatActivity {
         t = new ActionBarDrawerToggle(this, dl, R.string.Open, R.string.Close);
         dl.addDrawerListener(t);
         t.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        // checkout our goals, and add a warning if there are none
+        if (Elements.getAllGoals(sqLiteDatabase).isEmpty()) {
+            ImageButton noGoalsButton = new ViewBuilder(this).noGoalsAlert();
+            ConstraintLayout constraintLayout = findViewById(R.id.main_content);
+            constraintLayout.addView(noGoalsButton);
+            ConstraintSet constraintSet = new ConstraintSet();
+            constraintSet.clone(constraintLayout);
+            constraintSet.connect(noGoalsButton.getId(), ConstraintSet.END, constraintLayout.getId(), ConstraintSet.END, 50);
+            constraintSet.connect(noGoalsButton.getId(), ConstraintSet.TOP, constraintLayout.getId(), ConstraintSet.TOP, 50);
+            constraintSet.applyTo(constraintLayout);
+        }
     }
 
     @Override
@@ -101,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 doImportExport(storedMenu);
             } else {
-                Toast.makeText(this, "The app was not allowed to read your store.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.no_store_access), Toast.LENGTH_LONG).show();
             }
         }
     }

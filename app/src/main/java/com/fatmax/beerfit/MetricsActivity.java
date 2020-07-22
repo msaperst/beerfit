@@ -15,7 +15,7 @@ import com.fatmax.beerfit.utilities.Data;
 import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.Metric;
-import com.fatmax.beerfit.views.TableBuilder;
+import com.fatmax.beerfit.views.ViewBuilder;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
@@ -35,7 +35,7 @@ public class MetricsActivity extends AppCompatActivity {
     final List<Metric> metrics = new ArrayList<>();
     SQLiteDatabase sqLiteDatabase;
     Database database;
-    TableBuilder tableBuilder;
+    ViewBuilder viewBuilder;
     Iterator<Metric> metricsIterator;
     Metric metric;
 
@@ -49,7 +49,7 @@ public class MetricsActivity extends AppCompatActivity {
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
         database = new Database(sqLiteDatabase);
-        tableBuilder = new TableBuilder(this);
+        viewBuilder = new ViewBuilder(this);
 
         //setup our metrics
         metrics.add(new Metric("%Y"));
@@ -65,8 +65,8 @@ public class MetricsActivity extends AppCompatActivity {
         // if no data
         TableLayout table = findViewById(R.id.metricsBodyTable);
         if (table.getChildCount() == 0) {
-            TextView text = tableBuilder.createHeaderView("No Data Present");
-            TableRow row = tableBuilder.createTableRow(Collections.singletonList(text));
+            TextView text = viewBuilder.createHeaderView("No Data Present");
+            TableRow row = viewBuilder.createTableRow(Collections.singletonList(text));
             table.addView(row);
         }
     }
@@ -85,11 +85,11 @@ public class MetricsActivity extends AppCompatActivity {
             int beersEarned = 0;
             Map<String, Integer> activityGroups = Elements.getActivitiesPerformed(sqLiteDatabase, metric, activityTime);
             for (Map.Entry<String, Integer> activityGroup : activityGroups.entrySet()) {
-                periodRows.add(createMetricsRow(activityTime, Collections.singletonList(tableBuilder.createTextView(activityGroup.getKey()))));
+                periodRows.add(createMetricsRow(activityTime, Collections.singletonList(viewBuilder.createTextView(activityGroup.getKey()))));
                 beersEarned += activityGroup.getValue();
             }
             // finally, add each of our rows
-            metricsView.addView(createMetricsRow(activityTime, Collections.singletonList(tableBuilder.createHeaderView(metric.getTitle(activityTime) + " (" + beersDrank + " drank / " + beersEarned + " earned beers)"))));
+            metricsView.addView(createMetricsRow(activityTime, Collections.singletonList(viewBuilder.createHeaderView(metric.getTitle(activityTime) + " (" + beersDrank + " drank / " + beersEarned + " earned beers)"))));
             for (TableRow row : periodRows) {
                 metricsView.addView(row);
             }
@@ -122,7 +122,7 @@ public class MetricsActivity extends AppCompatActivity {
     }
 
     TableRow createMetricsRow(final String tag, List<View> cells) {
-        TableRow row = tableBuilder.createTableRow(tag, cells);
+        TableRow row = viewBuilder.createTableRow(tag, cells);
         row.setOnClickListener(v -> {
             if (metricsIterator.hasNext()) {
                 metric = metricsIterator.next();

@@ -18,7 +18,7 @@ import com.fatmax.beerfit.utilities.Database;
 import com.fatmax.beerfit.utilities.Elements;
 import com.fatmax.beerfit.utilities.Goal;
 import com.fatmax.beerfit.views.Measures;
-import com.fatmax.beerfit.views.TableBuilder;
+import com.fatmax.beerfit.views.ViewBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,16 +30,16 @@ public class GoalsActivity extends AppCompatActivity {
     Measures measures;
 
     public static void populateGoals(Context context, SQLiteDatabase sqLiteDatabase) {
-        TableBuilder tableBuilder = new TableBuilder(context);
+        ViewBuilder viewBuilder = new ViewBuilder(context);
         TableLayout tableLayout = ((Activity) context).findViewById(R.id.goalsTable);
         tableLayout.removeAllViews();
         List<Goal> goals = Elements.getAllGoals(sqLiteDatabase);
         for (Goal goal : goals) {
             // setup our cells
-            TextView goalView = tableBuilder.createTextView(goal.getString(), "goal");
+            TextView goalView = viewBuilder.createTextView(goal.getString(), "goal");
             goalView.setTextSize(20);
             goalView.setOnClickListener(view -> editGoal(context, sqLiteDatabase, view));
-            tableLayout.addView(tableBuilder.createTableRow(String.valueOf(goal.getId()),
+            tableLayout.addView(viewBuilder.createTableRow(String.valueOf(goal.getId()),
                     Collections.singletonList(goalView)));
         }
     }
