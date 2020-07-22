@@ -37,8 +37,8 @@ public class ActivitiesEditBeerAppiumTest extends AppiumTestBase {
         assertElementTextEquals("at", driver.findElement(By.id("at")));
         assertElementTextEquals("08:00", By.id("activityTime"));
         assertElementTextEquals("Drank Beer", driver.findElement(By.id("activityExercise")));
-        assertElementTextEquals("for", driver.findElement(By.id("_for_")));
-        assertElementTextEquals("1.0", By.id("activityAmount"));
+        assertElementHidden(By.id("_for_"));
+        assertElementTextEquals("1", By.id("activityAmount"));
         assertElementTextEquals("beer", driver.findElement(By.id("activityMeasurement")));
     }
 

@@ -196,7 +196,7 @@ public class ActivityUnitTest {
         activity.setMeasurement(measurement);
         activity.setExercise(exercise);
         activity.setAmount(1);
-        assertEquals("Drank 1.0 beer", activity.getString());
+        assertEquals("Drank 1 beer", activity.getString());
     }
 
     @Test
@@ -207,7 +207,7 @@ public class ActivityUnitTest {
         activity.setMeasurement(measurement);
         activity.setExercise(exercise);
         activity.setAmount(10);
-        assertEquals("Drank 10.0 beers", activity.getString());
+        assertEquals("Drank 10 beers", activity.getString());
     }
 
     @Test

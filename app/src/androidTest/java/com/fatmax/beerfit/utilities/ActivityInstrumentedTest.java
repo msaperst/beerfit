@@ -98,7 +98,7 @@ public class ActivityInstrumentedTest {
     public void getStringBeer() {
         SQLiteDatabase db = getDB();
         Activity activity = new Activity(db, 0);
-        assertEquals("Drank 1.0 beer", activity.getString());
+        assertEquals("Drank 1 beer", activity.getString());
     }
 
     @Test
@@ -106,7 +106,15 @@ public class ActivityInstrumentedTest {
         SQLiteDatabase db = getDB();
         Activity activity = new Activity(db, 0);
         activity.setAmount(0.9999);
-        assertEquals("Drank 0.9999 beers", activity.getString());
+        assertEquals("Drank 0 beers", activity.getString());
+    }
+
+    @Test
+    public void getStringBeerBarely() {
+        SQLiteDatabase db = getDB();
+        Activity activity = new Activity(db, 0);
+        activity.setAmount(1.000001);
+        assertEquals("Drank 1 beer", activity.getString());
     }
 
     @Test

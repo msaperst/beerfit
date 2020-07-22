@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.text.InputType;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,13 +57,14 @@ public class ActivityModal {
         if (activity.getId() != -1) {
             builder.setTitle(R.string.edit_your_activity);
             ((Spinner) activityView.findViewById(R.id.activityExercise)).setSelection(activity.getExercise().getId());
-            ((TextView) activityView.findViewById(R.id.activityAmount)).setText(String.valueOf(activity.getAmount()));
             ((Spinner) activityView.findViewById(R.id.activityMeasurement)).setSelection(Elements.getSortedMeasurement(sqLiteDatabase, 1, activity.getMeasurement()) + 1);
             builder.setPositiveButton(R.string.delete, (dialog, id) -> delete(activity));
             builder.setNegativeButton(R.string.update, null);
             calendar.setTime(activity.getDateTime());
             if (activity.isDrankBeer()) {
-                setAsBeer(activityView);
+                setAsBeer(activityView, activity.getAmount());
+            } else {
+                ((TextView) activityView.findViewById(R.id.activityAmount)).setText(String.valueOf(activity.getAmount()));
             }
         } else {
             builder.setTitle(R.string.add_an_activity);
@@ -111,7 +113,7 @@ public class ActivityModal {
         timePickerDialog.show();
     }
 
-    private void setAsBeer(View activityView) {
+    private void setAsBeer(View activityView, double amount) {
         // setup the beer exercise
         Spinner exerciseSpinner = activityView.findViewById(R.id.activityExercise);
         ViewGroup.LayoutParams exerciseLayoutParams = exerciseSpinner.getLayoutParams();
@@ -137,6 +139,17 @@ public class ActivityModal {
         measurement.setTextColor(Color.BLACK);
         rootLayout.removeView(measurementSpinner);
         rootLayout.addView(measurement);
+
+        // remove the for
+        TextView forText = activityView.findViewById(R.id._for_);
+        forText.setVisibility(View.GONE);
+        forText.setTextColor(Color.WHITE);
+
+        // set the amount input to an integer
+        EditText amountInput = activityView.findViewById(R.id.activityAmount);
+        amountInput.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+        amountInput.setText(String.valueOf((int) amount));
+
     }
 
     private void save(View activityView, Activity activity) {
@@ -149,7 +162,6 @@ public class ActivityModal {
         } catch (ParseException e) {
             activity.setDateTime(new Date());
         }
-
         // get activity information
         if (activity.getExercise() == null || !activity.isDrankBeer()) {  // if it's not a beer activity
             Spinner exercise = activityView.findViewById(R.id.activityExercise);
@@ -183,10 +195,8 @@ public class ActivityModal {
         if (!isFilledOut) {
             return;
         }
-
         // finally, calculate the earned beers
         activity.calculateBeers();
-
 
         activity.save();
         ActivitiesActivity.populateActivities(context, sqLiteDatabase);
