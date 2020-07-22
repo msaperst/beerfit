@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static com.fatmax.beerfit.utilities.Database.ACTIVITIES_TABLE;
+import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 
 public class MainPageAppiumTest extends AppiumTestBase {
 
@@ -97,5 +98,38 @@ public class MainPageAppiumTest extends AppiumTestBase {
     public void viewGoals() {
         new Navigate(driver).toGoals();
         assertElementTextEquals("BeerFit Goals", By.className("android.widget.TextView"));
+    }
+
+    @Test
+    public void notificationForNoGoals() {
+        assertElementDisplayed(By.id("noGoalsAlert"));
+    }
+
+    @Test
+    public void noNotificationForNoGoalsWithGoal() {
+        modifyDB("INSERT INTO " + GOALS_TABLE + " VALUES(1,1,2,5);");
+        Navigate navigate = new Navigate(driver);
+        navigate.toGoals();
+        navigate.goBack();
+        assertElementHidden(By.id("noGoalsAlert"));
+    }
+
+    @Test
+    public void noGoalsAlertTitleExists() {
+        driver.findElement(By.id("noGoalsAlert")).click();
+        assertElementTextEquals("No Goals Present", By.id("android:id/alertTitle"));
+    }
+
+    @Test
+    public void noGoalsAlertContentExists() {
+        driver.findElement(By.id("noGoalsAlert")).click();
+        assertElementTextEquals("You don't have any goals created. You should set a goal before doing anything else.", driver.findElement(By.id("android:id/message")));
+    }
+
+    @Test
+    public void noGoalsAlertButtons() {
+        driver.findElement(By.id("noGoalsAlert")).click();
+        List<WebElement> editBeerButtons = driver.findElements(By.className("android.widget.Button"));
+        assertEquals(editBeerButtons.size(), 0, "Expected to find '0' buttons", "Actually found '" + editBeerButtons.size() + "'");
     }
 }
