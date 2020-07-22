@@ -214,6 +214,11 @@ public class AppiumTestBase {
                 "Element '" + element.getBy() + "' visibility is set to '" + driver.findElement(element).isDisplayed() + "'");
     }
 
+    void assertElementHidden(By element) {
+        assertEquals(false, driver.isElementPresent(element), "Expected element '" + element.getBy() + "' to be hidden",
+                "Element '" + element.getBy() + "' display is set to '" + driver.isElementPresent(element) + "'");
+    }
+
     void assertElementEnabled(WebElement element) {
         assertEquals(true, element.isEnabled(), "Expected element '" + element.getAttribute("resourceId") + "' to be enabled",
                 "Element '" + element.getAttribute("resourceId") + "' enablement is set to '" + element.isEnabled() + "'");

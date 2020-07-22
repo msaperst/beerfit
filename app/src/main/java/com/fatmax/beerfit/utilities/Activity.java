@@ -137,10 +137,13 @@ public class Activity {
 
     public String getString() {
         String conjunction = " ";
+        String localAmount = String.valueOf(amount);
         if (!isDrankBeer()) {
             conjunction = " for ";
+        } else {
+            localAmount = String.valueOf((int) amount);
         }
-        return exercise.getPast() + conjunction + amount + " " + Elements.getProperStringPluralization(measurement.getUnit(), amount);
+        return exercise.getPast() + conjunction + localAmount + " " + Elements.getProperStringPluralization(measurement.getUnit(), Double.parseDouble(localAmount));
     }
 
     public void calculateBeers() {
