@@ -90,7 +90,6 @@ public class ImportExport {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Select Table to Import");
-//        builder.setMessage("Note that this entire table will be wiped out and replaced with data in file");
         builder.setItems(tables, (dialog, which) -> importData(tables[which]));
         builder.show();
     }
