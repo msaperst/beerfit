@@ -49,6 +49,7 @@ public class MetricsActivity extends AppCompatActivity {
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
         database = new Database(sqLiteDatabase);
+        database.setupDatabase();
         viewBuilder = new ViewBuilder(this);
 
         //setup our metrics

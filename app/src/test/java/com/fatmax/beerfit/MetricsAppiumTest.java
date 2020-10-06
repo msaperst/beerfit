@@ -11,9 +11,9 @@ import java.util.List;
 
 public class MetricsAppiumTest extends AppiumTestBase {
 
-    @Before
-    public void navigateToAddActivity() {
-        new Navigate(driver).toMetrics();
+    @Override
+    public String getStartingActivity() {
+        return "MetricsActivity";
     }
 
     @Test

@@ -11,9 +11,9 @@ import java.util.List;
 
 public class GoalsAppiumTest extends AppiumTestBase {
 
-    @Before
-    public void navigateToGoals() {
-        new Navigate(driver).toGoals();
+    @Override
+    public String getStartingActivity() {
+        return "GoalsActivity";
     }
 
     @Test

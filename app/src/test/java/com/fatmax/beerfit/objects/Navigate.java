@@ -34,23 +34,23 @@ public class Navigate {
 
     public void toNewGoal() {
         toGoals();
-        driver.findElement(By.AccessibilityId("More options")).click();
-        List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
-        menuOptions.get(0).click();
+        toOption(0);
     }
 
     public void toEditExercise() {
         toGoals();
-        driver.findElement(By.AccessibilityId("More options")).click();
-        List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
-        menuOptions.get(1).click();
+        toOption(1);
     }
 
     public void toEditMeasurement() {
         toGoals();
+        toOption(2);
+    }
+
+    public void toOption(int option) {
         driver.findElement(By.AccessibilityId("More options")).click();
         List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
-        menuOptions.get(2).click();
+        menuOptions.get(option).click();
     }
 
     public void toMetrics() {
@@ -63,24 +63,18 @@ public class Navigate {
     }
 
     public void clickOnExport() {
-        driver.findElement(By.AccessibilityId("More options")).click();
-        List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
-        menuOptions.get(0).click();
+        toOption(0);
     }
 
     public void export() {
-        driver.findElement(By.AccessibilityId("More options")).click();
-        List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
-        menuOptions.get(0).click();
+        clickOnExport();
         if (driver.isElementPresent(By.id("com.android.permissioncontroller:id/permission_allow_button"))) {
             driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
         }
     }
 
     public void mport() {
-        driver.findElement(By.AccessibilityId("More options")).click();
-        List<WebElement> menuOptions = driver.findElements(By.className("android.widget.TextView"));
-        menuOptions.get(1).click();
+        toOption(1);
         if (driver.isElementPresent(By.id("com.android.permissioncontroller:id/permission_allow_button"))) {
             driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
         }

@@ -17,9 +17,14 @@ import static com.fatmax.beerfit.utilities.Database.MEASUREMENTS_TABLE;
 
 public class MeasurementModifyAppiumTest extends AppiumTestBase {
 
+    @Override
+    public String getStartingActivity() {
+        return "GoalsActivity";
+    }
+
     @Before
     public void navigateToGoals() {
-        new Navigate(driver).toEditMeasurement();
+        new Navigate(driver).toOption(2);
     }
 
     @Test
