@@ -23,7 +23,7 @@ public class MeasurementModifyAppiumTest extends AppiumTestBase {
     }
 
     @Before
-    public void navigateToGoals() {
+    public void navigateToEditMeasurement() {
         new Navigate(driver).toOption(2);
     }
 
