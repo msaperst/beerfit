@@ -48,11 +48,7 @@ public class MainActivity extends AppCompatActivity {
         if (beerCounter == null) {
             return;
         }
-        if (beersLeft == 1) {
-            beerCounter.setText(context.getString(R.string.one_beer_left));
-        } else {
-            beerCounter.setText(context.getString(R.string.beers_left, beersLeft));
-        }
+        beerCounter.setText(context.getResources().getQuantityString(R.plurals.beers_left, beersLeft, beersLeft));
     }
 
     @Override

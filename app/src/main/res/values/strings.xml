@@ -2,19 +2,12 @@
     <string name="app_name">BeerFit</string>
     <string name="add_an_activity">Add An Activity</string>
     <string name="edit_your_activity">Edit Your Activity</string>
-    <string name="select_exercise">Select Exercise</string>
-    <string name="activity">Activity</string>
-    <string name="select_time">Select Time</string>
-    <string name="enter_duration">Enter Duration</string>
-    <string name="add_activity">Add Activity</string>
-    <string name="update_activity">Update Activity</string>
     <string name="add_a_goal">Add A Goal</string>
-    <string name="edit_your_goal">Edit Your Goal</string>
     <string name="to_earn_a_beer">To Earn A Beer…</string>
-    <string name="add_goal">Add Goal</string>
-    <string name="update_goal">Update Goal</string>
-    <string name="one_beer_left">1 Beer Left</string>
-    <string name="beers_left">%1$d Beers Left</string>
+    <plurals name="beers_left">
+        <item quantity="one">%1$d Beer Left</item>
+        <item quantity="other">%1$d Beers Left</item>
+    </plurals>
     <string name="earned_a_beer">Earned A Beer</string>
     <string name="drank_a_beer">Drank A Beer</string>
     <string name="beerfit_activities">BeerFit Activities</string>
@@ -25,16 +18,12 @@
     <string name="metrics">Metrics</string>
     <string name="Close">Close</string>
     <string name="Open">Open</string>
-    <string name="update_time">Update Time</string>
-    <string name="enter_amount">Enter Amount</string>
     <string name="drank_beer">Drank Beer</string>
     <string name="beer">beer</string>
     <string name="indicate_exercise">You need to indicate some exercise</string>
     <string name="indicate_duration">You need to indicate some duration</string>
     <string name="export_data">Export Data</string>
     <string name="import_data">Import Data</string>
-    <string name="plural">%1$ss</string>
-    <string name="plural_e">%1$ses</string>
     <string name="edit_exercises">Edit Exercises</string>
     <string name="edit_measurements">Edit Measurements</string>
 

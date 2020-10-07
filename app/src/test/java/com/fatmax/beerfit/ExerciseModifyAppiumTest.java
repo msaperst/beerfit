@@ -19,9 +19,14 @@ import static com.fatmax.beerfit.utilities.Database.EXERCISES_TABLE;
 
 public class ExerciseModifyAppiumTest extends AppiumTestBase {
 
+    @Override
+    public String getStartingActivity() {
+        return "GoalsActivity";
+    }
+
     @Before
-    public void navigateToGoals() {
-        new Navigate(driver).toEditExercise();
+    public void navigateToEditExercise() {
+        new Navigate(driver).toOption(1);
     }
 
     @Test

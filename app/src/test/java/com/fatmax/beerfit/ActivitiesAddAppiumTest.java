@@ -23,7 +23,7 @@ import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 public class ActivitiesAddAppiumTest extends AppiumTestBase {
 
     @Before
-    public void navigateToAddActivity() {
+    public void earnedABeer() {
         driver.findElement(By.id("earnedABeer")).click();
     }
 

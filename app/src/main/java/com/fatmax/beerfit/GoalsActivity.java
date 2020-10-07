@@ -52,6 +52,7 @@ public class GoalsActivity extends AppCompatActivity {
         //retrieve the current activities
         sqLiteDatabase = openOrCreateDatabase("beerfit", MODE_PRIVATE, null);
         database = new Database(sqLiteDatabase);
+        database.setupDatabase();
 
         // dynamically build our table
         populateGoals(this, sqLiteDatabase);

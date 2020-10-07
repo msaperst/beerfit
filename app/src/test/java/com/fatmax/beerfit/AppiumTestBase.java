@@ -88,6 +88,10 @@ public class AppiumTestBase {
     long waitTime = 5;
     long pollTime = 50;
 
+    public String getStartingActivity() {
+        return "MainActivity";
+    }
+
     @AfterClass
     public static void allDone() throws IOException {
         Report.writeOverallReport(testsExecuted, overallStatus, startTime);
@@ -107,7 +111,7 @@ public class AppiumTestBase {
         capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 60);
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
         capabilities.setCapability("appPackage", "com.fatmax.beerfit");
-        capabilities.setCapability("appActivity", "MainActivity");
+        capabilities.setCapability("appActivity", getStartingActivity());
         if (app.exists()) {
             capabilities.setCapability("app", app.getCanonicalPath());
         }

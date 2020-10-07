@@ -16,9 +16,14 @@ import static com.fatmax.beerfit.utilities.Database.GOALS_TABLE;
 
 public class GoalsAddAppiumTest extends AppiumTestBase {
 
+    @Override
+    public String getStartingActivity() {
+        return "GoalsActivity";
+    }
+
     @Before
-    public void navigateToAddGoals() {
-        new Navigate(driver).toNewGoal();
+    public void navigateToAddGoal() {
+        new Navigate(driver).toOption(0);
     }
 
     @Test
