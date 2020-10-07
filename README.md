@@ -45,7 +45,7 @@ UI Appium tests exist. They can be run with the below command:
 JUnit results can be found at:
 `app/build/reports/tests`
 FAST results can be found at:
-`app/build/reports/tests/index.html`    TODO - is this accurate?
+`app/build/reports/tests/index.html`
 
 ### Features
 Below is some information about the features in the BeerFit app
