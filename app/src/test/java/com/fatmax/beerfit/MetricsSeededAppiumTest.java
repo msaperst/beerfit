@@ -97,9 +97,9 @@ public class MetricsSeededAppiumTest extends AppiumTestBase {
         driver.findElement(METRICS_BODY_TABLE).findElements(TABLE_ROW).get(0).click();
         List<WebElement> tableRows = driver.findElement(METRICS_BODY_TABLE).findElements(TABLE_ROW);
         assertEquals(tableRows.size(), 12, "Expected to find '12' data rows", "Actually found '" + tableRows.size() + "'");
-        assertElementTextEquals("Week 3, February 2020 (2 drank / 4 earned beers)", tableRows.get(0).findElement(TEXT_VIEW));
-        assertElementTextEquals("Week 2, January 2020 (2 drank / 3 earned beers)", tableRows.get(5).findElement(TEXT_VIEW));
-        assertElementTextEquals("Week 1, January 2020 (0 drank / 5 earned beers)", tableRows.get(9).findElement(TEXT_VIEW));
+        assertElementTextEquals("February 10 - 16 2020 (2 drank / 4 earned beers)", tableRows.get(0).findElement(TEXT_VIEW));
+        assertElementTextEquals("January 6 - 12 2020 (2 drank / 3 earned beers)", tableRows.get(5).findElement(TEXT_VIEW));
+        assertElementTextEquals("December 30 2019 - January 5 2020 (0 drank / 5 earned beers)", tableRows.get(9).findElement(TEXT_VIEW));
     }
 
     @Test

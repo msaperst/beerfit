@@ -2,6 +2,11 @@ package com.fatmax.beerfit.utilities;
 
 import org.junit.Test;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
@@ -46,12 +51,21 @@ public class MetricUnitTest {
     @Test
     public void getTitleWeeklyTest() {
         assertEquals("123 3 a", metric.getTitle("123 3 a"));
-        assertEquals("123 b 3", metric.getTitle("123 b 3"));
         assertEquals("c 3 5", metric.getTitle("c 3 5"));
-        assertEquals("Week 5, January 0123", metric.getTitle("123 3 4"));
-        assertEquals("Week 2, January 2000", metric.getTitle("2000 1 1"));
-        assertEquals("Week 5, December 1999", metric.getTitle("2000 0 0"));
-        assertEquals("Week 5, December 1999", metric.getTitle("2000 99 0"));
+        assertEquals("January 3 - 9 2000", metric.getTitle("2000 1 1"));
+        assertEquals("December 27 1999 - January 2 2000", metric.getTitle("2000 0 0"));
+        assertEquals("January 27 - February 2 2020", metric.getTitle("2020 3 4"));
+    }
+
+    @Test
+    public void getWeeklySpreadTest() throws ParseException {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new SimpleDateFormat("yyyy ww", Locale.US).parse("2020 1"));
+        assertEquals("January 6 - 12 2020", metric.getWeeklySpread(cal));
+        cal.setTime(new SimpleDateFormat("yyyy ww", Locale.US).parse("2020 4"));
+        assertEquals("January 27 - February 2 2020", metric.getWeeklySpread(cal));
+        cal.setTime(new SimpleDateFormat("yyyy ww", Locale.US).parse("2020 0"));
+        assertEquals("December 30 2019 - January 5 2020", metric.getWeeklySpread(cal));
     }
 
     @Test
